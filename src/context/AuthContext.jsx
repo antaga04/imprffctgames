@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
+import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
 
@@ -10,32 +11,55 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Check if user is logged in (e.g., using localStorage)
+  const isTokenValid = (token) => {
+    if (!token) return false;
+    const decodedToken = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+    return decodedToken.exp > currentTime;
+  };
+
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const storedToken = localStorage.getItem('token');
+
+    if (storedToken == null) {
+      navigate('/');
+    }
+
+    if (storedUser && storedToken) {
+      if (isTokenValid(storedToken)) {
+        setUser(JSON.parse(storedUser));
+      } else {
+        logout();
+      }
     }
     setLoading(false);
   }, []);
 
-  // Login function
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
   const login = async (email, password) => {
     try {
       const response = await axios.post('http://localhost:8080/api/users/login', {
         email,
         password,
       });
-      setUser(response.data);
-      localStorage.setItem('user', JSON.stringify(response.data));
+
+      const { token, user } = response.data.data;
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
       navigate('/');
     } catch (error) {
       console.error('Login failed:', error);
-      throw error; // Throw the error so it can be caught in the component
+      throw error;
     }
   };
 
-  // Register function
   const register = async (nickname, password, email) => {
     try {
       await axios.post('http://localhost:8080/api/users/register', {
@@ -46,24 +70,24 @@ export const AuthProvider = ({ children }) => {
       navigate('/login');
     } catch (error) {
       console.error('Registration failed:', error);
-      throw error; // Throw the error so it can be caught in the component
+      throw error;
     }
   };
 
-  // Logout function
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('token');
     localStorage.removeItem('user');
+    navigate('/login');
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, updateUser, loading, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook to use the auth context
 export const useAuth = () => useContext(AuthContext);
 
 AuthProvider.propTypes = {
