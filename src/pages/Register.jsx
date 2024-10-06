@@ -26,19 +26,14 @@ const Register = () => {
       return;
     }
 
-    // Use toast.promise for handling the registration process
-    const registerPromise = register(nickname, password, email);
-
-    toast.promise(registerPromise, {
-      loading: 'Registering...',
-      success: 'Registration successful! Redirecting...',
-      error: (error) => error.response?.data?.error || 'An error occurred during registration.',
-    });
-
     try {
-      await registerPromise;
+      toast.promise(register(nickname, password, email), {
+        loading: 'Registering...',
+        success: 'Registration successful! Redirecting...',
+        error: (error) => error.response?.data?.error || 'An error occurred during registration.',
+      });
     } catch (error) {
-      console.error(error);
+      console.error('Registration error:', error);
     }
   };
 
