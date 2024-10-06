@@ -26,7 +26,7 @@ const Login = () => {
         error: (err) => err.response?.data?.error || 'Login failed. Please try again.',
       });
     } catch (error) {
-      console.error(error);
+      console.error('Login error:', error);
       toast.error('An error occurred during login.');
     }
   };
