@@ -1,20 +1,65 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 import { AtSymbolIcon, KeyIcon, RegisterUserIcon } from '../icons';
-import SigninLogo from '../components/SigninLogo';
-import BackButton from '../components/BackButton';
+import SigninLogo from '../components/ui/SigninLogo';
+import BackButton from '../components/ui/BackButton';
 import { toast } from 'sonner';
+import Button from '../components/ui/Button';
+import AuthLinkSwitcher from '../components/ui/AuthLinkSwitcher';
+import AuthInput from '../components/ui/AuthInput';
+
+const INPUTS = [
+  {
+    label: 'Nickname',
+    name: 'nickname',
+    type: 'text',
+    placeholder: 'Enter a nickname',
+    Icon: RegisterUserIcon,
+  },
+  {
+    label: 'Email',
+    name: 'email',
+    type: 'email',
+    placeholder: 'Enter an email',
+    Icon: AtSymbolIcon,
+  },
+  {
+    label: 'Password',
+    name: 'password',
+    type: 'password',
+    placeholder: 'Enter a password',
+    Icon: KeyIcon,
+  },
+  {
+    label: 'Confirm password',
+    name: 'confirmPassword',
+    type: 'password',
+    placeholder: 'Confirm your password',
+    Icon: KeyIcon,
+  },
+];
 
 const Register = () => {
-  const [nickname, setNickname] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [formData, setFormData] = useState({
+    nickname: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
   const { register } = useAuth();
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const { email, nickname, password, confirmPassword } = formData;
 
     if (!email || !nickname || !password || !confirmPassword) {
       toast.error('All fields are required.');
@@ -49,83 +94,21 @@ const Register = () => {
         >
           <h1 className="lusiana-font text-2xl">Register</h1>
 
-          <div className="form-field">
-            <label htmlFor="email">Email</label>
-            <div className="relative">
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter an email"
-                className="p-2 pl-10 rounded-md border text-sm w-full"
-              />
-              <AtSymbolIcon className="absolute left-2 top-2 h-6 w-6 text-gray-500" />
-            </div>
-          </div>
+          {INPUTS.map(({ label, name, type, placeholder, Icon }) => (
+            <AuthInput
+              key={name}
+              label={label}
+              name={name}
+              type={type}
+              placeholder={placeholder}
+              Icon={Icon}
+              value={formData[label.toLowerCase().replace(' ', '')]}
+              onChange={handleInputChange}
+            />
+          ))}
 
-          <div className="form-field">
-            <label htmlFor="nickname">Nickname</label>
-            <div className="relative">
-              <input
-                id="nickname"
-                type="text"
-                value={nickname}
-                onChange={(e) => setNickname(e.target.value)}
-                placeholder="Enter a nickname"
-                className="p-2 pl-10 rounded-md border text-sm w-full"
-              />
-              <RegisterUserIcon className="absolute left-2 top-2 h-6 w-6 text-gray-500" />
-            </div>
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="password">Password</label>
-            <div className="relative">
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter a password"
-                className="p-2 pl-10 rounded-md border text-sm w-full"
-              />
-              <KeyIcon className="absolute left-2 top-2 h-6 w-6 text-gray-500" />
-            </div>
-          </div>
-
-          <div className="form-field">
-            <label htmlFor="confirmPassword">Confirm password</label>
-            <div className="relative">
-              <input
-                id="confirmPassword"
-                type="password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Confirm your password"
-                className="p-2 pl-10 rounded-md border text-sm w-full"
-              />
-              <KeyIcon className="absolute left-2 top-2 h-6 w-6 text-gray-500" />
-            </div>
-          </div>
-
-          <button
-            id="register-btn"
-            type="submit"
-            className="transition-colors duration-200 border outline outline-1 outline-black bg-[#6795df] hover:bg-[#4b6a9d] text-white px-4 py-2 rounded-md cursor-pointer"
-          >
-            Register
-          </button>
-
-          <div className="text-center mt-4">
-            <span>Already have an account?</span>
-            <Link
-              to="/login"
-              className="text-[#4b6a9d] hover:text-[#35517c] ml-2 transition-colors ease-in-out duration-200"
-            >
-              Login here
-            </Link>
-          </div>
+          <Button text="Register" />
+          <AuthLinkSwitcher text="Already have an account?" url="/login" anchor="Login here" />
         </form>
       </div>
     </div>
