@@ -1,10 +1,13 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { jwtDecode } from 'jwt-decode';
 
 const AuthContext = createContext();
+
+const LOGIN_URL = import.meta.env.VITE_API_URL + '/users/login';
+const REGISTER_URL = import.meta.env.VITE_API_URL + '/users/register';
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -43,7 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/users/login', {
+      const response = await axios.post(LOGIN_URL, {
         email,
         password,
       });
@@ -62,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (nickname, password, email) => {
     try {
-      await axios.post('http://localhost:8080/api/users/register', {
+      await axios.post(REGISTER_URL, {
         nickname,
         email,
         password,

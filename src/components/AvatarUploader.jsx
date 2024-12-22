@@ -1,9 +1,11 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { CameraIcon, UserIcon } from '../icons';
 import { toast } from 'sonner';
 import { useAuth } from '../context/AuthContext';
+
+const UPLOAD_URL = import.meta.env.VITE_API_URL + '/users/avatar/';
 
 const AvatarUploader = ({ currentAvatar, setProfileData }) => {
   const { user, updateUser } = useAuth(); // Get user and updateUser from AuthContext
@@ -35,7 +37,7 @@ const AvatarUploader = ({ currentAvatar, setProfileData }) => {
     formData.append('avatar', avatar);
 
     const saveAvatar = async () => {
-      const response = await axios.put('http://localhost:8080/api/users/avatar/', formData, {
+      const response = await axios.put(UPLOAD_URL, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

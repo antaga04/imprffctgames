@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-import BackButton from '../components/BackButton';
+import BackButton from '../components/ui/BackButton';
 import AvatarUploader from '../components/AvatarUploader';
 import ProfileForm from '../components/ProfileForm';
 import { toast } from 'sonner';
+
+const UPDATE_URL = import.meta.env.VITE_API_URL + '/users/';
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -41,7 +43,7 @@ const Profile = () => {
 
     const saveProfile = async () => {
       const response = await axios.put(
-        'http://localhost:8080/api/users/',
+        UPDATE_URL,
         {
           nickname: updatedProfileData.nickname,
           email: updatedProfileData.email,
@@ -76,7 +78,6 @@ const Profile = () => {
       <div className="flex flex-col w-full md:p-4 mx-auto md:-mt-3 max-w-[425px] md:max-w-[500px] mt-5 gap-4 bg-[#f9fafb] text-[#111827] rounded-md px-8 py-4">
         <h1 className="text-3xl font-bold mb-6 text-center">Profile</h1>
         <div className="flex flex-col items-center gap-4">
-          {/* Avatar Uploader */}
           <AvatarUploader
             currentAvatar={profileData.avatar}
             profileData={profileData}
@@ -84,7 +85,6 @@ const Profile = () => {
             updateUser={updateUser}
           />
 
-          {/* Profile Form */}
           <ProfileForm
             profileData={profileData}
             setProfileData={setProfileData}
