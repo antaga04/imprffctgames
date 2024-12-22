@@ -1,5 +1,6 @@
-import { PowerIcon } from '../icons';
+import React from 'react';
 import PropTypes from 'prop-types';
+import { PowerIcon } from '../../icons';
 
 const SingOut = ({ handleLogout }) => {
   return (

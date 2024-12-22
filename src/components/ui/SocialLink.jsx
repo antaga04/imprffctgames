@@ -1,5 +1,6 @@
+import React from 'react';
 import PropTypes from 'prop-types';
-import { ArrowUpIcon } from '../icons';
+import { ArrowUpIcon } from '../../icons';
 
 const SocialLink = ({ name, link }) => {
   return (

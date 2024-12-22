@@ -1,3 +1,5 @@
+import React from 'react';
+
 const SigninLogo = () => {
   return (
     <div className="bg-[#6795df] text-white p-4 md:pt-20 rounded-md flex gap-4">

@@ -1,5 +1,6 @@
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeftIcon } from '../icons';
+import { ArrowLeftIcon } from '../../icons';
 import PropTypes from 'prop-types';
 
 const BackButton = ({ url }) => {
