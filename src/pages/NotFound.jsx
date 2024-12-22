@@ -1,3 +1,4 @@
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const NotFound = () => {
@@ -6,7 +7,6 @@ const NotFound = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-6">
       <div className="text-center mb-6">
-        {/* Quirky character or icon */}
         <div className="text-6xl mb-4">🤷‍♂️</div>
 
         <h1 className="text-4xl font-bold neon-text text-white mb-2">Oops! Page Not Found</h1>

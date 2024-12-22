@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Confetti from 'react-confetti';
-import BackButton from '../components/BackButton';
+import BackButton from '../components/ui/BackButton';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
@@ -104,9 +104,8 @@ export default function Puzzle15() {
   return (
     <>
       {showConfetti && <Confetti />}
+      <BackButton />
       <div className="min-h-screen flex flex-col items-center justify-center min-h-scree flex-1">
-        <BackButton />
-
         <h1 className="text-4xl font-bold text-center neon-text text-white mb-4">15 Puzzle</h1>
         <div className="mb-4 text-lg text-slate-300">
           Moves: {moves} | Time: {formatTime(time)}

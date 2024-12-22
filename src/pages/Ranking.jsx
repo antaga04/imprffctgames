@@ -1,4 +1,5 @@
-import BackButton from '../components/BackButton';
+import React from 'react';
+import BackButton from '../components/ui/BackButton';
 
 const Ranking = () => {
   return (

@@ -1,12 +1,13 @@
+import React from 'react';
+import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'sonner';
-import NotFound from './pages/NotFound';
-import Home from './pages/Home';
 import Game from './pages/Game';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound';
 import Profile from './pages/Profile';
 import Ranking from './pages/Ranking';
-import { AuthProvider } from './context/AuthContext';
-import Login from './pages/Login';
 import Register from './pages/Register';
 
 function App() {

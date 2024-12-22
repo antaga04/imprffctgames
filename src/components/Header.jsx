@@ -1,6 +1,7 @@
+import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { MedalIcon, UserIcon } from '../icons';
-import SingOut from './SingOut';
+import SingOut from './ui/SingOut';
 import { useAuth } from '../context/AuthContext';
 
 const Header = () => {

@@ -1,6 +1,7 @@
+import React from 'react';
 import Header from '../components/Header';
 import { games } from '../lib/games';
-import GameItem from '../components/GameItem';
+import GameItem from '../components/ui/GameItem';
 import Footer from '../components/Footer';
 
 const Home = () => {

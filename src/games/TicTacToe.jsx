@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Confetti from 'react-confetti';
-import BackButton from '../components/BackButton';
+import BackButton from '../components/ui/BackButton';
 
 const TicTacToe = () => {
   const [board, setBoard] = useState(Array(9).fill(null));
@@ -73,14 +73,9 @@ const TicTacToe = () => {
   return (
     <>
       {showConfetti && <Confetti />}
-
       <BackButton />
-
       <div className="min-h-screen flex flex-col justify-center items-center flex-1 gradient">
-        <div className="project-overview-noise"></div>
         <h1 className="text-4xl font-bold text-center neon-text text-white mb-4">Tic Tac Toe</h1>
-
-        {/* Game Status */}
         <p className="text-lg mb-4 text-slate-300">{status}</p>
 
         <div

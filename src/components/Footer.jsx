@@ -1,5 +1,6 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
-import SocialLink from './SocialLink';
+import SocialLink from './ui/SocialLink';
 import { useAuth } from '../context/AuthContext';
 
 const Footer = () => {
@@ -47,7 +48,9 @@ const Footer = () => {
           <div>
             <p className="mt-4 opacity-65 md:opacity-90 md:m-0">
               Designed and built by{' '}
-              <span className="whitespace-nowrap devil-detail">Adrián Anta.</span>
+              <a href="https://adrian-anta.netlify.app/" target="_blank" rel="noopener noreferrer" className="whitespace-nowrap devil-detail">
+                Adrián Anta.
+              </a>
             </p>
             <p className="opacity-65 text-sm hidden md:block">Made with 🌶️ on macOS.</p>
           </div>
