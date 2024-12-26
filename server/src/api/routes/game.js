@@ -1,11 +1,5 @@
 const express = require('express');
-const {
-  getAllGames,
-  createGame,
-  updateGameById,
-  deleteGame,
-  getGameById,
-} = require('../controllers/game');
+const { getAllGames, createGame, updateGameById, deleteGame, getGameById } = require('../controllers/game');
 const uploadFile = require('../../middlewares/uploadFile');
 const { hasValidAuthJwt, isAdmin } = require('../../middlewares/authenticated');
 

@@ -1,0 +1,15 @@
+{
+    "name": "puzlynk",
+    "version": "1.0.0",
+    "description": "This simple proyect mono-repo using pnpm, React ts and node js with express and mongodb.",
+    "dependencies": {},
+    "devDependencies": {
+        "prettier": "^3.4.2"
+    },
+    "scripts": {
+        "format": "prettier --write ."
+    },
+    "keywords": [],
+    "author": "antaga04",
+    "license": "ISC"
+}

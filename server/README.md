@@ -10,28 +10,28 @@ API_URL => https://backendgameshub.onrender.com
 
 ```javascript
 const Game = {
-  _id: 'id_de_mongoDB',
-  name: 'nombre_del_juego',
-  difficulty: 'dificultad_del_juego',
-  type: 'tipo_de_juego',
-  cover: 'imagen_del_juego',
+    _id: 'id_de_mongoDB',
+    name: 'nombre_del_juego',
+    difficulty: 'dificultad_del_juego',
+    type: 'tipo_de_juego',
+    cover: 'imagen_del_juego',
 };
 
 const Score = {
-  _id: 'id_de_mongoDB',
-  user_id: 'id_user_pertenece_score',
-  game_id: 'id_game_pertenece_score',
-  score: 'puntuación_del_juego',
+    _id: 'id_de_mongoDB',
+    user_id: 'id_user_pertenece_score',
+    game_id: 'id_game_pertenece_score',
+    score: 'puntuación_del_juego',
 };
 
 const User = {
-  _id: 'id_de_mongoDB',
-  nickname: 'nombre_del_user',
-  avatar: 'avatar_del_user', // será subido como file y se guardará en Cloudinary
-  email: 'email_del_user',
-  password: 'contraseña_del_user',
-  scores: ['lista', 'scores', 'user'],
-  rol: 'rol_del_user',
+    _id: 'id_de_mongoDB',
+    nickname: 'nombre_del_user',
+    avatar: 'avatar_del_user', // será subido como file y se guardará en Cloudinary
+    email: 'email_del_user',
+    password: 'contraseña_del_user',
+    scores: ['lista', 'scores', 'user'],
+    rol: 'rol_del_user',
 };
 ```
 

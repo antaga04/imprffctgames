@@ -3,11 +3,11 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const multer = require('multer');
 
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'gameshub',
-    allowFormats: ['png', 'jpg', 'jpeg', 'gif', 'webp'],
-  },
+    cloudinary: cloudinary,
+    params: {
+        folder: 'gameshub',
+        allowFormats: ['png', 'jpg', 'jpeg', 'gif', 'webp'],
+    },
 });
 
 const uploadFile = multer({ storage });
