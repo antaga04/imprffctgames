@@ -148,7 +148,7 @@ const PokemonGame: React.FC = () => {
                         <h2 className="text-white text-2xl">
                             You guessed{' '}
                             <span className="devil-detail">
-                                {gameStats.guesses.length}/{totalPokemonPresented}
+                                {gameStats.guesses.map((g) => g.correct).filter(Boolean).length}/{totalPokemonPresented}
                             </span>{' '}
                             Pokemon!
                         </h2>
@@ -204,7 +204,8 @@ const PokemonGame: React.FC = () => {
                     <>
                         <Timer duration={60} onExpire={handleGameOver} />
                         <div className="text-white mb-2 flex items-center gap-2">
-                            Correct Guesses: {gameStats.guesses.length} / {totalPokemonPresented}
+                            Correct Guesses: {gameStats.guesses.map((g) => g.correct).filter(Boolean).length}/
+                            {totalPokemonPresented}
                             <div
                                 className={`w-3 h-3 rounded-full ${
                                     gameStats.guesses.some((g) => g.pokemon.id === pokemonData?.id)
