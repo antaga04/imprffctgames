@@ -1,6 +1,3 @@
-# Nintenhub
+# Puzlynk Client
 
-## Requirements
-
-1. Simple & minimalist app.
-2. Displays a few games in a column.
+Built with React, TypeScript, TailwindCSS and shadcn UI.

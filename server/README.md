@@ -1,10 +1,8 @@
-# Games Hub Backend
-
-(Proyecto MERN 6)
+# Puzlynk Server
 
 API de puntuaciones y juegos. Continiene una lista de Games. También hay Scores asociadas a un User autenticado el la base de datos y a un Game.
 
-API_URL => https://backendgameshub.onrender.com
+API_URL =>
 
 ## MODELOS
 
@@ -43,8 +41,7 @@ const User = {
 
 ## URLs:
 
-- https://localhost:8080/api
-- https://backendgameshub.onrender.com/api
+- https://localhost:${PORT}/api
 
 ## Endpoints
 
@@ -63,8 +60,8 @@ const User = {
 | HTTP Request | Endpoint   | Description                   | Protected | Admin |
 | ------------ | ---------- | ----------------------------- | --------- | ----- |
 | GET          | /scores    | Todas las scores registrados. | No        | No    |
-| POST         | /scores    | Crear una nueva review.       | Sí        | No    |
-| DELETE       | /scores/id | Borrar una review.            | Sí        | No    |
+| POST         | /scores    | Crear un nuevo score.         | Sí        | No    |
+| DELETE       | /scores/id | Borrar un score.              | Sí        | No    |
 
 ### MODELO USERS:
 

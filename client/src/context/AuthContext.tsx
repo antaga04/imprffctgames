@@ -23,7 +23,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const token = localStorage.getItem('jwt');
             const storedUser = localStorage.getItem('user');
 
-            // Avoid unnecessary token decoding if token or user is absent
             if (!token || !storedUser) {
                 setAuthState({ isAuthenticated: false, user: null, loading: false });
                 return;
@@ -33,7 +32,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 const decodedToken: DecodedToken = jwtDecode(token);
                 const currentTime = Math.floor(Date.now() / 1000);
 
-                // Check token expiration
                 if (decodedToken.exp < currentTime) {
                     toast.warning('Your session has expired. Please log in again.');
                     localStorage.removeItem('jwt');
