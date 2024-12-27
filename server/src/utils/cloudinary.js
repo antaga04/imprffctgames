@@ -1,4 +1,4 @@
-const cloudinary = require('cloudinary').v2;
+import { v2 as cloudinary } from 'cloudinary';
 
 // Utility function to extract the Cloudinary public ID from the image URL
 const extractPublicIdFromUrl = (url) => {
@@ -20,4 +20,4 @@ const deleteCloudinaryImage = async (avatarUrl) => {
     }
 };
 
-module.exports = { deleteCloudinaryImage };
+export default deleteCloudinaryImage;

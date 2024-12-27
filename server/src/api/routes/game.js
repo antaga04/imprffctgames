@@ -1,7 +1,7 @@
-const express = require('express');
-const { getAllGames, createGame, updateGameById, deleteGame, getGameById } = require('../controllers/game');
-const uploadFile = require('../../middlewares/uploadFile');
-const { hasValidAuthJwt, isAdmin } = require('../../middlewares/authenticated');
+import express from 'express';
+import { getAllGames, createGame, updateGameById, deleteGame, getGameById } from '../controllers/game.js';
+import uploadFile from '../../middlewares/uploadFile.js';
+import { hasValidAuthJwt, isAdmin } from '../../middlewares/authenticated.js';
 
 const router = express.Router();
 
@@ -11,4 +11,4 @@ router.post('/', hasValidAuthJwt, isAdmin, uploadFile.single('cover'), createGam
 router.put('/:id', hasValidAuthJwt, isAdmin, uploadFile.single('cover'), updateGameById);
 router.delete('/:id', hasValidAuthJwt, isAdmin, deleteGame);
 
-module.exports = router;
+export default router;

@@ -1,7 +1,7 @@
-const { verifytoken } = require('../utils/jwt');
-const User = require('../api/models/user');
+import { verifytoken } from '../utils/jwt.js';
+import User from '../api/models/user.js';
 
-const hasValidAuthJwt = (req, res, next) => {
+export const hasValidAuthJwt = (req, res, next) => {
     try {
         const { authorization } = req.headers;
         const [, token] = authorization.split(' ');
@@ -15,7 +15,7 @@ const hasValidAuthJwt = (req, res, next) => {
     }
 };
 
-const isAdmin = async (req, res, next) => {
+export const isAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id);
         if (user.rol === 'admin') {
@@ -26,8 +26,4 @@ const isAdmin = async (req, res, next) => {
     } catch (err) {
         res.status(500).json({ error: 'Internal Server Error' });
     }
-};
-module.exports = {
-    hasValidAuthJwt,
-    isAdmin,
 };

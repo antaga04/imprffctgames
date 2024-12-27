@@ -1,6 +1,6 @@
-const Score = require('../../api/models/score');
+import Score from '../models/score.js';
 
-const getAllScores = async (req, res) => {
+export const getAllScores = async (req, res) => {
     try {
         const scores = await Score.find().populate([{ path: 'game_id' }, { path: 'user_id', select: 'nickname' }]);
         res.status(200).json({ data: scores });
@@ -9,7 +9,7 @@ const getAllScores = async (req, res) => {
     }
 };
 
-const createScore = async (req, res) => {
+export const createScore = async (req, res) => {
     try {
         const { score, user_id, game_id } = req.body;
 
@@ -32,7 +32,7 @@ const createScore = async (req, res) => {
     }
 };
 
-const deleteScore = async (req, res) => {
+export const deleteScore = async (req, res) => {
     try {
         const { id } = req.params;
         await Score.deleteOne({ _id: id });
@@ -40,10 +40,4 @@ const deleteScore = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: 'Error deleting Score' });
     }
-};
-
-module.exports = {
-    getAllScores,
-    createScore,
-    deleteScore,
 };

@@ -1,10 +1,10 @@
-const User = require('../../api/models/user');
-const { verifyPassword, hashPassword } = require('../../utils/password');
-const { signToken } = require('../../utils/jwt');
-const { deleteCloudinaryImage } = require('../../utils/cloudinary');
-const { validateNickname, validateEmail } = require('../../utils/validation');
+import User from '../../api/models/user.js';
+import { verifyPassword, hashPassword } from '../../utils/password.js';
+import { signToken } from '../../utils/jwt.js';
+import deleteCloudinaryImage from '../../utils/cloudinary.js';
+import { validateNickname, validateEmail } from '../../utils/validation.js';
 
-const registerUser = async (req, res) => {
+export const registerUser = async (req, res) => {
     try {
         const { email, nickname, password } = req.body;
 
@@ -35,7 +35,7 @@ const registerUser = async (req, res) => {
     }
 };
 
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -61,7 +61,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-const updateUserAvatar = async (req, res) => {
+export const updateUserAvatar = async (req, res) => {
     const { path } = req.file;
     const { id } = req.user;
 
@@ -84,7 +84,7 @@ const updateUserAvatar = async (req, res) => {
     }
 };
 
-const updateUser = async (req, res) => {
+export const updateUser = async (req, res) => {
     try {
         const { id } = req.user;
         const updates = req.body;
@@ -123,7 +123,7 @@ const updateUser = async (req, res) => {
     }
 };
 
-const getUser = async (req, res) => {
+export const getUser = async (req, res) => {
     try {
         const { id } = req.user;
 
@@ -137,12 +137,4 @@ const getUser = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: 'Error fetching user details' });
     }
-};
-
-module.exports = {
-    registerUser,
-    loginUser,
-    updateUser,
-    updateUserAvatar,
-    getUser,
 };

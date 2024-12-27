@@ -1,7 +1,7 @@
-const express = require('express');
-const { registerUser, loginUser, updateUser, updateUserAvatar, getUser } = require('../controllers/user');
-const { hasValidAuthJwt } = require('../../middlewares/authenticated');
-const uploadFile = require('../../middlewares/uploadFile');
+import express from 'express';
+import { registerUser, loginUser, updateUser, updateUserAvatar, getUser } from '../controllers/user.js';
+import { hasValidAuthJwt } from '../../middlewares/authenticated.js';
+import uploadFile from '../../middlewares/uploadFile.js';
 
 const router = express.Router();
 
@@ -11,4 +11,4 @@ router.put('/', hasValidAuthJwt, updateUser);
 router.get('/', hasValidAuthJwt, getUser);
 router.put('/avatar', hasValidAuthJwt, uploadFile.single('avatar'), updateUserAvatar);
 
-module.exports = router;
+export default router;

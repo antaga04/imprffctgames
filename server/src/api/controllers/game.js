@@ -1,6 +1,6 @@
-const Game = require('../../api/models/game');
+import Game from '../models/game.js';
 
-const getAllGames = async (req, res) => {
+export const getAllGames = async (req, res) => {
     try {
         const games = await Game.find();
         res.status(200).json({ data: games });
@@ -9,7 +9,7 @@ const getAllGames = async (req, res) => {
     }
 };
 
-const getGameById = async (req, res) => {
+export const getGameById = async (req, res) => {
     try {
         const { id } = req.params;
         const game = await Game.findById(id);
@@ -19,7 +19,7 @@ const getGameById = async (req, res) => {
     }
 };
 
-const createGame = async (req, res) => {
+export const createGame = async (req, res) => {
     try {
         const { name, difficulty, type } = req.body;
         const coverPath = req.file ? req.file.path : 'none';
@@ -46,7 +46,7 @@ const createGame = async (req, res) => {
     }
 };
 
-const updateGameById = async (req, res) => {
+export const updateGameById = async (req, res) => {
     try {
         const { id } = req.params;
         const { name, difficulty, type } = req.body;
@@ -69,7 +69,7 @@ const updateGameById = async (req, res) => {
     }
 };
 
-const deleteGame = async (req, res) => {
+export const deleteGame = async (req, res) => {
     try {
         const { id } = req.params;
         await Game.deleteOne({ _id: id });
@@ -77,12 +77,4 @@ const deleteGame = async (req, res) => {
     } catch (error) {
         res.status(400).json({ error: 'Error deleting Game' });
     }
-};
-
-module.exports = {
-    getAllGames,
-    getGameById,
-    createGame,
-    updateGameById,
-    deleteGame,
 };

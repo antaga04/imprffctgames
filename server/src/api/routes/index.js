@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 
-const usersRouter = require('./user');
-const scoresRouter = require('./score');
-const gamesRouter = require('./game');
+import usersRouter from './user.js';
+import scoresRouter from './score.js';
+import gamesRouter from './game.js';
 
 const router = express.Router();
 
@@ -10,4 +10,4 @@ router.use('/users', usersRouter);
 router.use('/scores', scoresRouter);
 router.use('/games', gamesRouter);
 
-module.exports = router;
+export default router;

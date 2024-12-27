@@ -1,11 +1,11 @@
-const express = require('express');
-const { getAllScores, createScore, deleteScore } = require('../controllers/score');
-const { hasValidAuthJwt, isAdmin } = require('../../middlewares/authenticated');
+import express from 'express';
+import { getAllScores, createScore, deleteScore } from '../controllers/score.js';
+import { hasValidAuthJwt } from '../../middlewares/authenticated.js';
 
 const router = express.Router();
 
 router.get('/', getAllScores);
-router.post('/', hasValidAuthJwt, isAdmin, createScore);
-router.delete('/:id', hasValidAuthJwt, isAdmin, deleteScore);
+router.post('/', hasValidAuthJwt, createScore);
+router.delete('/:id', hasValidAuthJwt, deleteScore);
 
-module.exports = router;
+export default router;
