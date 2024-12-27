@@ -1,8 +1,8 @@
 import User from '../../api/models/user.js';
-import { verifyPassword, hashPassword } from '../../utils/password.js';
+import { hashPassword, verifyPassword } from '../../utils/password.js';
 import { signToken } from '../../utils/jwt.js';
 import deleteCloudinaryImage from '../../utils/cloudinary.js';
-import { validateNickname, validateEmail } from '../../utils/validation.js';
+import { validateNickname, validateEmail, validatePassword } from '../../utils/validation.js';
 
 export const registerUser = async (req, res) => {
     try {
@@ -18,11 +18,9 @@ export const registerUser = async (req, res) => {
             return res.status(400).json({ error: nicknameValidation.message });
         }
 
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{6,}$/;
-        if (!passwordRegex.test(password)) {
-            return res.status(400).json({
-                error: 'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase, and one digit',
-            });
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.valid) {
+            return res.status(400).json({ error: passwordValidation.message });
         }
 
         const newUser = new User({ email, nickname, password });
@@ -87,36 +85,53 @@ export const updateUserAvatar = async (req, res) => {
 export const updateUser = async (req, res) => {
     try {
         const { id } = req.user;
-        const updates = req.body;
+        const { nickname, email, password } = req.body;
 
+        // Fetch the existing user
         const oldUser = await User.findById(id);
         if (!oldUser) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        const nicknameValidation = validateNickname(updates.nickname);
-        if (!nicknameValidation.valid) {
-            return res.status(400).json({ error: nicknameValidation.message });
+        // Object to store fields to update
+        const updateFields = {};
+
+        // Validate and prepare fields for update
+        if (nickname !== undefined) {
+            const nicknameValidation = validateNickname(nickname);
+            if (!nicknameValidation.valid) {
+                return res.status(400).json({ error: nicknameValidation.message });
+            }
+            updateFields.nickname = nickname;
         }
 
-        const emailValidation = validateEmail(updates.email);
-        if (!emailValidation.valid) {
-            return res.status(400).json({ error: emailValidation.message });
+        if (email !== undefined) {
+            const emailValidation = validateEmail(email);
+            if (!emailValidation.valid) {
+                return res.status(400).json({ error: emailValidation.message });
+            }
+            updateFields.email = email;
         }
 
-        if (updates.password !== undefined) {
-            updates.password = await hashPassword(updates.password);
-            console.log('inside', updates.password);
+        if (password !== undefined) {
+            const passwordValidation = validatePassword(password);
+            if (!passwordValidation.valid) {
+                return res.status(400).json({ error: passwordValidation.message });
+            }
+            // Consider hashing the password before saving
+            const hashedPassword = await hashPassword(password);
+            updateFields.password = hashedPassword;
         }
 
-        // Preserve old fields that should not be updated
-        updates.rol = oldUser.rol;
-        updates.scores = oldUser.scores;
+        // Ensure there are fields to update
+        if (Object.keys(updateFields).length === 0) {
+            return res.status(400).json({ error: 'No valid fields provided for update.' });
+        }
 
-        // Update the user with the new data
-        const user = await User.findByIdAndUpdate(id, updates, { new: true });
+        // Update the user
+        const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
 
-        return res.status(200).json({ data: user });
+        return res.status(200).json({ data: updatedUser });
     } catch (error) {
         console.error('Error updating user:', error);
         return res.status(500).json({ error: 'An unexpected error occurred while updating the user.' });

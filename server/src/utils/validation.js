@@ -13,3 +13,15 @@ export const validateEmail = (email) => {
     }
     return { valid: true };
 };
+
+export const validatePassword = (password) => {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+    if (!password || typeof password !== 'string' || !passwordRegex.test(password)) {
+        return {
+            valid: false,
+            message:
+                'Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase, and one digit and one special character.',
+        };
+    }
+    return { valid: true };
+};
