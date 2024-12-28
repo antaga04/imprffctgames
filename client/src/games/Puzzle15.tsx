@@ -1,35 +1,33 @@
 import { useState, useEffect, useCallback } from 'react';
 import Confetti from 'react-confetti';
 import GameWrapper from '@/components/layouts/GameWrapper';
+import { useAuth } from '@/context/AuthContext';
+import { TimerIncrementProps } from '@/types/types';
+import { uploadScore } from '@/services/uploadScore';
+import { toast } from 'sonner';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const EMPTY_INDEX = CELL_COUNT - 1;
 
-type TimerProps = {
-    isRunning: boolean;
-    gameStarted: boolean;
-    resetSignal: number; // Incremented to trigger a reset in the Timer
-};
-
-const Timer: React.FC<TimerProps> = ({ isRunning, gameStarted, resetSignal }) => {
-    const [time, setTime] = useState(0);
+const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSignal, setTime }) => {
+    const [time, setLocalTime] = useState(0);
 
     useEffect(() => {
         let interval: ReturnType<typeof setInterval>;
 
         if (isRunning && gameStarted) {
             interval = setInterval(() => {
+                setLocalTime((prevTime) => prevTime + 1);
                 setTime((prevTime) => prevTime + 1);
             }, 1000);
         }
 
         return () => clearInterval(interval);
-    }, [isRunning, gameStarted]);
+    }, [isRunning, gameStarted, setTime]);
 
-    // Reset the timer whenever `resetSignal` changes
     useEffect(() => {
-        setTime(0);
+        setLocalTime(0);
     }, [resetSignal]);
 
     const formatTime = (seconds: number): string => {
@@ -48,7 +46,9 @@ const Game = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const [initialBoard, setInitialBoard] = useState([...board]);
     const [showConfetti, setShowConfetti] = useState(false);
-    const [resetSignal, setResetSignal] = useState(0); // Used to trigger timer reset
+    const [resetSignal, setResetSignal] = useState(0);
+    const [time, setTime] = useState(0);
+    const { user } = useAuth();
 
     useEffect(() => {
         shuffleBoard();
@@ -58,7 +58,7 @@ const Game = () => {
         const newBoard = Array.from({ length: CELL_COUNT }, (_, i) => i);
         for (let i = newBoard.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [newBoard[i], newBoard[j]] = [newBoard[j], newBoard[i]]; // Fisher-Yates shuffle
+            [newBoard[i], newBoard[j]] = [newBoard[j], newBoard[i]]; //! Fisher-Yates shuffle
         }
         setBoard(newBoard);
         setInitialBoard([...newBoard]);
@@ -86,8 +86,27 @@ const Game = () => {
         if (isSolved() && gameStarted) {
             setShowConfetti(true);
             setIsRunning(false);
+            handleGameCompletion();
         }
     }, [isSolved, gameStarted]);
+
+    const handleGameCompletion = () => {
+        const scoreData = { moves, time };
+        const gameId = '676f137d31fbdf3e1d79b172';
+
+        if (user) {
+            try {
+                toast.promise(uploadScore(scoreData, gameId), {
+                    loading: 'Uploading score...',
+                    success: 'Your score has been uploaded!',
+                    error: (err) => err.response?.data?.error || 'Error! Could not upload score.',
+                });
+            } catch (error) {
+                console.error('Error uploading score:', error);
+                throw new Error('Failed to upload score');
+            }
+        }
+    };
 
     const canMoveTile = useCallback(
         (tileIndex: number): boolean => {
@@ -131,9 +150,9 @@ const Game = () => {
         <>
             <p className="mb-4 text-lg text-slate-300">
                 <span>Moves: {moves} |</span>
-                <Timer isRunning={isRunning} gameStarted={gameStarted} resetSignal={resetSignal} />
+                <Timer isRunning={isRunning} gameStarted={gameStarted} resetSignal={resetSignal} setTime={setTime} />
             </p>
-            {showConfetti && <Confetti />}
+            {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
             <div className="grid grid-cols-4 gap-2 p-4 bg-gray-300 rounded-lg shadow-lg text-black">
                 {board.map((tile, index) => (
                     <button

@@ -2,9 +2,12 @@ import { useState, useEffect, useRef } from 'react';
 import Confetti from 'react-confetti';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import GameWrapper from '@/components/layouts/GameWrapper';
-import { PokemonInputProps, PokemonData, GameStats, TimerProps } from '@/types/types';
+import { PokemonInputProps, PokemonData, GameStats, TimerDecrementProps } from '@/types/types';
+import { uploadScore } from '@/services/uploadScore';
+import { useAuth } from '@/context/AuthContext';
+import { toast } from 'sonner';
 
-const Timer: React.FC<TimerProps> = ({ duration, onExpire }) => {
+const Timer: React.FC<TimerDecrementProps> = ({ duration, onExpire }) => {
     const [timeLeft, setTimeLeft] = useState<number>(duration);
 
     useEffect(() => {
@@ -73,13 +76,14 @@ const PokemonGame: React.FC = () => {
     const [totalPokemonPresented, setTotalPokemonPresented] = useState<number>(0);
     const [playAgainKey, setPlayAgainKey] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
+    const { user } = useAuth();
     // const [guessStatus, setGuessStatus] = useState<'correct' | 'incorrect' | 'none'>('none');
 
     const pokemonCache = useRef<Record<number, PokemonData>>({});
 
     const fetchPokemon = async () => {
         setLoading(true);
-        const randomId = Math.floor(Math.random() * 151) + 1;
+        const randomId = Math.floor(Math.random() * 369) + 1;
 
         if (pokemonCache.current[randomId]) {
             setPokemonData(pokemonCache.current[randomId]);
@@ -128,6 +132,25 @@ const PokemonGame: React.FC = () => {
     const handleGameOver = () => {
         setGameOver(true);
         setShowConfetti(true);
+
+        const correct = gameStats.guesses.filter((g) => g.correct).length;
+        const total = totalPokemonPresented;
+
+        const scoreData = { correct, total };
+        const gameId = '676f12b831fbdf3e1d79b16a';
+
+        if (user) {
+            try {
+                toast.promise(uploadScore(scoreData, gameId), {
+                    loading: 'Uploading score...',
+                    success: 'Your score has been uploaded!',
+                    error: (err) => err.response?.data?.error || 'Error uploading score.',
+                });
+            } catch (error) {
+                console.error('Error uploading score:', error);
+                throw new Error('Failed to upload score');
+            }
+        }
     };
 
     const handlePlayAgain = () => {
@@ -163,9 +186,9 @@ const PokemonGame: React.FC = () => {
                                             <img
                                                 src={g.pokemon.image}
                                                 alt={g.pokemon.name}
-                                                className="w-16 h-16 object-contain"
+                                                className="w-20 h-20 object-contain"
                                             />
-                                            <span className="text-green-500 text-sm mt-2">{g.pokemon.name}</span>
+                                            <span className="text-green-500 text-base mt-2">{g.pokemon.name}</span>
                                         </div>
                                     ) : (
                                         <div
@@ -175,9 +198,9 @@ const PokemonGame: React.FC = () => {
                                             <img
                                                 src={g.pokemon.image}
                                                 alt={g.pokemon.name}
-                                                className="w-16 h-16 object-contain"
+                                                className="w-20 h-20 object-contain"
                                             />
-                                            <span className="text-red-500 text-sm mt-2">{g.pokemon.name}</span>
+                                            <span className="text-red-500 text-base mt-2">{g.pokemon.name}</span>
                                         </div>
                                     ),
                                 )}
@@ -186,9 +209,9 @@ const PokemonGame: React.FC = () => {
                                         <img
                                             src={pokemonData.image}
                                             alt={pokemonData.name}
-                                            className="w-16 h-16 object-contain"
+                                            className="w-20 h-20 object-contain"
                                         />
-                                        <span className="text-white text-sm mt-2">{pokemonData.name}</span>
+                                        <span className="text-white text-base mt-2">{pokemonData.name}</span>
                                     </div>
                                 )}
                             </div>

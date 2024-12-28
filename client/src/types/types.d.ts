@@ -35,7 +35,7 @@ export type ProfileData = {
 };
 
 /* --------------- Pokemon --------------- */
-export interface TimerProps {
+export interface TimerDecrementProps {
     duration: number;
     onExpire: () => void;
 }
@@ -54,3 +54,45 @@ export interface PokemonData {
 export interface GameStats {
     guesses: { pokemon: PokemonData; correct: boolean }[];
 }
+
+/* --------------- Ranking --------------- */
+export interface Score {
+    _id: string;
+    user_id: {
+        _id: string;
+        nickname: string;
+        avatar: string;
+    };
+    game_id: {
+        _id: string;
+        name: string;
+        cover: string;
+    };
+    scoreData: {
+        correct?: number;
+        total?: number;
+        moves?: number;
+        time?: number;
+    };
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface Game {
+    gameId: string;
+    gameName: string;
+}
+
+export interface PaginationInfo {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+}
+
+/* --------------- Games --------------- */
+type TimerIncrementProps = {
+    isRunning: boolean;
+    gameStarted: boolean;
+    resetSignal: number; // Incremented to trigger a reset in the Timer
+    setTime: React.Dispatch<React.SetStateAction<number>>; // Function to pass time back to Game component
+};
