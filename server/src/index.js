@@ -1,11 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { connectToDatabase } from './config/db.js';
 import mainRouter from './api/routes/index.js';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 connectToDatabase();
 
