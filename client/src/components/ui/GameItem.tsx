@@ -17,7 +17,7 @@ const GameItem: React.FC<GameItemProps> = ({ link, name, thumbnail }) => {
             >
                 <div className="glare-item-top inner-edge"></div>
                 <img src={thumbnail} alt={`${name} logo`} className="w-10 h-10 md:w-16 md:h-16 z-10" />
-                <p className="text-2xl font-bold text-white z-10">{name}</p>
+                <p className="text-2xl font-bold text-white z-10 text-center">{name}</p>
                 <div className="card-bg"></div>
             </Link>
         </li>

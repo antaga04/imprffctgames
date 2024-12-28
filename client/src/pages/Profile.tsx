@@ -34,7 +34,7 @@ const Profile = () => {
     // Handle saving profile updates
     const handleSaveProfile = async (updatedProfileData: ProfileData) => {
         setLoading(true);
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('jwt');
 
         if (!token) {
             console.error('No token found');

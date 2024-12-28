@@ -17,7 +17,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfi
     const [avatarPreview, setAvatarPreview] = useState(currentAvatar || null);
     const [avatar, setAvatar] = useState<File | null>(null);
 
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('jwt');
 
     useEffect(() => {
         if (currentAvatar) {

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
-import Button from '@/components/ui/Button';
+import ButtonFrom from '@/components/ui/ButtonForm';
 import AuthInput from '@/components/ui/AuthInput';
 import BackButton from '@/components/ui/BackButton';
 import SigninLogo from '@/components/ui/SigninLogo';
@@ -64,7 +64,7 @@ const LoginFrom = () => {
                 />
             ))}
 
-            <Button text="Log in" />
+            <ButtonFrom text="Log in" />
         </form>
     );
 };

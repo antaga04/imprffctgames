@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import SigninLogo from '@/components/ui/SigninLogo';
 import BackButton from '@/components/ui/BackButton';
-import Button from '@/components/ui/Button';
+import ButtonForm from '@/components/ui/ButtonForm';
 import AuthLinkSwitcher from '@/components/ui/AuthLinkSwitcher';
 import AuthInput from '@/components/ui/AuthInput';
 import { useAuth } from '@/context/AuthContext';
@@ -76,7 +76,7 @@ const RegisterForm = () => {
                 />
             ))}
 
-            <Button text="Register" />
+            <ButtonForm text="Register" />
         </form>
     );
 };
