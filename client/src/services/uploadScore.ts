@@ -5,7 +5,7 @@ export const uploadScore = async (scoreData: unknown, gameId: string) => {
         const token = localStorage.getItem('jwt');
 
         const response = await axios.post(
-            'http://localhost:8000/api/scores/',
+            `${import.meta.env.VITE_API_URL}/scores/`,
             {
                 scoreData,
                 game_id: gameId,

@@ -92,7 +92,7 @@ const Game = () => {
 
     const handleGameCompletion = () => {
         const scoreData = { moves, time };
-        const gameId = '676f137d31fbdf3e1d79b172';
+        const gameId = import.meta.env.VITE_PUZZLE15_ID;
 
         if (user) {
             try {

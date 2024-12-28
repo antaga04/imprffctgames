@@ -137,7 +137,7 @@ const PokemonGame: React.FC = () => {
         const total = totalPokemonPresented;
 
         const scoreData = { correct, total };
-        const gameId = '676f12b831fbdf3e1d79b16a';
+        const gameId = import.meta.env.VITE_POKEMON_ID;
 
         if (user) {
             try {

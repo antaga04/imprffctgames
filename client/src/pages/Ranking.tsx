@@ -15,8 +15,8 @@ import BackButton from '@/components/ui/BackButton';
 import { Game, PaginationInfo, Score } from '@/types/types';
 
 const games: Game[] = [
-    { gameId: '676f12b831fbdf3e1d79b16a', gameName: 'Pokemon' },
-    { gameId: '676f137d31fbdf3e1d79b172', gameName: '15 Puzzle' },
+    { gameId: import.meta.env.VITE_POKEMON_ID, gameName: 'Pokemon' },
+    { gameId: import.meta.env.VITE_PUZZLE15_ID, gameName: '15 Puzzle' },
 ];
 
 const Ranking: React.FC = () => {
@@ -32,7 +32,7 @@ const Ranking: React.FC = () => {
     const fetchScores = async (gameId: string, page: number) => {
         setIsLoading(true);
         try {
-            const response = await axios.get(`http://localhost:8000/api/scores/${gameId}`, {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/scores/${gameId}`, {
                 params: { page, limit: 10 },
             });
 
