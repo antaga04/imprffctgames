@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
     cors({
-        origin: 'https://puzlynk.vercel.app',
+        origin: process.env.CLIENT_URL,
         methods: ['GET', 'PUT', 'POST', 'DELETE'],
         allowedHeaders: ['Content-Type', 'Authorization'],
         credentials: true,
