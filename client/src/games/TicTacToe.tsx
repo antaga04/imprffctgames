@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Confetti from 'react-confetti';
 import GameWrapper from '@/components/layouts/GameWrapper';
+import CoolDownButton from '@/components/ui/CoolDownButton';
 
 // Define the types
 type Player = 'X' | 'O' | null;
@@ -103,9 +104,13 @@ const Game = () => {
                 ))}
             </div>
 
-            <button className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 z-10" onClick={resetGame}>
-                Reset Game
-            </button>
+            <CoolDownButton
+                text="Reset Game"
+                onSubmit={resetGame}
+                bgColor="bg-red-600"
+                hoverBgColor="hover:bg-red-700"
+                className="mt-6"
+            />
         </>
     );
 };
