@@ -66,10 +66,10 @@ export const sortScores = (scores, scoringLogic) => {
 
         case 'moves_time':
             return scores.sort((a, b) => {
-                if (a.scoreData.moves !== b.scoreData.moves) {
-                    return a.scoreData.moves - b.scoreData.moves; // Fewer moves first
+                if (a.scoreData.time !== b.scoreData.time) {
+                    return a.scoreData.time - b.scoreData.time; // Shorter time first
                 }
-                return a.scoreData.time - b.scoreData.time; // Shorter time first
+                return a.scoreData.moves - b.scoreData.moves; // Fewer moves in case of a tie
             });
 
         default:
