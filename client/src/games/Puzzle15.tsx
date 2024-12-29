@@ -5,6 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { TimerIncrementProps } from '@/types/types';
 import { uploadScore } from '@/services/uploadScore';
 import { toast } from 'sonner';
+import CoolDownButton from '@/components/ui/CoolDownButton';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
@@ -36,7 +37,7 @@ const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSig
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
-    return <span> Time: {formatTime(time)}</span>;
+    return <span className="font-mono min-w-[6ch] text-right">Time: {formatTime(time)}</span>;
 };
 
 const Game = () => {
@@ -44,7 +45,6 @@ const Game = () => {
     const [moves, setMoves] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
-    const [initialBoard, setInitialBoard] = useState([...board]);
     const [showConfetti, setShowConfetti] = useState(false);
     const [resetSignal, setResetSignal] = useState(0);
     const [time, setTime] = useState(0);
@@ -65,14 +65,8 @@ const Game = () => {
         } while (!isSolvable(newBoard)); // Repeat until a solvable configuration is generated
 
         setBoard(newBoard);
-        setInitialBoard([...newBoard]);
         resetGameState();
     }, []);
-
-    const resetBoard = useCallback(() => {
-        setBoard([...initialBoard]);
-        resetGameState();
-    }, [initialBoard]);
 
     const resetGameState = () => {
         setMoves(0);
@@ -180,8 +174,8 @@ const Game = () => {
 
     return (
         <>
-            <p className="mb-4 text-lg text-slate-300">
-                <span>Moves: {moves} |</span>
+            <p className="mb-4 text-lg text-slate-300 flex justify-between gap-4">
+                <span className="font-mono min-w-[6ch] text-right">Moves: {String(moves).padStart(3, '0')}</span>
                 <Timer isRunning={isRunning} gameStarted={gameStarted} resetSignal={resetSignal} setTime={setTime} />
             </p>
             {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
@@ -204,19 +198,9 @@ const Game = () => {
                 ))}
             </div>
             <div className="mt-4 space-x-4">
-                <button
-                    onClick={shuffleBoard}
-                    className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors duration-300"
-                >
-                    New Game
-                </button>
-                <button
-                    onClick={resetBoard}
-                    className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors duration-300"
-                >
-                    Reset
-                </button>
+                <CoolDownButton text="New Game" onSubmit={shuffleBoard} />
             </div>
+            <p className="mt-4">Move tiles in grid to order them from 1 to 15.</p>
             {isSolved() && gameStarted && (
                 <div className="mt-4 text-xl font-bold text-center text-white">
                     Congratulations! You solved the puzzle!
