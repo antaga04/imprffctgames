@@ -55,11 +55,15 @@ const Game = () => {
     }, []);
 
     const shuffleBoard = useCallback(() => {
-        const newBoard = Array.from({ length: CELL_COUNT }, (_, i) => i);
-        for (let i = newBoard.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [newBoard[i], newBoard[j]] = [newBoard[j], newBoard[i]]; //! Fisher-Yates shuffle
-        }
+        let newBoard;
+        do {
+            newBoard = Array.from({ length: CELL_COUNT }, (_, i) => i);
+            for (let i = newBoard.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newBoard[i], newBoard[j]] = [newBoard[j], newBoard[i]];
+            }
+        } while (!isSolvable(newBoard)); // Repeat until a solvable configuration is generated
+
         setBoard(newBoard);
         setInitialBoard([...newBoard]);
         resetGameState();
@@ -145,6 +149,29 @@ const Game = () => {
         (tile: number, index: number): boolean => tile === index && tile !== EMPTY_INDEX,
         [],
     );
+
+    const isSolvable = (board: number[]): boolean => {
+        const inversionCount = board.reduce((count, tile, i) => {
+            if (tile === EMPTY_INDEX) return count;
+            for (let j = i + 1; j < board.length; j++) {
+                if (board[j] !== EMPTY_INDEX && board[i] > board[j]) {
+                    count++;
+                }
+            }
+            return count;
+        }, 0);
+
+        const emptyRowFromBottom = GRID_SIZE - Math.floor(board.indexOf(EMPTY_INDEX) / GRID_SIZE);
+
+        if (GRID_SIZE % 2 === 1) {
+            return inversionCount % 2 === 0;
+        } else {
+            return (
+                (inversionCount % 2 === 0 && emptyRowFromBottom % 2 === 1) ||
+                (inversionCount % 2 === 1 && emptyRowFromBottom % 2 === 0)
+            );
+        }
+    };
 
     return (
         <>
