@@ -7,6 +7,8 @@ import { uploadScore } from '@/services/uploadScore';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 
+const usedIds = new Set<number>(); // Set to track used IDs to avoid duplicates
+
 // Input Component for Pokémon Name
 const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => {
     const [input, setInput] = useState<string>('');
@@ -75,8 +77,16 @@ const Game: React.FC = () => {
     const pokemonCache = useRef<Record<number, PokemonData>>({});
 
     const fetchPokemon = async () => {
+        console.log(usedIds);
         setLoading(true);
-        const randomId = Math.floor(Math.random() * 151) + 1;
+
+        let randomId;
+
+        do {
+            randomId = Math.floor(Math.random() * 151) + 1;
+        } while (usedIds.has(randomId));
+
+        usedIds.add(randomId);
 
         if (pokemonCache.current[randomId]) {
             setPokemonData(pokemonCache.current[randomId]);
@@ -95,6 +105,7 @@ const Game: React.FC = () => {
                 console.error('Error fetching Pokémon data:', error);
             }
         }
+
         setTotalPokemonPresented((prev) => prev + 1);
         setLoading(false);
     };
@@ -142,11 +153,16 @@ const Game: React.FC = () => {
 
         if (user) {
             try {
-                toast.promise(uploadScore(scoreData, gameId), {
-                    loading: 'Uploading score...',
-                    success: 'Your score has been uploaded!',
-                    error: (err) => err.response?.data?.error || 'Error uploading score.',
-                });
+                toast.promise(
+                    uploadScore(scoreData, gameId).then((response) => {
+                        return response.message || 'Your score has been uploaded!';
+                    }),
+                    {
+                        loading: 'Uploading score...',
+                        success: (responseMessage) => responseMessage,
+                        error: (err) => err.response?.data?.error || 'Error uploading score.',
+                    },
+                );
             } catch (error) {
                 console.error('Error uploading score:', error);
                 throw new Error('Failed to upload score');

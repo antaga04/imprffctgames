@@ -100,11 +100,16 @@ const Game = () => {
 
         if (user) {
             try {
-                toast.promise(uploadScore(scoreData, gameId), {
-                    loading: 'Uploading score...',
-                    success: 'Your score has been uploaded!',
-                    error: (err) => err.response?.data?.error || 'Error! Could not upload score.',
-                });
+                toast.promise(
+                    uploadScore(scoreData, gameId).then((response) => {
+                        return response.message || 'Your score has been uploaded!';
+                    }),
+                    {
+                        loading: 'Uploading score...',
+                        success: (responseMessage) => responseMessage,
+                        error: (err) => err.response?.data?.error || 'Error uploading score.',
+                    },
+                );
             } catch (error) {
                 console.error('Error uploading score:', error);
                 throw new Error('Failed to upload score');
@@ -213,7 +218,9 @@ const Game = () => {
                 </button>
             </div>
             {isSolved() && gameStarted && (
-                <div className="mt-4 text-xl font-bold text-green-600">Congratulations! You solved the puzzle!</div>
+                <div className="mt-4 text-xl font-bold text-center text-white">
+                    Congratulations! You solved the puzzle!
+                </div>
             )}
         </>
     );
