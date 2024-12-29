@@ -10,6 +10,19 @@ import Register from '@/pages/Register';
 import { AuthProvider } from '@/context/AuthContext';
 
 function App() {
+    console.log(`
+Hi there! 👋 I hope you like what you see here. Enjoy! 🚀
+	 __
+    (  )
+	 ||
+  	 ||
+ ___|""|__.._
+/____________\\
+\\____________/~~~
+
+- Art by Jens Reissenweber from ASCII Art Archive 
+`);
+
     return (
         <BrowserRouter>
             <AuthProvider>

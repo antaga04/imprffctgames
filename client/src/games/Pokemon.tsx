@@ -53,7 +53,7 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
                 onSubmit={handleOnSubmit}
                 bgColor="bg-green-600"
                 hoverBgColor="hover:bg-green-700"
-                className="mt-6"
+                className="mt-6 mb-2"
             />
         </>
     );
@@ -190,7 +190,7 @@ const Game: React.FC = () => {
                         </span>{' '}
                         Pokemon!
                     </h2>
-                    <div className="mt-6 max-w-3xl mx-auto">
+                    <div className="my-6 max-w-3xl mx-auto">
                         <div className="flex flex-wrap gap-4 mt-4 items-center justify-center">
                             {gameStats.guesses.map((g, idx) =>
                                 g.correct ? (
@@ -288,6 +288,13 @@ const Game: React.FC = () => {
 
 // Main Pokemon Game Component
 const PokemonGame: React.FC = () => {
+    console.log(
+        '%cHey, you! %cI see you peeking around the DevTools... %cNo cheating allowed! 😎',
+        'color: darkorange; font-size: 16px; font-weight: bold;',
+        'color: limegreen; font-size: 16px; font-weight: bold;',
+        'color: red; font-size: 16px; font-weight: bold; text-decoration: underline;',
+    );
+
     return (
         <GameWrapper title="Who's that Pokemon?" height="479px">
             <Game />

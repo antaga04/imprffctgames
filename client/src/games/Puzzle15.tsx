@@ -200,9 +200,9 @@ const Game = () => {
             <div className="mt-4 space-x-4">
                 <CoolDownButton text="New Game" onSubmit={shuffleBoard} />
             </div>
-            <p className="mt-4">Move tiles in grid to order them from 1 to 15.</p>
+            <p className="mt-4 text-center">Move tiles in grid to order them from 1 to 15.</p>
             {isSolved() && gameStarted && (
-                <div className="mt-4 text-xl font-bold text-center text-white">
+                <div className="my-4 text-xl font-bold text-center text-white">
                     Congratulations! You solved the puzzle!
                 </div>
             )}
