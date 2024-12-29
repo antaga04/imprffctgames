@@ -11,9 +11,9 @@ export function compareScores(existingScore, newScore, scoringLogic) {
         if (newScore.correct > existingScore.correct) return true;
         if (newScore.correct === existingScore.correct && newScore.total > existingScore.total) return true;
     } else if (scoringLogic === 'moves_time') {
-        // Lower `moves` wins; tiebreaker is lower `time`
-        if (newScore.moves < existingScore.moves) return true;
-        if (newScore.moves === existingScore.moves && newScore.time < existingScore.time) return true;
+        // Lower `time` wins; tiebreaker is lower `moves`
+        if (newScore.time < existingScore.time) return true;
+        if (newScore.time === existingScore.time && newScore.moves < existingScore.moves) return true;
     }
     return false;
 }
