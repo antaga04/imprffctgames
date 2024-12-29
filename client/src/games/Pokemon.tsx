@@ -115,7 +115,7 @@ const Game: React.FC = () => {
     const handleGuess = (guess: string) => {
         if (!pokemonData) return;
 
-        const isCorrect = guess === pokemonData.name;
+        const isCorrect = guess.toLocaleLowerCase() === pokemonData.name;
 
         setGameStats((prevStats) => ({
             guesses: [
