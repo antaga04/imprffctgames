@@ -6,13 +6,13 @@ import { PokemonInputProps, PokemonData, GameStats } from '@/types/types';
 import { uploadScore } from '@/services/uploadScore';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
+import CoolDownButton from '@/components/ui/CoolDownButton';
 
 const usedIds = new Set<number>(); // Set to track used IDs to avoid duplicates
 
 // Input Component for Pokémon Name
 const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => {
     const [input, setInput] = useState<string>('');
-    const [cooldown, setCooldown] = useState<boolean>(false);
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.key === 'Enter' && input.length === nameLength) {
@@ -32,6 +32,11 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
         );
     };
 
+    const handleOnSubmit = () => {
+        onSubmit(input);
+        setInput('');
+    };
+
     return (
         <>
             <InputOTP
@@ -43,21 +48,13 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
             >
                 {renderInputGroups()}
             </InputOTP>
-            <button
-                onClick={() => {
-                    if (cooldown) return;
-                    onSubmit(input);
-                    setInput('');
-                    setCooldown(true);
-                    setTimeout(() => setCooldown(false), 1000);
-                }}
-                disabled={cooldown}
-                className={`mt-6 px-4 py-2 text-white rounded hover:bg-green-700 ${
-                    cooldown ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600'
-                }`}
-            >
-                Submit
-            </button>
+            <CoolDownButton
+                text="Submit"
+                onSubmit={handleOnSubmit}
+                bgColor="bg-green-600"
+                hoverBgColor="hover:bg-green-700"
+                className="mt-6"
+            />
         </>
     );
 };
@@ -77,7 +74,6 @@ const Game: React.FC = () => {
     const pokemonCache = useRef<Record<number, PokemonData>>({});
 
     const fetchPokemon = async () => {
-        console.log(usedIds);
         setLoading(true);
 
         let randomId;
@@ -183,7 +179,10 @@ const Game: React.FC = () => {
             {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
             {gameOver ? (
                 <>
-                    <h3 className="text-amber-400 text-xl">Time's up!</h3>
+                    <div className="inline-flex items-center justify-between min-w-[300px] h-12 gap-4 mb-3">
+                        <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
+                        <h3 className="text-amber-400 text-2xl">Time's up!</h3>
+                    </div>
                     <h2 className="text-white text-2xl">
                         You guessed{' '}
                         <span className="devil-detail">
@@ -232,30 +231,41 @@ const Game: React.FC = () => {
                             )}
                         </div>
                     </div>
-                    <button
-                        onClick={handlePlayAgain}
-                        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                    >
-                        Play Again
-                    </button>
                 </>
             ) : (
                 <>
-                    <div className="text-white mb-2">Time Left: {timeLeft}s</div>
-                    <div className="text-white mb-2 flex items-center gap-2">
-                        Correct Guesses: {gameStats.guesses.map((g) => g.correct).filter(Boolean).length}/
-                        {totalPokemonPresented}
-                        <div
-                            className={`w-3 h-3 rounded-full ${
-                                gameStats.guesses.some((g) => g.pokemon.id === pokemonData?.id)
-                                    ? gameStats.guesses.find((g) => g.pokemon.id === pokemonData?.id)?.correct
-                                        ? 'bg-green-500'
-                                        : 'bg-red-500'
-                                    : 'bg-transparent'
-                            } transition-opacity duration-500`}
-                        ></div>
+                    <div className="inline-flex items-center justify-between h-12 gap-4 mb-3">
+                        <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
+                        <div className="flex flex-col text-white">
+                            <p className="font-mono min-w-[6ch] text-right">
+                                Time:{' '}
+                                <span className={`font-mono ${timeLeft < 11 ? 'text-red-600' : 'text-white'}`}>
+                                    {String(timeLeft).padStart(2, '0')}s
+                                </span>
+                            </p>
+
+                            <div className="flex justify-between gap-4 items-center">
+                                <div
+                                    className={`w-3 h-3 rounded-full ${
+                                        gameStats.guesses.some((g) => g.pokemon.id === pokemonData?.id)
+                                            ? gameStats.guesses.find((g) => g.pokemon.id === pokemonData?.id)?.correct
+                                                ? 'bg-green-500'
+                                                : 'bg-red-500'
+                                            : 'bg-transparent'
+                                    }`}
+                                ></div>
+                                <span className="font-mono min-w-[6ch] text-right">
+                                    Correct:{' '}
+                                    {String(gameStats.guesses.map((g) => g.correct).filter(Boolean).length).padStart(
+                                        2,
+                                        '0',
+                                    )}
+                                    /{String(totalPokemonPresented).padStart(2, '0')}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <div className="relative w-64 h-64">
+                    <div className="relative md:w-64 md:h-64 w-52 h-52">
                         {loading ? (
                             <div className="absolute inset-0 flex items-center justify-center">
                                 <p className="text-white">Loading...</p>
