@@ -1,4 +1,4 @@
-import { AtSymbolIcon, KeyIcon, RegisterUserIcon } from '@/icons';
+import { AtSign, KeyRound, User } from 'lucide-react';
 
 export const LOGIN_INPUTS = [
     {
@@ -6,14 +6,14 @@ export const LOGIN_INPUTS = [
         name: 'email',
         type: 'email',
         placeholder: 'Enter your email',
-        icon: AtSymbolIcon,
+        icon: AtSign,
     },
     {
         label: 'Password',
         name: 'password',
         type: 'password',
         placeholder: 'Enter your password',
-        icon: KeyIcon,
+        icon: KeyRound,
     },
 ];
 
@@ -23,27 +23,27 @@ export const REGISTER_INPUTS = [
         name: 'nickname',
         type: 'text',
         placeholder: 'Enter a nickname',
-        icon: RegisterUserIcon,
+        icon: User,
     },
     {
         label: 'Email',
         name: 'email',
         type: 'email',
         placeholder: 'Enter an email',
-        icon: AtSymbolIcon,
+        icon: AtSign,
     },
     {
         label: 'Password',
         name: 'password',
         type: 'password',
         placeholder: 'Enter a password',
-        icon: KeyIcon,
+        icon: KeyRound,
     },
     {
         label: 'Confirm password',
         name: 'confirmPassword',
         type: 'password',
         placeholder: 'Confirm your password',
-        icon: KeyIcon,
+        icon: KeyRound,
     },
 ];

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { CameraIcon, UserIcon } from '@/icons';
 import { useAuth } from '@/context/AuthContext';
 import { ProfileData } from '@/types/types';
+import { Camera, User } from 'lucide-react';
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL + '/users/avatar/';
 
@@ -86,14 +86,14 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfi
                     <img src={avatarPreview} alt="User Avatar" className="w-32 h-32 rounded-full object-cover" />
                 ) : (
                     <span className="w-32 h-32 rounded-full text-gray-400 bg-slate-800 flex items-center justify-center fill-white">
-                        <UserIcon />
+                        <User />
                     </span>
                 )}
                 <label
                     htmlFor="avatar-upload"
-                    className="absolute bottom-0 right-0 p-2 bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 transition-colors"
+                    className="absolute bottom-0 right-0 p-1 bg-blue-500 rounded-full cursor-pointer hover:bg-blue-600 text-blue-500 hover:text-blue-600 transition-colors"
                 >
-                    <CameraIcon />
+                    <Camera className="fill-black h-7 w-7" />
                 </label>
                 <input
                     type="file"

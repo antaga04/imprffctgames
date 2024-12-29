@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeftIcon } from '@/icons';
+import { ChevronLeft } from 'lucide-react';
 
 const BackButton: React.FC<{ url?: string }> = ({ url }) => {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ const BackButton: React.FC<{ url?: string }> = ({ url }) => {
             className="group absolute top-4 left-4 md:top-10 md:left-10 flex items-center px-4 py-2 rounded-3xl text-[#f2f2f2] bg-[#f2f2f226] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] z-10 backdrop-blur-md transition-all duration-400 ease-custom-ease-1"
         >
             <span className="inline-block mr-2 transform transition-transform duration-300 ease-custom-ease-2 group-hover:-translate-x-1 fill-[#f2f2f2]">
-                <ArrowLeftIcon />
+                <ChevronLeft className="h-5 w-5" />
             </span>
             Back
         </button>

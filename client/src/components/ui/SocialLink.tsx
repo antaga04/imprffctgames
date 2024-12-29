@@ -1,4 +1,4 @@
-import { ArrowUpIcon } from '@/icons';
+import { MoveUpRight } from 'lucide-react';
 
 type SocialLinkProps = {
     name: string;
@@ -14,7 +14,7 @@ const SocialLink: React.FC<SocialLinkProps> = ({ name, link }) => {
         >
             {name}
             <span className="fill-white inline-block transform transition-transform duration-300 ease-custom-ease-2 group-hover:-rotate-[-45deg]">
-                <ArrowUpIcon />
+                <MoveUpRight className="h-4 w-4" />
             </span>
         </a>
     );

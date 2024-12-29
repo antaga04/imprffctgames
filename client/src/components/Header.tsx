@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
-import { MedalIcon, UserIcon } from '@/icons';
 import SingOut from '@/components/ui/SingOut';
 import { useAuth } from '@/context/AuthContext';
+import { Medal, User } from 'lucide-react';
 
 const Header = () => {
     const { user, logout } = useAuth();
@@ -31,7 +31,7 @@ const Header = () => {
                     to="/ranking"
                     className="w-full md:w-fit px-4 py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
                 >
-                    <MedalIcon />
+                    <Medal />
                     <span className="">Ranking</span>
                 </NavLink>
                 {user ? (
@@ -40,7 +40,7 @@ const Header = () => {
                             to="/profile"
                             className="w-full md:w-fit px-4 py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
                         >
-                            <UserIcon />
+                            <User />
                             <span className="">Profile</span>
                         </NavLink>
                         <SingOut handleLogout={logout} />
@@ -50,7 +50,7 @@ const Header = () => {
                         to="/login"
                         className="w-full md:w-fit px-4 py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
                     >
-                        <UserIcon />
+                        <User />
                         <span className="">Login</span>
                     </NavLink>
                 )}
