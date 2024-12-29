@@ -2,7 +2,7 @@
 
 API de puntuaciones y juegos. Continiene una lista de Games. También hay Scores asociadas a un User autenticado el la base de datos y a un Game.
 
-API_URL =>
+API_URL => [text](https://puzlynkapi.vercel.app/)
 
 ## MODELOS
 
@@ -13,13 +13,14 @@ const Game = {
     difficulty: 'dificultad_del_juego',
     type: 'tipo_de_juego',
     cover: 'imagen_del_juego',
+    scoringLogic: 'tipo_de_calculo_de_puntuación',
 };
 
 const Score = {
     _id: 'id_de_mongoDB',
     user_id: 'id_user_pertenece_score',
     game_id: 'id_game_pertenece_score',
-    score: 'puntuación_del_juego',
+    scoreData: 'puntuación_del_juego_flexible',
 };
 
 const User = {
@@ -29,7 +30,7 @@ const User = {
     email: 'email_del_user',
     password: 'contraseña_del_user',
     scores: ['lista', 'scores', 'user'],
-    rol: 'rol_del_user',
+    rol: 'rol_del_user', // siempre será user
 };
 ```
 
@@ -42,6 +43,7 @@ const User = {
 ## URLs:
 
 - https://localhost:${PORT}/api
+- [text](https://puzlynkapi.vercel.app/)
 
 ## Endpoints
 
@@ -57,11 +59,12 @@ const User = {
 
 ### MODELO SCORES:
 
-| HTTP Request | Endpoint   | Description                   | Protected | Admin |
-| ------------ | ---------- | ----------------------------- | --------- | ----- |
-| GET          | /scores    | Todas las scores registrados. | No        | No    |
-| POST         | /scores    | Crear un nuevo score.         | Sí        | No    |
-| DELETE       | /scores/id | Borrar un score.              | Sí        | No    |
+| HTTP Request | Endpoint    | Description                   | Protected | Admin |
+| ------------ | ----------- | ----------------------------- | --------- | ----- |
+| GET          | /scores     | Todas las scores registrados. | No        | No    |
+| GET          | /scores/:id | Scores por game id.           | No        | No    |
+| POST         | /scores     | Crear un nuevo score.         | Sí        | No    |
+| DELETE       | /scores/id  | Borrar un score.              | Sí        | No    |
 
 ### MODELO USERS:
 
@@ -77,5 +80,6 @@ const User = {
 - Si el endpoint es 'Protected' será necesario estar registrado como User.
 - Para acceder a los endpoints 'Protected' se usará un Bearer token.
 - Si el endpoint es 'Admin' será necesario ser un User con rol 'admin.
+- Los scores se almacenan en un objeto flexible, por lo que puedes almacenar cualquier tipo de dato.
 
 ### > Para cualquier duda puedes contartarme al email antaga04@gmail.com :)
