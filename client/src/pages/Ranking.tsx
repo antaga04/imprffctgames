@@ -91,7 +91,7 @@ const Ranking: React.FC = () => {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead className="w-[100px]">Rank</TableHead>
+                                    <TableHead>Rank</TableHead>
                                     <TableHead>Player</TableHead>
                                     <TableHead>Date</TableHead>
                                     <TableHead className="text-right">Score</TableHead>
