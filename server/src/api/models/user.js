@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 import { hashPassword } from '../../utils/password.js';
 
 const userSchema = new mongoose.Schema({
-    nickname: { type: String, required: true },
-    email: { type: String, required: true },
+    nickname: { type: String, required: true, unique: true, minlength: 3, maxlength: 15 },
+    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     avatar: { type: String },
     scores: [{ type: mongoose.Types.ObjectId, ref: 'Score' }],

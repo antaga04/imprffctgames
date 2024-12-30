@@ -37,17 +37,25 @@ export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email }).lean();
+        const user = await User.findOne({ email })
+            .populate({
+                path: 'scores',
+                populate: {
+                    path: 'game_id',
+                    select: 'name cover',
+                },
+            })
+            .lean();
 
         if (!user) {
-            res.status(401).json({ data: `User doesn't exist` });
+            res.status(401).json({ error: `User doesn't exist` });
             return;
         }
 
         const validPassword = await verifyPassword(password, user.password);
 
         if (!validPassword) {
-            res.status(401).json({ data: `Incorrect email or password` });
+            res.status(401).json({ error: `Incorrect email or password` });
             return;
         }
 
