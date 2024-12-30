@@ -16,7 +16,7 @@ export const uploadScore = async (scoreData: unknown, gameId: string) => {
                 },
             },
         );
-        return response.data;
+        return response;
     } catch (error) {
         console.error('Error uploading score:', error);
         throw new Error('Failed to upload score');

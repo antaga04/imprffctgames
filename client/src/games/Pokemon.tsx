@@ -137,7 +137,7 @@ const Game: React.FC = () => {
         fetchPokemon();
     };
 
-    const handleGameOver = () => {
+    const handleGameOver = async () => {
         setGameOver(true);
         setShowConfetti(true);
 
@@ -148,20 +148,25 @@ const Game: React.FC = () => {
         const gameId = import.meta.env.VITE_POKEMON_ID;
 
         if (user) {
+            const loadingToastId = toast.loading('Uploading score...');
+
             try {
-                toast.promise(
-                    uploadScore(scoreData, gameId).then((response) => {
-                        return response.message || 'Your score has been uploaded!';
-                    }),
-                    {
-                        loading: 'Uploading score...',
-                        success: (responseMessage) => responseMessage,
-                        error: (err) => err.response?.data?.error || 'Error uploading score.',
-                    },
-                );
+                const response = await uploadScore(scoreData, gameId);
+                const { message, data } = response.data;
+
+                toast.dismiss(loadingToastId);
+
+                if (response.status === 200) {
+                    toast.warning(`${message}. Previous score: ${data.scoreData.correct}/${data.scoreData.total}`);
+                } else if (response.status === 201) {
+                    toast.success(`${message}. New score: Moves: ${data.scoreData.correct}/${data.scoreData.total}`);
+                } else {
+                    toast.error(response.data.error);
+                }
             } catch (error) {
                 console.error('Error uploading score:', error);
-                throw new Error('Failed to upload score');
+                toast.dismiss(loadingToastId);
+                toast.error('Error uploading score.');
             }
         }
     };
@@ -174,6 +179,7 @@ const Game: React.FC = () => {
         setTotalPokemonPresented(0);
         setPlayAgainKey((prev) => prev + 1);
     };
+
     return (
         <section className="flex flex-col justify-center items-center">
             {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}

@@ -28,6 +28,7 @@ const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSig
     }, [isRunning, gameStarted, setTime]);
 
     useEffect(() => {
+        setTime(0);
         setLocalTime(0);
     }, [resetSignal]);
 
@@ -88,25 +89,36 @@ const Game = () => {
         }
     }, [isSolved, gameStarted]);
 
-    const handleGameCompletion = () => {
+    const handleGameCompletion = async () => {
+        console.log('>>>> handleGameCompletion', moves, time);
+
         const scoreData = { moves, time };
         const gameId = import.meta.env.VITE_PUZZLE15_ID;
 
         if (user) {
+            const loadingToastId = toast.loading('Uploading score...');
+
             try {
-                toast.promise(
-                    uploadScore(scoreData, gameId).then((response) => {
-                        return response.message || 'Your score has been uploaded!';
-                    }),
-                    {
-                        loading: 'Uploading score...',
-                        success: (responseMessage) => responseMessage,
-                        error: (err) => err.response?.data?.error || 'Error uploading score.',
-                    },
-                );
+                const response = await uploadScore(scoreData, gameId);
+                const { message, data } = response.data;
+
+                toast.dismiss(loadingToastId);
+
+                if (response.status === 200) {
+                    toast.warning(
+                        `${message}. Previous score: Moves: ${data.scoreData.moves}, Time: ${data.scoreData.time}`,
+                    );
+                } else if (response.status === 201) {
+                    toast.success(
+                        `${message}. New score: Moves: ${data.scoreData.moves}, Time: ${data.scoreData.time}`,
+                    );
+                } else {
+                    toast.error(response.data.error);
+                }
             } catch (error) {
                 console.error('Error uploading score:', error);
-                throw new Error('Failed to upload score');
+                toast.dismiss(loadingToastId);
+                toast.error('Error uploading score.');
             }
         }
     };
