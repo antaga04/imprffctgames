@@ -100,20 +100,20 @@ const Ranking: React.FC = () => {
                             <TableBody>
                                 {isLoading ? (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="text-center">
+                                        <TableCell colSpan={4} className="text-center font-mono text-md">
                                             Loading...
                                         </TableCell>
                                     </TableRow>
                                 ) : scores.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="text-center">
+                                        <TableCell colSpan={4} className="text-center font-mono text-md">
                                             No scores available
                                         </TableCell>
                                     </TableRow>
                                 ) : (
                                     scores.map((score, index) => (
                                         <TableRow key={score._id}>
-                                            <TableCell className="font-medium">
+                                            <TableCell className="font-medium text-center">
                                                 {(pagination.currentPage - 1) * 10 + index + 1}
                                             </TableCell>
                                             <TableCell>
@@ -136,9 +136,19 @@ const Ranking: React.FC = () => {
                                                 })}
                                             </TableCell>
                                             <TableCell className="text-right">
-                                                {score.game_id.name === 'pokemon'
-                                                    ? `${score.scoreData.correct}/${score.scoreData.total}`
-                                                    : `Moves: ${score.scoreData.moves}, Time: ${score.scoreData.time}s`}
+                                                {score.game_id.name === 'pokemon' ? (
+                                                    `${score.scoreData.correct}/${score.scoreData.total}`
+                                                ) : (
+                                                    <>
+                                                        <span className="ml-2 text-base">
+                                                            Time: {score.scoreData.time}s
+                                                        </span>
+                                                        <span className="text-xs whitespace-nowrap">
+                                                            {' '}
+                                                            ({score.scoreData.moves} moves)
+                                                        </span>
+                                                    </>
+                                                )}
                                             </TableCell>
                                         </TableRow>
                                     ))
