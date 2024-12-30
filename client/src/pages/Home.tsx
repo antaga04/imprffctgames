@@ -2,8 +2,18 @@ import Header from '@/components/Header';
 import { games } from '@/lib/games';
 import GameItem from '@/components/ui/GameItem';
 import Footer from '@/components/Footer';
+import { toast } from 'sonner';
+import { useEffect } from 'react';
 
 const Home = () => {
+    useEffect(() => {
+        const hasShownToast = sessionStorage.getItem('hasShownRegisterToast');
+        if (!hasShownToast) {
+            toast.info('You can login to appear in the rankings!');
+            sessionStorage.setItem('hasShownRegisterToast', 'true');
+        }
+    }, []);
+
     return (
         <>
             <Header />
