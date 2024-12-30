@@ -131,7 +131,7 @@ const Ranking: React.FC = () => {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="">
-                                                {score.game_id.name === 'pokemon' ? (
+                                                {score.game_id._id === import.meta.env.VITE_POKEMON_ID ? (
                                                     `${score.scoreData.correct}/${score.scoreData.total}`
                                                 ) : (
                                                     <span className="flex flex-wrap items-baseline md:gap-1">
