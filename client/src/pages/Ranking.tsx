@@ -93,8 +93,8 @@ const Ranking: React.FC = () => {
                                 <TableRow>
                                     <TableHead>Rank</TableHead>
                                     <TableHead>Player</TableHead>
+                                    <TableHead>Score</TableHead>
                                     <TableHead>Date</TableHead>
-                                    <TableHead className="text-right">Score</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -117,7 +117,7 @@ const Ranking: React.FC = () => {
                                                 {(pagination.currentPage - 1) * 10 + index + 1}
                                             </TableCell>
                                             <TableCell>
-                                                <div className="flex items-center">
+                                                <div className="flex items-center whitespace-nowrap">
                                                     <Avatar className="w-8 h-8 mr-2">
                                                         <AvatarImage
                                                             src={score.user_id.avatar}
@@ -130,25 +130,25 @@ const Ranking: React.FC = () => {
                                                     {score.user_id.nickname}
                                                 </div>
                                             </TableCell>
-                                            <TableCell className="text-left">
-                                                {new Date(score.createdAt).toLocaleString(undefined, {
-                                                    dateStyle: 'medium',
-                                                })}
-                                            </TableCell>
-                                            <TableCell className="text-right">
+                                            <TableCell className="">
                                                 {score.game_id.name === 'pokemon' ? (
                                                     `${score.scoreData.correct}/${score.scoreData.total}`
                                                 ) : (
-                                                    <>
-                                                        <span className="ml-2 text-base">
+                                                    <span className="flex flex-wrap items-baseline md:gap-1">
+                                                        <span className="text-base whitespace-nowrap">
                                                             Time: {score.scoreData.time}s
                                                         </span>
-                                                        <span className="text-xs whitespace-nowrap">
+                                                        <span className="text-xs whitespace-nowrap text-black/70">
                                                             {' '}
                                                             ({score.scoreData.moves} moves)
                                                         </span>
-                                                    </>
+                                                    </span>
                                                 )}
+                                            </TableCell>
+                                            <TableCell className="whitespace-nowrap">
+                                                {new Date(score.createdAt).toLocaleString(undefined, {
+                                                    dateStyle: 'medium',
+                                                })}
                                             </TableCell>
                                         </TableRow>
                                     ))

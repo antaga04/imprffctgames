@@ -10,7 +10,7 @@ export const games = {
         thumbnail: '/15.png',
     },
     pokemon: {
-        name: "Who's that Pokemon",
+        name: "Who's that Pokémon",
         url: 'pokemon',
         thumbnail: '/pokemon.png',
     },

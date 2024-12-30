@@ -194,7 +194,7 @@ const Game: React.FC = () => {
                         <span className="devil-detail">
                             {gameStats.guesses.map((g) => g.correct).filter(Boolean).length}/{totalPokemonPresented}
                         </span>{' '}
-                        Pokemon!
+                        Pokémon!
                     </h2>
                     <div className="my-6 max-w-3xl mx-auto">
                         <div className="flex flex-wrap gap-4 mt-4 items-center justify-center">
@@ -302,7 +302,7 @@ const PokemonGame: React.FC = () => {
     );
 
     return (
-        <GameWrapper title="Who's that Pokemon?" height="479px">
+        <GameWrapper title="Who's that Pokémon?" height="479px">
             <Game />
         </GameWrapper>
     );
