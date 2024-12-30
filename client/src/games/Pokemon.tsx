@@ -64,7 +64,6 @@ const Game: React.FC = () => {
     const [gameStats, setGameStats] = useState<GameStats>({ guesses: [] });
     const [showConfetti, setShowConfetti] = useState<boolean>(false);
     const [gameOver, setGameOver] = useState<boolean>(false);
-    const [totalPokemonPresented, setTotalPokemonPresented] = useState<number>(0);
     const [playAgainKey, setPlayAgainKey] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
     const { user } = useAuth();
@@ -102,7 +101,6 @@ const Game: React.FC = () => {
             }
         }
 
-        setTotalPokemonPresented((prev) => prev + 1);
         setLoading(false);
     };
 
@@ -142,7 +140,7 @@ const Game: React.FC = () => {
         setShowConfetti(true);
 
         const correct = gameStats.guesses.filter((g) => g.correct).length;
-        const total = totalPokemonPresented;
+        const total = gameStats.guesses.length;
 
         const scoreData = { correct, total };
         const gameId = import.meta.env.VITE_POKEMON_ID;
@@ -176,7 +174,6 @@ const Game: React.FC = () => {
         setGameStats({ guesses: [] });
         setShowConfetti(false);
         setGameOver(false);
-        setTotalPokemonPresented(0);
         setPlayAgainKey((prev) => prev + 1);
     };
 
@@ -192,7 +189,7 @@ const Game: React.FC = () => {
                     <h2 className="text-white text-2xl">
                         You guessed{' '}
                         <span className="devil-detail">
-                            {gameStats.guesses.map((g) => g.correct).filter(Boolean).length}/{totalPokemonPresented}
+                            {gameStats.guesses.map((g) => g.correct).filter(Boolean).length}/{gameStats.guesses.length}
                         </span>{' '}
                         Pokémon!
                     </h2>
@@ -266,7 +263,7 @@ const Game: React.FC = () => {
                                         2,
                                         '0',
                                     )}
-                                    /{String(totalPokemonPresented).padStart(2, '0')}
+                                    /{String(gameStats.guesses.length).padStart(2, '0')}
                                 </span>
                             </div>
                         </div>

@@ -4,11 +4,14 @@ import GameItem from '@/components/ui/GameItem';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 const Home = () => {
+    const { isAuthenticated } = useAuth();
+
     useEffect(() => {
         const hasShownToast = sessionStorage.getItem('hasShownRegisterToast');
-        if (!hasShownToast) {
+        if (!hasShownToast && !isAuthenticated) {
             toast.info('You can login to appear in the rankings!');
             sessionStorage.setItem('hasShownRegisterToast', 'true');
         }

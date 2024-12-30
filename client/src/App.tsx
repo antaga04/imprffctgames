@@ -8,6 +8,7 @@ import Profile from '@/pages/Profile';
 import Ranking from '@/pages/Ranking';
 import Register from '@/pages/Register';
 import { AuthProvider } from '@/context/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
     console.log(`
@@ -25,11 +26,13 @@ Hi there! 👋 I hope you like what you see here. Enjoy! 🚀
 
     return (
         <BrowserRouter>
+            <Toaster richColors position="top-center" />
             <AuthProvider>
-                <Toaster richColors position="top-center" />
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/profile" element={<Profile />} />
+                    <Route element={<PrivateRoute />}>
+                        <Route path="/profile" element={<Profile />} />
+                    </Route>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/ranking" element={<Ranking />} />

@@ -146,7 +146,7 @@ const Ranking: React.FC = () => {
                                                 )}
                                             </TableCell>
                                             <TableCell className="whitespace-nowrap">
-                                                {new Date(score.createdAt).toLocaleString(undefined, {
+                                                {new Date(score.updatedAt).toLocaleString(undefined, {
                                                     dateStyle: 'medium',
                                                 })}
                                             </TableCell>
