@@ -194,6 +194,15 @@ const Ranking: React.FC = () => {
                                 </PaginationContent>
                             </Pagination>
                         </div>
+                        {selectedGame?.gameId === import.meta.env.VITE_PUZZLE15_ID ? (
+                            <p className="flex justify-center mt-4 text-gray-500 text-sm">
+                                Ranking is based on faster times. Fewer moves are the tiebreaker.
+                            </p>
+                        ) : (
+                            <p className="flex justify-center mt-4 text-gray-500 text-sm">
+                                Ranking is based on a combination of total correct guesses and accuracy.
+                            </p>
+                        )}
                     </>
                 ) : (
                     <div className="text-center py-8">

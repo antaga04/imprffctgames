@@ -59,9 +59,16 @@ export const sortScores = (scores, scoringLogic) => {
     switch (scoringLogic) {
         case 'guesses_correct_total':
             return scores.sort((a, b) => {
-                const aScore = a.scoreData.correct / a.scoreData.total;
-                const bScore = b.scoreData.correct / b.scoreData.total;
-                return bScore - aScore; // Higher percentage first
+                const p = 2; // Penalty factor
+                const aCorrect = a.scoreData.correct;
+                const aTotal = a.scoreData.total;
+                const bCorrect = b.scoreData.correct;
+                const bTotal = b.scoreData.total;
+
+                const aScore = aCorrect * Math.pow(aCorrect / aTotal, p);
+                const bScore = bCorrect * Math.pow(bCorrect / bTotal, p);
+
+                return bScore - aScore; // Higher score first
             });
 
         case 'moves_time':
