@@ -37,15 +37,7 @@ export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const user = await User.findOne({ email })
-            .populate({
-                path: 'scores',
-                populate: {
-                    path: 'game_id',
-                    select: 'name cover',
-                },
-            })
-            .lean();
+        const user = await User.findOne({ email }).lean();
 
         if (!user) {
             res.status(401).json({ error: `User doesn't exist` });
@@ -137,9 +129,9 @@ export const updateUser = async (req, res) => {
         }
 
         // Update the user
-        const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true });
-
-        return res.status(200).json({ data: updatedUser });
+        const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true }).lean();
+        const { password: unusedPassword, ...restUser } = updatedUser;
+        return res.status(200).json({ data: restUser });
     } catch (error) {
         console.error('Error updating user:', error);
         return res.status(500).json({ error: 'An unexpected error occurred while updating the user.' });
@@ -150,7 +142,15 @@ export const getUser = async (req, res) => {
     try {
         const { id } = req.user;
 
-        const user = await User.findById(id).select('-password');
+        const user = await User.findById(id)
+            .select('-password')
+            .populate({
+                path: 'scores',
+                populate: {
+                    path: 'game_id',
+                    select: 'name cover',
+                },
+            });
 
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
