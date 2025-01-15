@@ -24,7 +24,7 @@ const AuthInput: React.FC<AuthInputProps> = ({ label, name, type, placeholder, I
             <label htmlFor={name} className="block font-medium text-gray-700">
                 {label}
             </label>
-            <div className="relative">
+            <div className="relative flex items-center">
                 <input
                     id={name}
                     name={name}
@@ -38,10 +38,11 @@ const AuthInput: React.FC<AuthInputProps> = ({ label, name, type, placeholder, I
                 {type === 'password' && (
                     <button
                         type="button"
+                        title={showPassword ? 'Hide password' : 'Show password'}
                         onClick={handleTogglePassword}
-                        className="absolute right-3 top-2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                        className="flex items-center text-sm leading-5 text-gray-400 hover:bg-black/5 border w-[38px] h-[38px] rounded-md justify-center ml-2 transition-all duration-300"
                     >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showPassword ? <Eye /> : <EyeOff />}
                     </button>
                 )}
             </div>

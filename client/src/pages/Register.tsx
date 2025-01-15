@@ -52,7 +52,7 @@ const RegisterForm = () => {
                 register(nickname, email, password).then(() => login(email, password)), // Corrected order of arguments
                 {
                     loading: 'Registering...',
-                    success: 'Registration successful! Redirecting to login...',
+                    success: 'Registration successful!',
                     error: (error) => error.response?.data?.error || 'An error occurred during registration.',
                 },
             );
