@@ -1,13 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { ProfileData } from '@/types/types';
-
-type ProfileFormProps = {
-    profileData: ProfileData;
-    setProfileData: React.Dispatch<React.SetStateAction<ProfileData>>;
-    onSaveProfile: (data: ProfileData) => void;
-    loading: boolean;
-};
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData, onSaveProfile, loading }) => {
     const { user } = useAuth();

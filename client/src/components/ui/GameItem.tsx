@@ -1,11 +1,5 @@
 import { Link } from 'react-router-dom';
 
-type GameItemProps = {
-    link: string;
-    name: string;
-    thumbnail: string;
-};
-
 const GameItem: React.FC<GameItemProps> = ({ link, name, thumbnail }) => {
     return (
         <li className="md:h-56 w-full outline outline-1 outline-[#f2f2f20d] outline-offset-[-1px] bg-[#f2f2f20a] rounded-[24px] self-stretch p-2 relative shadow-[0_40px_80px_#00000080]">

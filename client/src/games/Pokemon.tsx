@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import Confetti from 'react-confetti';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import GameWrapper from '@/components/layouts/GameWrapper';
-import { PokemonInputProps, PokemonData, GameStats } from '@/types/types';
 import { uploadScore } from '@/services/uploadScore';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';

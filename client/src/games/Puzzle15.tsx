@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import Confetti from 'react-confetti';
 import GameWrapper from '@/components/layouts/GameWrapper';
 import { useAuth } from '@/context/AuthContext';
-import { TimerIncrementProps } from '@/types/types';
 import { uploadScore } from '@/services/uploadScore';
 import { toast } from 'sonner';
 import CoolDownButton from '@/components/ui/CoolDownButton';

@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContextProps, AuthState, DecodedToken, AuthUser } from '@/types/types';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'sonner';
 import axios from 'axios';

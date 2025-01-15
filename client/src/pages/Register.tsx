@@ -8,13 +8,6 @@ import { useAuth } from '@/context/AuthContext';
 import { REGISTER_INPUTS } from '@/lib/constants';
 import { toast } from 'sonner';
 
-type RegisterFormData = {
-    nickname: string;
-    email: string;
-    password: string;
-    confirmPassword: string;
-};
-
 const RegisterForm = () => {
     const [formData, setFormData] = useState<RegisterFormData>({
         nickname: '',

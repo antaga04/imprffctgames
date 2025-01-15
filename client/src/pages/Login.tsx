@@ -8,11 +8,6 @@ import SigninLogo from '@/components/ui/SigninLogo';
 import AuthLinkSwitcher from '@/components/ui/AuthLinkSwitcher';
 import { LOGIN_INPUTS } from '@/lib/constants';
 
-type LoginFromData = {
-    email: string;
-    password: string;
-};
-
 const LoginFrom = () => {
     const { login } = useAuth();
     const [formData, setFormData] = useState<LoginFromData>({

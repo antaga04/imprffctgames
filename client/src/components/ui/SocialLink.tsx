@@ -1,9 +1,5 @@
 import { MoveUpRight } from 'lucide-react';
 
-type SocialLinkProps = {
-    name: string;
-    link: string;
-};
 const SocialLink: React.FC<SocialLinkProps> = ({ name, link }) => {
     return (
         <a

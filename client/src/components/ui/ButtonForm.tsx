@@ -1,8 +1,4 @@
-type ButtonProps = {
-    text: string;
-};
-
-const ButtonForm: React.FC<ButtonProps> = ({ text }) => {
+const ButtonForm: React.FC<{ text: string }> = ({ text }) => {
     return (
         <button
             id="login-btn"

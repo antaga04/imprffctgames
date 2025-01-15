@@ -5,7 +5,6 @@ import { useAuth } from '@/context/AuthContext';
 import BackButton from '@/components/ui/BackButton';
 import AvatarUploader from '@/components/AvatarUploader';
 import ProfileForm from '@/components/ProfileForm';
-import { ProfileData } from '@/types/types';
 
 const UPDATE_URL = import.meta.env.VITE_API_URL + '/users/';
 

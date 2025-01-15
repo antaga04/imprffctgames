@@ -11,7 +11,6 @@ import {
 } from '@/components/ui/pagination';
 import axios from 'axios';
 import BackButton from '@/components/ui/BackButton';
-import { Game, PaginationInfo, Score } from '@/types/types';
 import MyAvatar from '@/components/ui/MyAvatar';
 
 const games: Game[] = [

@@ -1,5 +1,3 @@
-import { MyAvatarProps } from '@/types/types';
-
 const MyAvatar: React.FC<MyAvatarProps> = ({ url, alt, width, height }) => {
     return (
         <span className={`${width} ${height} rounded-full flex items-center justify-center overflow-hidden`}>

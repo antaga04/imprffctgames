@@ -2,16 +2,10 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-import { ProfileData } from '@/types/types';
 import { Camera } from 'lucide-react';
 import MyAvatar from './ui/MyAvatar';
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL + '/users/avatar/';
-
-type AvatarUploaderProps = {
-    currentAvatar: string | null;
-    setProfileData: (data: ProfileData | ((prevData: ProfileData) => ProfileData)) => void;
-};
 
 const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfileData }) => {
     const { user, updateUser } = useAuth();

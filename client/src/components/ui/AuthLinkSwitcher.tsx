@@ -1,11 +1,5 @@
 import { Link } from 'react-router-dom';
 
-type AuthLinkSwitcherTypes = {
-    text: string;
-    url: string;
-    anchor: string;
-};
-
 const AuthLinkSwitcher: React.FC<AuthLinkSwitcherTypes> = ({ text, url, anchor }) => {
     return (
         <div className="text-center mt-4">

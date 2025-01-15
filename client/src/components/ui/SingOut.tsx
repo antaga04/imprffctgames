@@ -1,9 +1,5 @@
 import { LogOut } from 'lucide-react';
 
-type SingOutProps = {
-    handleLogout: () => void;
-};
-
 const SingOut: React.FC<SingOutProps> = ({ handleLogout }) => {
     return (
         <div onClick={handleLogout} className="w-full contents">

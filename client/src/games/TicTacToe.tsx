@@ -3,11 +3,6 @@ import Confetti from 'react-confetti';
 import GameWrapper from '@/components/layouts/GameWrapper';
 import CoolDownButton from '@/components/ui/CoolDownButton';
 
-// Define the types
-type Player = 'X' | 'O' | null;
-type Board = Player[];
-type WinnerResult = { player: Player; combination: number[] } | null;
-
 const Game = () => {
     const [board, setBoard] = useState<Board>(Array(9).fill(null));
     const [currentPlayer, setCurrentPlayer] = useState<Player>('X');

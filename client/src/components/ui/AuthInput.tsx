@@ -1,17 +1,6 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-type AuthInputProps = {
-    label: string;
-    name: string;
-    type: string;
-    placeholder: string;
-    Icon: React.FC<React.SVGProps<SVGSVGElement>>;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    isPassword?: boolean;
-};
-
 const AuthInput: React.FC<AuthInputProps> = ({ label, name, type, placeholder, Icon, value, onChange }) => {
     const [showPassword, setShowPassword] = useState(false);
 

@@ -1,22 +1,22 @@
 /* --------------- Auth --------------- */
-export interface AuthState {
+interface AuthState {
     isAuthenticated: boolean;
     user: User | null;
     loading: boolean;
 }
 
-export interface AuthContextProps extends AuthState {
+interface AuthContextProps extends AuthState {
     login: (email: string, password: string) => Promise<void>;
     register: (nickname: string, email: string, password: string) => Promise<void>;
     logout: () => void;
     updateUser: (user: User) => void;
 }
 
-export interface DecodedToken {
+interface DecodedToken {
     exp: number;
 }
 
-export interface AuthUser {
+interface AuthUser {
     _id: string;
     nickname: string;
     email: string;
@@ -27,7 +27,7 @@ export interface AuthUser {
 }
 
 /* --------------- Components --------------- */
-export type ProfileData = {
+type ProfileData = {
     nickname: string;
     email: string;
     password: string;
@@ -41,29 +41,87 @@ type MyAvatarProps = {
     height: string;
 };
 
+type AuthInputProps = {
+    label: string;
+    name: string;
+    type: string;
+    placeholder: string;
+    Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    isPassword?: boolean;
+};
+
+type AuthLinkSwitcherTypes = {
+    text: string;
+    url: string;
+    anchor: string;
+};
+
+type CoolDownButtonProps = {
+    text: string;
+    onSubmit: () => void;
+    bgColor?: string;
+    hoverBgColor?: string;
+    textColor?: string;
+    className?: string;
+};
+
+type SingOutProps = {
+    handleLogout: () => void;
+};
+
+type SocialLinkProps = {
+    name: string;
+    link: string;
+};
+
+type AvatarUploaderProps = {
+    currentAvatar: string | null;
+    setProfileData: (data: ProfileData | ((prevData: ProfileData) => ProfileData)) => void;
+};
+
+type ProfileFormProps = {
+    profileData: ProfileData;
+    setProfileData: React.Dispatch<React.SetStateAction<ProfileData>>;
+    onSaveProfile: (data: ProfileData) => void;
+    loading: boolean;
+};
+
+type LoginFromData = {
+    email: string;
+    password: string;
+};
+
+type RegisterFormData = {
+    nickname: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+};
 /* --------------- Pokemon --------------- */
-export interface TimerDecrementProps {
+interface TimerDecrementProps {
     duration: number;
     onExpire: () => void;
 }
 
-export interface PokemonInputProps {
+interface PokemonInputProps {
     nameLength: number;
     onSubmit: (input: string) => void;
 }
 
-export interface PokemonData {
+interface PokemonData {
     id: number;
     name: string;
     image: string;
 }
 
-export interface GameStats {
+interface GameStats {
     guesses: { pokemon: PokemonData; correct: boolean }[];
 }
 
 /* --------------- Ranking --------------- */
-export interface Score {
+interface Score {
     _id: string;
     user_id: {
         _id: string;
@@ -80,12 +138,12 @@ export interface Score {
     updatedAt: string;
 }
 
-export interface Game {
+interface Game {
     gameId: string;
     gameName: string;
 }
 
-export interface PaginationInfo {
+interface PaginationInfo {
     currentPage: number;
     totalPages: number;
     totalItems: number;
@@ -98,6 +156,16 @@ type TimerIncrementProps = {
     resetSignal: number; // Incremented to trigger a reset in the Timer
     setTime: React.Dispatch<React.SetStateAction<number>>; // Function to pass time back to Game component
 };
+
+type GameItemProps = {
+    link: string;
+    name: string;
+    thumbnail: string;
+};
+
+type Player = 'X' | 'O' | null;
+type Board = Player[];
+type WinnerResult = { player: Player; combination: number[] } | null;
 
 /* --------------- Scores --------------- */
 type ScoreData = {

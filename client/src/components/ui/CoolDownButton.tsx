@@ -1,14 +1,5 @@
 import { useState } from 'react';
 
-type CoolDownButtonProps = {
-    text: string;
-    onSubmit: () => void;
-    bgColor?: string;
-    hoverBgColor?: string;
-    textColor?: string;
-    className?: string;
-};
-
 const CoolDownButton: React.FC<CoolDownButtonProps> = ({
     onSubmit,
     text,
