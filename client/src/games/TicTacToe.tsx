@@ -54,7 +54,7 @@ const Game = () => {
             [2, 4, 6], // Diagonal top-right to bottom-left
         ];
 
-        for (let combination of winningCombinations) {
+        for (const combination of winningCombinations) {
             const [a, b, c] = combination;
             if (board[a] && board[a] === board[b] && board[a] === board[c]) {
                 return { player: board[a], combination };

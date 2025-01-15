@@ -13,7 +13,7 @@ const BackButton: React.FC<{ url?: string }> = ({ url }) => {
         }
     };
     const handleBack = () => {
-        url ? navigate(url) : automaticNavigate();
+        return url ? navigate(url) : automaticNavigate();
     };
 
     return (
