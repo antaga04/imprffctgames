@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
+import { ProfileData } from '@/types/types';
 
 type ProfileFormProps = {
-    profileData: any;
-    setProfileData: (data: any) => void;
-    onSaveProfile: (data: any) => void;
+    profileData: ProfileData;
+    setProfileData: React.Dispatch<React.SetStateAction<ProfileData>>;
+    onSaveProfile: (data: ProfileData) => void;
     loading: boolean;
 };
 
@@ -14,10 +15,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData, 
 
     useEffect(() => {
         if (user) {
-            setProfileData({
-                nickname: user.nickname,
+            setProfileData((prev) => ({
+                ...prev,
+                nickname: user.nickname || '',
                 email: user.email,
-            });
+            }));
         }
     }, [user, setProfileData]);
 
@@ -33,11 +35,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData, 
     };
 
     const handleCancel = () => {
-        setProfileData({
-            nickname: user.nickname,
-            email: user.email,
+        setProfileData((prev) => ({
+            ...prev,
+            nickname: user.nickname || '',
+            email: user.email || '',
             password: '',
-        });
+        }));
         setIsEditing(false);
     };
 

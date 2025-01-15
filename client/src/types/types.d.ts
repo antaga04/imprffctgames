@@ -20,7 +20,7 @@ export interface AuthUser {
     _id: string;
     nickname: string;
     email: string;
-    scores: any[];
+    scores: ScoreDataGeneric[];
     rol: string;
     __v: number;
     avatar: string;
@@ -32,6 +32,13 @@ export type ProfileData = {
     email: string;
     password: string;
     avatar: string;
+};
+
+type MyAvatarProps = {
+    url: string;
+    alt: string;
+    width: string;
+    height: string;
 };
 
 /* --------------- Pokemon --------------- */
@@ -68,12 +75,7 @@ export interface Score {
         name: string;
         cover: string;
     };
-    scoreData: {
-        correct?: number;
-        total?: number;
-        moves?: number;
-        time?: number;
-    };
+    scoreData: { [key: string]: number | undefined };
     createdAt: string;
     updatedAt: string;
 }
@@ -95,4 +97,16 @@ type TimerIncrementProps = {
     gameStarted: boolean;
     resetSignal: number; // Incremented to trigger a reset in the Timer
     setTime: React.Dispatch<React.SetStateAction<number>>; // Function to pass time back to Game component
+};
+
+/* --------------- Scores --------------- */
+type ScoreData = {
+    correct?: number;
+    total?: number;
+    moves?: number;
+    time?: number;
+};
+
+type ScoreDataGeneric = {
+    [key: string]: number | undefined;
 };

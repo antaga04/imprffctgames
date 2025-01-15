@@ -3,7 +3,8 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { ProfileData } from '@/types/types';
-import { Camera, User } from 'lucide-react';
+import { Camera } from 'lucide-react';
+import MyAvatar from './ui/MyAvatar';
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL + '/users/avatar/';
 
@@ -25,11 +26,21 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfi
         }
     }, [currentAvatar]);
 
+    useEffect(() => {
+        return () => {
+            if (avatarPreview) {
+                URL.revokeObjectURL(avatarPreview); // Cleanup blob URL
+            }
+        };
+    }, [avatarPreview]);
+
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
+
         if (!file) return;
         setAvatar(file);
         setAvatarPreview(URL.createObjectURL(file));
+        e.target.value = '';
     };
 
     const handleSaveAvatar = async () => {
@@ -81,12 +92,12 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfi
 
     return (
         <div className="relative flex flex-col items-center">
-            <div className="relative w-fit">
+            <div className="relative w-fit flex">
                 {avatarPreview ? (
-                    <img src={avatarPreview} alt="User Avatar" className="w-32 h-32 rounded-full object-cover" />
+                    <MyAvatar url={avatarPreview} alt="User Avatar" width="w-32" height="h-32" />
                 ) : (
-                    <span className="w-32 h-32 rounded-full text-gray-400 bg-slate-800 flex items-center justify-center fill-white">
-                        <User />
+                    <span className="w-32 h-32 rounded-full text-white text-xl bg-[var(--blue)] flex items-center justify-center">
+                        {user.nickname.slice(0, 2).toUpperCase()}
                     </span>
                 )}
                 <label

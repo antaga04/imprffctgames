@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
     Pagination,
     PaginationContent,
@@ -13,6 +12,7 @@ import {
 import axios from 'axios';
 import BackButton from '@/components/ui/BackButton';
 import { Game, PaginationInfo, Score } from '@/types/types';
+import MyAvatar from '@/components/ui/MyAvatar';
 
 const games: Game[] = [
     { gameId: import.meta.env.VITE_POKEMON_ID, gameName: 'Pokemon' },
@@ -20,7 +20,10 @@ const games: Game[] = [
 ];
 
 const Ranking: React.FC = () => {
-    const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+    const storageGameId = localStorage.getItem('rankingGame');
+    const defaultGame = games.find((game) => game.gameName === storageGameId) || games[0];
+
+    const [selectedGame, setSelectedGame] = useState<Game>(defaultGame);
     const [scores, setScores] = useState<Score[]>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1,
@@ -55,6 +58,7 @@ const Ranking: React.FC = () => {
         const game = games.find((g) => g.gameId === gameId);
         if (game) {
             setSelectedGame(game);
+            localStorage.setItem('rankingGame', game.gameName);
         }
     };
 
@@ -118,15 +122,20 @@ const Ranking: React.FC = () => {
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center whitespace-nowrap">
-                                                    <Avatar className="w-8 h-8 mr-2">
-                                                        <AvatarImage
-                                                            src={score.user_id.avatar}
-                                                            alt={score.user_id.nickname}
-                                                        />
-                                                        <AvatarFallback>
-                                                            {score.user_id.nickname.slice(0, 2).toUpperCase()}
-                                                        </AvatarFallback>
-                                                    </Avatar>
+                                                    <div className="mr-2">
+                                                        {score.user_id.avatar ? (
+                                                            <MyAvatar
+                                                                url={score.user_id.avatar}
+                                                                alt="User Avatar"
+                                                                width="w-8"
+                                                                height="h-8"
+                                                            />
+                                                        ) : (
+                                                            <span className="w-8 h-8 rounded-full text-white bg-[var(--blue)] flex items-center justify-center">
+                                                                {score.user_id.nickname.slice(0, 2).toUpperCase()}
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     {score.user_id.nickname}
                                                 </div>
                                             </TableCell>
