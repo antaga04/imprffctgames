@@ -82,7 +82,7 @@ export const updateUserAvatar = async (req, res) => {
     }
 };
 
-export const updateUser = async (req, res) => {
+export const updateUserAccount = async (req, res) => {
     try {
         const { id } = req.user;
         const { nickname, email, password } = req.body;
@@ -143,7 +143,7 @@ export const getUser = async (req, res) => {
         const { id } = req.user;
 
         const user = await User.findById(id)
-            .select('-password')
+            .select('-password -rol')
             .populate({
                 path: 'scores',
                 populate: {
@@ -159,5 +159,46 @@ export const getUser = async (req, res) => {
         res.status(200).json({ data: user });
     } catch (error) {
         res.status(400).json({ error: 'Error fetching user details' });
+    }
+};
+
+export const updateUserPassword = async (req, res) => {
+    try {
+        const { id } = req.user;
+        const { password, newPassword } = req.body;
+
+        if (!password) {
+            return res.status(400).json({ error: 'No current password provided' });
+        }
+
+        if (!newPassword) {
+            return res.status(400).json({ error: 'No password provided' });
+        }
+
+        const oldUser = await User.findById(id);
+        if (!oldUser) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const validPassword = await verifyPassword(password, oldUser.password);
+        if (!validPassword) {
+            return res.status(401).json({ error: 'Incorrect password' });
+        }
+
+        const passwordValidation = validatePassword(newPassword);
+        if (!passwordValidation.valid) {
+            return res.status(400).json({ error: passwordValidation.message });
+        }
+
+        // Hash the new password
+        const hashedPassword = await hashPassword(newPassword);
+
+        // Update the user's password
+        const updatedUser = await User.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
+
+        return res.status(200).json({ data: updatedUser });
+    } catch (error) {
+        console.error('Error updating password:', error);
+        return res.status(500).json({ error: 'An unexpected error occurred while updating the password.' });
     }
 };
