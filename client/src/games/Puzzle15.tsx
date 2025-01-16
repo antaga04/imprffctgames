@@ -202,7 +202,7 @@ const Game = () => {
                                   ? 'bg-green-200 hover:bg-green-300'
                                   : 'bg-gray-100 hover:bg-gray-200'
                         } ${canMoveTile(index) ? 'cursor-pointer' : 'cursor-not-allowed'}`}
-                        disabled={tile === EMPTY_INDEX || !canMoveTile(index)}
+                        disabled={tile === EMPTY_INDEX || !canMoveTile(index) || isSolved()}
                     >
                         {tile === EMPTY_INDEX ? '' : tile + 1}
                     </button>
