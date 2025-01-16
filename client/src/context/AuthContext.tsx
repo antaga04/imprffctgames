@@ -33,9 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
                 if (decodedToken.exp < currentTime) {
                     toast.warning('Your session has expired. Please log in again.');
-                    localStorage.removeItem('jwt');
-                    localStorage.removeItem('user');
-                    setAuthState({ isAuthenticated: false, user: null, loading: false });
+                    clearSession();
                     return;
                 }
 
@@ -48,14 +46,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             } catch (error) {
                 console.error('Failed to parse token or user data:', error);
                 toast.error('Session data is invalid. Please log in again.');
-                localStorage.removeItem('jwt');
-                localStorage.removeItem('user');
-                setAuthState({ isAuthenticated: false, user: null, loading: false });
+                clearSession();
             }
         };
 
         initializeAuth();
     }, []);
+
+    const clearSession = () => {
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('user');
+        setAuthState({ isAuthenticated: false, user: null, loading: false });
+    };
 
     const login = async (email: string, password: string) => {
         try {
@@ -74,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 loading: false,
             });
             navigate('/');
-        } catch (error) {
+        } catch (error: unknown) {
             console.error('Login failed:', error);
             throw error;
         }

@@ -30,8 +30,10 @@ interface AuthUser {
 type ProfileData = {
     nickname: string;
     email: string;
-    password: string;
+    currentPassword: string;
+    newPassword: string;
     avatar: string;
+    scores: Score[];
 };
 
 type MyAvatarProps = {
@@ -50,6 +52,7 @@ type AuthInputProps = {
     value: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     isPassword?: boolean;
+    disabled?: boolean;
 };
 
 type AuthLinkSwitcherTypes = {
@@ -78,14 +81,13 @@ type SocialLinkProps = {
 
 type AvatarUploaderProps = {
     currentAvatar: string | null;
+    profileData: ProfileData;
     setProfileData: (data: ProfileData | ((prevData: ProfileData) => ProfileData)) => void;
 };
 
 type ProfileFormProps = {
     profileData: ProfileData;
     setProfileData: React.Dispatch<React.SetStateAction<ProfileData>>;
-    onSaveProfile: (data: ProfileData) => void;
-    loading: boolean;
 };
 
 type LoginFromData = {
@@ -98,6 +100,31 @@ type RegisterFormData = {
     email: string;
     password: string;
     confirmPassword: string;
+};
+
+type FromTabProps = {
+    inputs: {
+        label: string;
+        name: string;
+        type: string;
+        placeholder: string;
+        Icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    }[];
+    profileData: ProfileData;
+};
+
+type ProfileFields = {
+    nickname: string;
+    email: string;
+    password: string;
+    newPassword: string;
+    confirmPassword: string;
+};
+
+type EditButtonsProps = {
+    handleCancel: () => void;
+    loading: boolean;
+    isEdited: boolean;
 };
 /* --------------- Pokemon --------------- */
 interface TimerDecrementProps {

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-const AuthInput: React.FC<AuthInputProps> = ({ label, name, type, placeholder, Icon, value, onChange }) => {
+const AuthInput: React.FC<AuthInputProps> = ({ label, name, type, placeholder, Icon, value, onChange, disabled }) => {
     const [showPassword, setShowPassword] = useState(false);
 
     const handleTogglePassword = () => {
@@ -19,6 +19,7 @@ const AuthInput: React.FC<AuthInputProps> = ({ label, name, type, placeholder, I
                     name={name}
                     type={type === 'password' && showPassword ? 'text' : type}
                     value={value}
+                    disabled={disabled}
                     onChange={onChange}
                     placeholder={placeholder}
                     className="p-2 pl-10 pr-12 rounded-md border text-sm w-full"

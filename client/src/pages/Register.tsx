@@ -56,7 +56,7 @@ const RegisterForm = () => {
 
     return (
         <form onSubmit={handleSubmit} id="register-form" className="flex flex-col gap-4">
-            {REGISTER_INPUTS.map(({ label, name, type, placeholder, icon: Icon }) => (
+            {REGISTER_INPUTS.map(({ label, name, type, placeholder, Icon }) => (
                 <AuthInput
                     key={name}
                     label={label}

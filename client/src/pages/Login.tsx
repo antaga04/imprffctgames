@@ -46,7 +46,7 @@ const LoginFrom = () => {
 
     return (
         <form onSubmit={handleSubmit} id="login-form" className="flex flex-col gap-4">
-            {LOGIN_INPUTS.map(({ label, name, type, placeholder, icon: Icon }) => (
+            {LOGIN_INPUTS.map(({ label, name, type, placeholder, Icon }) => (
                 <AuthInput
                     key={name}
                     label={label}
