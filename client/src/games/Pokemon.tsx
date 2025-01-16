@@ -65,7 +65,7 @@ const Game: React.FC = () => {
     const [gameOver, setGameOver] = useState<boolean>(false);
     const [playAgainKey, setPlayAgainKey] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
-    const { user } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [timeLeft, setTimeLeft] = useState<number>(60);
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -144,7 +144,7 @@ const Game: React.FC = () => {
         const scoreData = { correct, total };
         const gameId = import.meta.env.VITE_POKEMON_ID;
 
-        if (user) {
+        if (isAuthenticated) {
             const loadingToastId = toast.loading('Uploading score...');
 
             try {

@@ -3,7 +3,7 @@ import SocialLink from '@/components/ui/SocialLink';
 import { useAuth } from '@/context/AuthContext';
 
 const Footer = () => {
-    const { user } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     return (
         <footer className="md:w-full flex items-center justify-between text-[#f2f2f2] py-4 md:py-6 border-t border-[#f2f2f21a]">
@@ -18,7 +18,7 @@ const Footer = () => {
                             >
                                 Ranking
                             </Link>
-                            {user ? (
+                            {isAuthenticated ? (
                                 <Link
                                     to="/profile"
                                     className="w-full flex items-center justify-between gap-2 group md:px-3 md:py-1 rounded-lg md:bg-[#f2f2f20f] md:hover:bg-[#f2f2f233] md:border md:border-[#f2f2f20a] md:hover:border-[#f2f2f21a] md:backdrop-blur-md md:transition-all md:duration-400 ease-custom-ease-1"

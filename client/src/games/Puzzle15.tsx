@@ -48,7 +48,7 @@ const Game = () => {
     const [showConfetti, setShowConfetti] = useState(false);
     const [resetSignal, setResetSignal] = useState(0);
     const [time, setTime] = useState(0);
-    const { user } = useAuth();
+    const { isAuthenticated } = useAuth();
 
     useEffect(() => {
         shuffleBoard();
@@ -94,7 +94,7 @@ const Game = () => {
         const scoreData = { moves, time };
         const gameId = import.meta.env.VITE_PUZZLE15_ID;
 
-        if (user) {
+        if (isAuthenticated) {
             const loadingToastId = toast.loading('Uploading score...');
 
             try {

@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import { useAuth } from '@/context/AuthContext';
 import { Camera } from 'lucide-react';
 import MyAvatar from './ui/MyAvatar';
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL + '/users/avatar/';
 
-const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfileData }) => {
-    const { user, updateUser } = useAuth();
+const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileData, setProfileData }) => {
     const [avatarPreview, setAvatarPreview] = useState(currentAvatar || null);
     const [avatar, setAvatar] = useState<File | null>(null);
 
@@ -56,8 +54,6 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfi
             });
 
             const updatedAvatar = response.data.data;
-            const updatedUser = { ...user, avatar: updatedAvatar };
-            updateUser(updatedUser);
             setProfileData((prevData: ProfileData) => ({
                 ...prevData,
                 avatar: updatedAvatar,
@@ -91,7 +87,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, setProfi
                     <MyAvatar url={avatarPreview} alt="User Avatar" width="w-32" height="h-32" />
                 ) : (
                     <span className="w-32 h-32 rounded-full text-white text-xl bg-[var(--blue)] flex items-center justify-center">
-                        {user.nickname.slice(0, 2).toUpperCase()}
+                        {profileData.nickname.slice(0, 2).toUpperCase()}
                     </span>
                 )}
                 <label

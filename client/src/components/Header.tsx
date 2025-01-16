@@ -4,7 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Medal, User } from 'lucide-react';
 
 const Header = () => {
-    const { user, logout } = useAuth();
+    const { isAuthenticated, logout } = useAuth();
 
     return (
         <header className="w-full flex flex-col items-center justify-between text-white text-center z-50 md:flex-row pt-4">
@@ -34,7 +34,7 @@ const Header = () => {
                     <Medal />
                     <span className="">Ranking</span>
                 </NavLink>
-                {user ? (
+                {isAuthenticated ? (
                     <>
                         <NavLink
                             to="/profile"
