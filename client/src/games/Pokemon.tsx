@@ -196,7 +196,7 @@ const Game: React.FC = () => {
 
     return (
         <section className="flex flex-col justify-center items-center">
-            {showConfetti && <Confetti recycle={false} numberOfPieces={200} gravity={0.25} />}
+            {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
             {gameOver ? (
                 <>
                     <div className="inline-flex items-center justify-between min-w-[300px] h-12 gap-4 mb-3">

@@ -74,7 +74,7 @@ const Game = () => {
 
     return (
         <>
-            {showConfetti && <Confetti recycle={false} numberOfPieces={200} gravity={0.25} />}
+            {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
 
             <p className="text-lg mb-4 text-slate-300">{status}</p>
             <div

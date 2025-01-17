@@ -222,7 +222,7 @@ const Game: React.FC = () => {
 
     return (
         <>
-            {showConfetti && <Confetti recycle={false} numberOfPieces={200} gravity={0.25} />}
+            {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
             <p className="mb-4 text-lg text-slate-300 flex justify-between gap-4">
                 <Timer
                     isRunning={isRunning}
