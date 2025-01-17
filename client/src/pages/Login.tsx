@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { toast } from 'sonner';
 import ButtonFrom from '@/components/ui/ButtonForm';
@@ -14,6 +14,13 @@ const LoginFrom = () => {
         email: '',
         password: '',
     });
+    const focusRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (focusRef.current) {
+            focusRef.current.focus();
+        }
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -46,7 +53,7 @@ const LoginFrom = () => {
 
     return (
         <form onSubmit={handleSubmit} id="login-form" className="flex flex-col gap-4">
-            {LOGIN_INPUTS.map(({ label, name, type, placeholder, Icon }) => (
+            {LOGIN_INPUTS.map(({ label, name, type, placeholder, Icon }, idx) => (
                 <AuthInput
                     key={name}
                     label={label}
@@ -56,6 +63,7 @@ const LoginFrom = () => {
                     Icon={Icon}
                     value={formData[name as keyof typeof formData]}
                     onChange={handleInputChange}
+                    focusOnMount={idx === 0 ? focusRef : undefined}
                 />
             ))}
 

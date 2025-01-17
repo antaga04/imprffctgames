@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import SigninLogo from '@/components/ui/SigninLogo';
 import BackButton from '@/components/ui/BackButton';
 import ButtonForm from '@/components/ui/ButtonForm';
@@ -16,6 +16,13 @@ const RegisterForm = () => {
         confirmPassword: '',
     });
     const { register, login } = useAuth();
+    const focusRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (focusRef.current) {
+            focusRef.current.focus();
+        }
+    }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -56,7 +63,7 @@ const RegisterForm = () => {
 
     return (
         <form onSubmit={handleSubmit} id="register-form" className="flex flex-col gap-4">
-            {REGISTER_INPUTS.map(({ label, name, type, placeholder, Icon }) => (
+            {REGISTER_INPUTS.map(({ label, name, type, placeholder, Icon }, idx) => (
                 <AuthInput
                     key={name}
                     label={label}
@@ -66,6 +73,7 @@ const RegisterForm = () => {
                     Icon={Icon}
                     value={formData[name as keyof typeof formData]}
                     onChange={handleInputChange}
+                    focusOnMount={idx === 0 ? focusRef : undefined}
                 />
             ))}
 
