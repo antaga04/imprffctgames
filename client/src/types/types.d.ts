@@ -53,6 +53,7 @@ type AuthInputProps = {
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
     isPassword?: boolean;
     disabled?: boolean;
+    focusOnMount?: React.RefObject<HTMLInputElement>;
 };
 
 type AuthLinkSwitcherTypes = {
@@ -144,7 +145,11 @@ interface PokemonData {
 }
 
 interface GameStats {
-    guesses: { pokemon: PokemonData; correct: boolean }[];
+    guesses: {
+        pokemon: PokemonData;
+        correct: boolean;
+        guess: string;
+    }[];
 }
 
 /* --------------- Ranking --------------- */
@@ -177,11 +182,23 @@ interface PaginationInfo {
 }
 
 /* --------------- Games --------------- */
+type GameWrapperProps = {
+    children: React.ReactNode;
+    title: string;
+    height?: string;
+    instructions?: string;
+};
+
 type TimerIncrementProps = {
     isRunning: boolean;
     gameStarted: boolean;
     resetSignal: number; // Incremented to trigger a reset in the Timer
-    setTime: React.Dispatch<React.SetStateAction<number>>; // Function to pass time back to Game component
+    onGameFinish: (time: number) => void; // Callback to pass time back to Game component
+};
+
+type DecrementTimerProps = {
+    onGameFinished: () => void;
+    resetSignal: number;
 };
 
 type GameItemProps = {
