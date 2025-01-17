@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Confetti from 'react-confetti';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import GameWrapper from '@/components/layouts/GameWrapper';
@@ -8,6 +8,35 @@ import { toast } from 'sonner';
 import CoolDownButton from '@/components/ui/CoolDownButton';
 
 const usedIds = new Set<number>(); // Set to track used IDs to avoid duplicates
+
+const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal }) => {
+    const INITIAL_TIME = 60;
+    const [timeLeft, setTimeLeft] = useState<number>(INITIAL_TIME);
+
+    useEffect(() => {
+        setTimeLeft(INITIAL_TIME);
+
+        const interval = setInterval(() => {
+            setTimeLeft((prevTime) => Math.max(prevTime - 1, 0));
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [resetSignal]);
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            onGameFinished();
+        }
+    }, [timeLeft, onGameFinished]);
+
+    const timeColorClass = useMemo(() => (timeLeft < 11 ? 'text-red-600' : 'text-white'), [timeLeft]);
+
+    return (
+        <p className="font-mono min-w-[6ch] text-right">
+            Time: <span className={`font-mono ${timeColorClass}`}>{String(timeLeft).padStart(2, '0')}s</span>
+        </p>
+    );
+};
 
 // Input Component for Pokémon Name
 const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => {
@@ -66,8 +95,6 @@ const Game: React.FC = () => {
     const [playAgainKey, setPlayAgainKey] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
     const { isAuthenticated } = useAuth();
-    const [timeLeft, setTimeLeft] = useState<number>(60);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     const pokemonCache = useRef<Record<number, PokemonData>>({});
 
@@ -104,15 +131,6 @@ const Game: React.FC = () => {
     };
 
     useEffect(() => {
-        if (timeLeft <= 0) {
-            handleGameOver();
-            return;
-        }
-        intervalRef.current = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-        return () => clearInterval(intervalRef.current!);
-    }, [timeLeft]);
-
-    useEffect(() => {
         fetchPokemon();
     }, [playAgainKey]);
 
@@ -127,6 +145,7 @@ const Game: React.FC = () => {
                 {
                     pokemon: pokemonData,
                     correct: isCorrect,
+                    guess: guess,
                 },
             ],
         }));
@@ -169,7 +188,6 @@ const Game: React.FC = () => {
     };
 
     const handlePlayAgain = () => {
-        setTimeLeft(60);
         setGameStats({ guesses: [] });
         setShowConfetti(false);
         setGameOver(false);
@@ -178,7 +196,7 @@ const Game: React.FC = () => {
 
     return (
         <section className="flex flex-col justify-center items-center">
-            {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
+            {showConfetti && <Confetti recycle={false} numberOfPieces={200} gravity={0.25} />}
             {gameOver ? (
                 <>
                     <div className="inline-flex items-center justify-between min-w-[300px] h-12 gap-4 mb-3">
@@ -198,8 +216,9 @@ const Game: React.FC = () => {
                                 g.correct ? (
                                     <div
                                         key={idx}
-                                        className="flex flex-col items-center border border-green-500 p-2 rounded"
+                                        className="flex flex-col items-center border border-green-500 p-2 rounded relative"
                                     >
+                                        <span className="absolute top-0 right-1 text-white text-sm">{idx + 1}</span>
                                         <img
                                             src={g.pokemon.image}
                                             alt={g.pokemon.name}
@@ -210,14 +229,16 @@ const Game: React.FC = () => {
                                 ) : (
                                     <div
                                         key={idx}
-                                        className="flex flex-col items-center border border-red-500 p-2 rounded"
+                                        className="flex flex-col items-center border border-red-500 p-2 rounded relative"
                                     >
+                                        <span className="absolute top-0 right-1 text-white text-sm">{idx + 1}</span>
                                         <img
                                             src={g.pokemon.image}
                                             alt={g.pokemon.name}
                                             className="w-20 h-20 object-contain"
                                         />
-                                        <span className="text-red-500 text-base mt-2">{g.pokemon.name}</span>
+                                        <span className="text-green-500 text-base mt-2">{g.pokemon.name}</span>
+                                        <span className="text-red-500 text-base mt-2">{g.guess}</span>
                                     </div>
                                 ),
                             )}
@@ -239,12 +260,7 @@ const Game: React.FC = () => {
                     <div className="inline-flex items-center justify-between h-12 gap-4 mb-3">
                         <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
                         <div className="flex flex-col text-white">
-                            <p className="font-mono min-w-[6ch] text-right">
-                                Time:{' '}
-                                <span className={`font-mono ${timeLeft < 11 ? 'text-red-600' : 'text-white'}`}>
-                                    {String(timeLeft).padStart(2, '0')}s
-                                </span>
-                            </p>
+                            <DecrementTimer onGameFinished={handleGameOver} resetSignal={playAgainKey} />
 
                             <div className="flex justify-between gap-4 items-center">
                                 <div
@@ -298,7 +314,11 @@ const PokemonGame: React.FC = () => {
     );
 
     return (
-        <GameWrapper title="Who's that Pokémon?" height="479px">
+        <GameWrapper
+            title="Who's that Pokémon?"
+            height="479px"
+            instructions="Guess as many Pokémon as you can in 15 seconds."
+        >
             <Game />
         </GameWrapper>
     );
