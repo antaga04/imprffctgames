@@ -26,10 +26,10 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-            <nav className="flex gap-2 w-full md:justify-end">
+            <nav className="flex gap-1 md:gap-2 w-full md:justify-end">
                 <NavLink
                     to="/ranking"
-                    className="w-full md:w-fit px-4 py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
+                    className="w-full md:w-fit px-2 py-1 md:px-4 md:py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
                 >
                     <Medal />
                     <span className="">Ranking</span>
