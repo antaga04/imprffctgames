@@ -74,13 +74,13 @@ const Game = () => {
 
     return (
         <>
-            {showConfetti && <Confetti recycle={false} numberOfPieces={300} />}
+            {showConfetti && <Confetti recycle={false} numberOfPieces={200} gravity={0.25} />}
 
             <p className="text-lg mb-4 text-slate-300">{status}</p>
             <div
                 role="grid"
                 aria-label="Tic Tac Toe game board"
-                className="grid grid-cols-3 gap-2 w-fit z-10 p-4 bg-gray-300 rounded-lg shadow-lg text-black"
+                className="grid grid-cols-3 gap-2 w-fit p-4 bg-gray-300 rounded-lg shadow-lg text-black"
             >
                 {board.map((value, index) => (
                     <div
