@@ -2,13 +2,13 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import Confetti from 'react-confetti';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import GameWrapper from '@/components/layouts/GameWrapper';
-import { uploadScore } from '@/services/uploadScore';
-import { useAuth } from '@/context/AuthContext';
-import { toast } from 'sonner';
 import CoolDownButton from '@/components/ui/CoolDownButton';
+import { useGameCompletion } from '@/hooks/useCompletion';
+import { useTempScore } from '@/hooks/useTempScore';
 
 const usedIds = new Set<number>(); // Set to track used IDs to avoid duplicates
-const INITIAL_TIME = 60;
+const INITIAL_TIME = 30;
+const GAME_ID = import.meta.env.VITE_POKEMON_ID;
 
 const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal }) => {
     const [timeLeft, setTimeLeft] = useState<number>(INITIAL_TIME);
@@ -94,7 +94,10 @@ const Game: React.FC = () => {
     const [gameOver, setGameOver] = useState<boolean>(false);
     const [playAgainKey, setPlayAgainKey] = useState<number>(0);
     const [loading, setLoading] = useState<boolean>(false);
-    const { isAuthenticated } = useAuth();
+
+    const { setTempScore } = useTempScore();
+    const handleCompletion = useGameCompletion(GAME_ID);
+    const hasHandledCompletion = useRef(false);
 
     const pokemonCache = useRef<Record<number, PokemonData>>({});
 
@@ -154,6 +157,9 @@ const Game: React.FC = () => {
     };
 
     const handleGameOver = async () => {
+        if (hasHandledCompletion.current) return; // Prevent re-execution
+        hasHandledCompletion.current = true;
+
         setGameOver(true);
         setShowConfetti(true);
 
@@ -161,30 +167,10 @@ const Game: React.FC = () => {
         const total = gameStats.guesses.length;
 
         const scoreData = { correct, total };
-        const gameId = import.meta.env.VITE_POKEMON_ID;
 
-        if (isAuthenticated) {
-            const loadingToastId = toast.loading('Uploading score...');
+        setTempScore({ scoreData, gameId: GAME_ID });
 
-            try {
-                const response = await uploadScore(scoreData, gameId);
-                const { message, data } = response.data;
-
-                toast.dismiss(loadingToastId);
-
-                if (response.status === 200) {
-                    toast.warning(`${message}. Previous score: ${data.scoreData.correct}/${data.scoreData.total}`);
-                } else if (response.status === 201) {
-                    toast.success(`${message}. New score: Moves: ${data.scoreData.correct}/${data.scoreData.total}`);
-                } else {
-                    toast.error(response.data.error);
-                }
-            } catch (error) {
-                console.error('Error uploading score: ', error);
-                toast.dismiss(loadingToastId);
-                toast.error('Error uploading score.');
-            }
-        }
+        handleCompletion(scoreData);
     };
 
     const handlePlayAgain = () => {
@@ -192,6 +178,7 @@ const Game: React.FC = () => {
         setShowConfetti(false);
         setGameOver(false);
         setPlayAgainKey((prev) => prev + 1);
+        hasHandledCompletion.current = false;
     };
 
     return (
