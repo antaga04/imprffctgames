@@ -32,7 +32,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
                     disabled={disabled}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="p-2 pl-10 pr-12 rounded-md border text-sm w-full"
+                    className={`${disabled && 'cursor-not-allowed'} p-2 pl-10 pr-12 rounded-md border text-sm w-full`}
                     ref={focusOnMount}
                 />
                 <Icon className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />

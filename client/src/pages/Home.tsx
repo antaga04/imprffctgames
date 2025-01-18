@@ -4,7 +4,7 @@ import GameItem from '@/components/ui/GameItem';
 import Footer from '@/components/Footer';
 import { toast } from 'sonner';
 import { useEffect } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 const Home = () => {
     const { isAuthenticated } = useAuth();

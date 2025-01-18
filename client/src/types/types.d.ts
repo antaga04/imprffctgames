@@ -1,7 +1,6 @@
 /* --------------- Auth --------------- */
 interface AuthState {
     isAuthenticated: boolean;
-    user: User | null;
     loading: boolean;
 }
 
@@ -9,7 +8,6 @@ interface AuthContextProps extends AuthState {
     login: (email: string, password: string) => Promise<void>;
     register: (nickname: string, email: string, password: string) => Promise<void>;
     logout: () => void;
-    updateUser: (user: User) => void;
 }
 
 interface DecodedToken {
@@ -21,7 +19,7 @@ interface AuthUser {
     nickname: string;
     email: string;
     scores: ScoreDataGeneric[];
-    rol: string;
+    role: string;
     __v: number;
     avatar: string;
 }
@@ -126,6 +124,11 @@ type EditButtonsProps = {
     handleCancel: () => void;
     loading: boolean;
     isEdited: boolean;
+};
+
+type AccountFields = {
+    nickname: string;
+    email: string;
 };
 /* --------------- Pokemon --------------- */
 interface TimerDecrementProps {

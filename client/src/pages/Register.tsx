@@ -4,9 +4,10 @@ import BackButton from '@/components/ui/BackButton';
 import ButtonForm from '@/components/ui/ButtonForm';
 import AuthLinkSwitcher from '@/components/ui/AuthLinkSwitcher';
 import AuthInput from '@/components/ui/AuthInput';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { REGISTER_INPUTS } from '@/lib/constants';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState<RegisterFormData>({
@@ -15,7 +16,8 @@ const RegisterForm = () => {
         password: '',
         confirmPassword: '',
     });
-    const { register, login } = useAuth();
+    const { register } = useAuth();
+    const navigate = useNavigate();
     const focusRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -49,10 +51,10 @@ const RegisterForm = () => {
 
         try {
             toast.promise(
-                register(nickname, email, password).then(() => login(email, password)), // Corrected order of arguments
+                register(nickname, email, password).then(() => navigate('/login')),
                 {
                     loading: 'Registering...',
-                    success: 'Registration successful!',
+                    success: 'Confirmation email has been resent. Please check your inbox.',
                     error: (error) => error.response?.data?.error || 'An error occurred during registration.',
                 },
             );

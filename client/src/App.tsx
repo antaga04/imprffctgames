@@ -7,8 +7,8 @@ import NotFound from '@/pages/NotFound';
 import Profile from '@/pages/Profile';
 import Ranking from '@/pages/Ranking';
 import Register from '@/pages/Register';
-import { AuthProvider } from '@/context/AuthContext';
-import PrivateRoute from './components/PrivateRoute';
+import { AuthProvider } from '@/contexts/AuthProvider';
+import PrivateRoute from '@/components/PrivateRoute';
 
 function App() {
     console.log(`

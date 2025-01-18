@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import ButtonFrom from '@/components/ui/ButtonForm';
 import AuthInput from '@/components/ui/AuthInput';

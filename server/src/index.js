@@ -5,10 +5,13 @@ import cors from 'cors';
 import rateLimit from 'express-rate-limit';
 import { connectToDatabase } from './config/db.js';
 import mainRouter from './api/routes/index.js';
+import cookieParser from 'cookie-parser';
 
 connectToDatabase();
 
 const app = express();
+
+app.use(cookieParser());
 
 app.use(
     cors({

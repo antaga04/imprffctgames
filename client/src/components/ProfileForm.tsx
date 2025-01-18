@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { updateAccount, updatePassword } from '@/services/userServices';
 import axios from 'axios';
 import { ACCOUNT_INPUTS, PASSWORD_INPUTS } from '@/lib/constants';
+import { useAuth } from '@/hooks/useAuth';
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData }) => {
     return (
@@ -26,7 +27,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData }
 };
 
 const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData }) => {
-    const [fields, setFields] = useState({ nickname: '', email: '' });
+    const [fields, setFields] = useState<AccountFields>({ nickname: '', email: '' });
     const [loading, setLoading] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
 
@@ -38,11 +39,9 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
         event.preventDefault();
 
         setLoading(true);
-        const token = localStorage.getItem('jwt');
-        if (!token) return;
 
         try {
-            await updateAccount(fields, token);
+            await updateAccount({ nickname: fields.nickname });
             setProfileData({ ...profileData, ...fields });
             toast.success('Profile updated successfully!');
         } catch (error) {
@@ -69,7 +68,7 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
             {ACCOUNT_INPUTS.map(({ label, name, type, placeholder, Icon }) => (
                 <AuthInput
                     key={name}
@@ -80,7 +79,7 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
                     Icon={Icon}
                     value={fields[name as keyof typeof fields]}
                     onChange={(e) => handleInputChange(e)}
-                    disabled={loading}
+                    disabled={loading || type === 'email'}
                 />
             ))}
             <EditButtons handleCancel={handleCancel} loading={loading} isEdited={isEdited} />
@@ -92,6 +91,7 @@ const PasswordTab: React.FC = () => {
     const [fields, setFields] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
     const [loading, setLoading] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
+    const { logout } = useAuth();
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -102,13 +102,12 @@ const PasswordTab: React.FC = () => {
         }
 
         setLoading(true);
-        const token = localStorage.getItem('jwt');
-        if (!token) return;
 
         try {
-            await updatePassword({ password: fields.currentPassword, newPassword: fields.newPassword }, token);
+            await updatePassword({ password: fields.currentPassword, newPassword: fields.newPassword });
             toast.success('Password updated successfully!');
             setFields({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            logout();
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 const errorMessage = error.response?.data?.error || 'Failed to update password.';
@@ -139,7 +138,7 @@ const PasswordTab: React.FC = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
             {PASSWORD_INPUTS.map(({ label, name, type, placeholder, Icon }) => (
                 <AuthInput
                     key={name}
@@ -160,7 +159,7 @@ const PasswordTab: React.FC = () => {
 
 const EditButtons: React.FC<EditButtonsProps> = ({ handleCancel, loading, isEdited }) => {
     return (
-        <div className="mt-6">
+        <div>
             <button
                 type="submit"
                 className={`px-4 py-2 rounded-md transition-colors ${

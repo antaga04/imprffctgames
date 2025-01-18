@@ -15,15 +15,8 @@ const Profile = () => {
     });
 
     const fetchUser = async () => {
-        const token = localStorage.getItem('jwt');
-
-        if (!token) {
-            console.error('No token found');
-            return;
-        }
-
         try {
-            const response = await fetchUserData(token);
+            const response = await fetchUserData();
             const { data } = response.data;
 
             setProfileData(data);
@@ -33,8 +26,6 @@ const Profile = () => {
     };
 
     useEffect(() => {
-        console.log('useEffect');
-
         fetchUser();
     }, []);
 
