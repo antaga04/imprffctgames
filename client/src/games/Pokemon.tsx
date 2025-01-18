@@ -8,9 +8,9 @@ import { toast } from 'sonner';
 import CoolDownButton from '@/components/ui/CoolDownButton';
 
 const usedIds = new Set<number>(); // Set to track used IDs to avoid duplicates
+const INITIAL_TIME = 60;
 
 const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal }) => {
-    const INITIAL_TIME = 60;
     const [timeLeft, setTimeLeft] = useState<number>(INITIAL_TIME);
 
     useEffect(() => {
@@ -123,7 +123,7 @@ const Game: React.FC = () => {
                 pokemonCache.current[randomId] = newPokemon;
                 setPokemonData(newPokemon);
             } catch (error) {
-                console.error('Error fetching Pokémon data:', error);
+                console.error('Error fetching Pokémon data: ', error);
             }
         }
 
@@ -180,7 +180,7 @@ const Game: React.FC = () => {
                     toast.error(response.data.error);
                 }
             } catch (error) {
-                console.error('Error uploading score:', error);
+                console.error('Error uploading score: ', error);
                 toast.dismiss(loadingToastId);
                 toast.error('Error uploading score.');
             }
@@ -317,7 +317,7 @@ const PokemonGame: React.FC = () => {
         <GameWrapper
             title="Who's that Pokémon?"
             height="479px"
-            instructions="Guess as many Pokémon as you can in 15 seconds."
+            instructions={`Guess as many Pokémon as you can in ${INITIAL_TIME} seconds.`}
         >
             <Game />
         </GameWrapper>

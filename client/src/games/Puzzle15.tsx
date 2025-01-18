@@ -117,7 +117,7 @@ const Game: React.FC = () => {
                     toast.error(response.data.error);
                 }
             } catch (error) {
-                console.error('Error uploading score:', error);
+                console.error('Error uploading score: ', error);
                 toast.dismiss(loadingToastId);
                 toast.error('Error uploading score.');
             }
