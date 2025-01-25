@@ -85,8 +85,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (tempScore) {
                 const { scoreData, gameId } = tempScore;
 
-                console.log(tempScore);
-
                 await handleScoreUpload({
                     scoreData,
                     gameId,
@@ -118,6 +116,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const register = async (nickname: string, email: string, password: string) => {
         try {
             await axios.post(REGISTER_URL, { nickname, email, password });
+            if (tempScore) {
+                const { scoreData, gameId } = tempScore;
+
+                await handleScoreUpload({
+                    scoreData,
+                    gameId,
+                });
+
+                clearTempScore();
+            }
         } catch (error) {
             console.error('Registration failed:', error);
             throw error;
