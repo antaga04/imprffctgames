@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { handleScoreUpload } from '@/lib/scoreHandler';
 import { AxiosError } from 'axios';
 import { useTempScore } from './useTempScore';
+import { encryptData } from '@/lib/encrypt';
 
 export const useGameCompletion = (gameId: string) => {
     const navigate = useNavigate();
@@ -13,8 +14,13 @@ export const useGameCompletion = (gameId: string) => {
     const handleCompletion = async (scoreData: ScoreData) => {
         if (isAuthenticated) {
             try {
-                await handleScoreUpload({
+                const score = encryptData({
                     scoreData,
+                    game_id: gameId,
+                });
+
+                await handleScoreUpload({
+                    score,
                     gameId,
                 });
                 clearTempScore();

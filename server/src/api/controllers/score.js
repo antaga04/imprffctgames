@@ -3,6 +3,7 @@ import Game from '../models/game.js';
 import User from '../models/user.js';
 import { compareScores, validateScoreData, sortScores } from '../../utils/scoreUtils.js';
 import { paginate } from '../../utils/paginationHelper.js';
+import { decryptData } from '../../utils/crypto.js';
 
 export const getAllScores = async (req, res) => {
     try {
@@ -78,7 +79,8 @@ export const getScoresByGameId = async (req, res) => {
 
 export const createScore = async (req, res) => {
     try {
-        const { game_id, scoreData } = req.body;
+        const { score } = req.body;
+        const { scoreData, game_id } = decryptData(score);
         const { id: user_id } = req.user;
 
         if (!user_id || !game_id || !scoreData) {
