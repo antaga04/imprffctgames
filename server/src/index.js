@@ -2,10 +2,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import cors from 'cors';
-import rateLimit from 'express-rate-limit';
 import { connectToDatabase } from './config/db.js';
 import mainRouter from './api/routes/index.js';
 import cookieParser from 'cookie-parser';
+import { generalLimiter } from './utils/rateLimiters.js';
 
 connectToDatabase();
 
@@ -22,14 +22,7 @@ app.use(
     }),
 );
 
-const limiter = rateLimit({
-    windowMs: 3 * 60 * 1000,
-    limit: 50,
-    standardHeaders: false,
-    legacyHeaders: false,
-});
-
-app.use(limiter);
+app.use(generalLimiter);
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
