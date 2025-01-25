@@ -14,7 +14,9 @@ const Header = () => {
                     className="logo flex items-center gap-2 bg-slate-500 md:bg-transparent w-full rounded-lg px-4 mb-2 md:w-fit md:mb-0"
                 >
                     <div className=" flex flex-col p-2 tems-start justify-start">
-                        <h1 className="text-3xl">PuzLynk</h1>
+                        <h1 className="text-3xl">
+                            <span className="error-underline neon-text">imprffct</span> games
+                        </h1>
                         <a
                             href="https://adrian-anta.netlify.app/"
                             target="_blank"

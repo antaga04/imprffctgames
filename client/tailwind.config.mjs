@@ -59,5 +59,13 @@ export default {
             },
         },
     },
+    variants: {
+        extend: {
+            ringWidth: ['focus-within'],
+            ringColor: ['focus-within'],
+            ringOffsetWidth: ['focus-within'],
+            ringOffsetColor: ['focus-within'],
+        },
+    },
     plugins: [tailwindcssAnimate],
 };
