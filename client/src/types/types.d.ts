@@ -67,6 +67,7 @@ type CoolDownButtonProps = {
     hoverBgColor?: string;
     textColor?: string;
     className?: string;
+    coolTime?: number;
 };
 
 type SingOutProps = {
@@ -213,6 +214,23 @@ type GameItemProps = {
 type Player = 'X' | 'O' | null;
 type Board = Player[];
 type WinnerResult = { player: Player; combination: number[] } | null;
+
+type Feedback = {
+    correct: string;
+    guess: string;
+};
+
+/* --------------- TempScore --------------- */
+type TempScoreData = {
+    scoreData: ScoreData;
+    gameId: string;
+};
+
+type TempScoreContextType = {
+    tempScore?: TempScoreData;
+    setTempScore: (data: TempScoreData) => void;
+    clearTempScore: () => void;
+};
 
 /* --------------- Scores --------------- */
 type ScoreData = {
