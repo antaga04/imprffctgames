@@ -7,8 +7,44 @@ import { useGameCompletion } from '@/hooks/useCompletion';
 import { useTempScore } from '@/hooks/useTempScore';
 
 const usedIds = new Set<number>(); // Set to track used IDs to avoid duplicates
-const INITIAL_TIME = 30;
+const INITIAL_TIME = 60;
 const GAME_ID = import.meta.env.VITE_POKEMON_ID;
+
+const Feedback: React.FC<Feedback> = ({ correct, guess }) => {
+    const correctArray = correct.split('');
+    const guessArray = guess.split('');
+
+    const feedback = correctArray.map((char, index) => {
+        const guessedChar = guessArray[index];
+
+        if (guessedChar === char) {
+            return (
+                <span key={index} className="text-green-500">
+                    {char}
+                </span>
+            );
+        } else if (guessedChar !== undefined) {
+            return (
+                <span key={index} className="text-red-500 underline">
+                    {guessedChar}
+                </span>
+            );
+        } else {
+            return (
+                <span key={index} className="text-gray-500">
+                    _
+                </span>
+            );
+        }
+    });
+
+    return (
+        <div className="flex flex-col gap-2">
+            <span className="text-base text-green-500">{correct}</span>
+            <span className="text-base">{feedback}</span>
+        </div>
+    );
+};
 
 const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal }) => {
     const [timeLeft, setTimeLeft] = useState<number>(INITIAL_TIME);
@@ -224,8 +260,9 @@ const Game: React.FC = () => {
                                             alt={g.pokemon.name}
                                             className="w-20 h-20 object-contain"
                                         />
-                                        <span className="text-green-500 text-base mt-2">{g.pokemon.name}</span>
-                                        <span className="text-red-500 text-base mt-2">{g.guess}</span>
+                                        {/* <span className="text-green-500 text-base mt-2">{g.pokemon.name}</span>
+                                        <span className="text-red-500 text-base mt-2">{g.guess}</span> */}
+                                        <Feedback correct={g.pokemon.name} guess={g.guess} />
                                     </div>
                                 ),
                             )}
