@@ -20,6 +20,7 @@ export const logoutUser = (req, res) => {
             httpOnly: true,
             secure: Boolean(process.env.IS_PRODUCTION),
             sameSite: 'Strict',
+            domain: process.env.COOKIE_DOMAIN,
         });
 
         res.status(200).json({ message: 'Logged out successfully' });
@@ -57,8 +58,8 @@ export const loginUser = async (req, res) => {
             httpOnly: true, // Prevent access via JavaScript
             secure: Boolean(process.env.IS_PRODUCTION),
             maxAge: 2 * 60 * 60 * 1000, // Token expires in 2 hours
-            // maxAge: 15 * 1000, // Token expires in 15 seconds
             sameSite: 'Strict', // Prevent cross-site request forgery (CSRF)
+            domain: process.env.COOKIE_DOMAIN, // to share the cookie with subdomains
         });
 
         const { password: unusedPassword, ...restUser } = user;
@@ -195,6 +196,7 @@ export const updateUserPassword = async (req, res) => {
             httpOnly: true,
             secure: Boolean(process.env.IS_PRODUCTION),
             sameSite: 'Strict',
+            domain: process.env.COOKIE_DOMAIN,
         });
 
         return res.status(200).json({ message: 'Password updated successfully' });
