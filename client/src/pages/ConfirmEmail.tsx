@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'sonner';
 import BackButton from '@/components/ui/BackButton';
@@ -8,6 +9,8 @@ const ConfirmEmail = () => {
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const token = query.get('token');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (token) {
@@ -25,6 +28,7 @@ const ConfirmEmail = () => {
                 })
                 .finally(() => {
                     toast.dismiss(loadingToastId);
+                    navigate('/login');
                 });
         } else {
             toast.error('No token provided.');
