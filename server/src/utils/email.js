@@ -17,7 +17,7 @@ export const sendConfirmationEmail = async (email, token) => {
     const customizedEmail = emailTemplate.replace('{{confirmationLink}}', confirmationLink);
 
     const { data, error } = await resend.emails.send({
-        from: 'PuzLynk <onboarding@resend.dev>',
+        from: 'Imprffct Games <noreply@auth.imprffctgames.com>',
         to: [email],
         subject: 'Email Confirmation',
         html: customizedEmail,

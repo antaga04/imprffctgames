@@ -1,4 +1,4 @@
-# Puzlynk Server
+# Imprffct Games Server
 
 API de puntuaciones y juegos. Continiene una lista de Games. También hay Scores asociadas a un User autenticado el la base de datos y a un Game.
 

@@ -16,10 +16,9 @@ export const verifyUser = async (req, res) => {
 
 export const logoutUser = (req, res) => {
     try {
-        // Clear the cookie
         res.clearCookie('token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: Boolean(process.env.IS_PRODUCTION),
             sameSite: 'Strict',
         });
 
@@ -56,7 +55,7 @@ export const loginUser = async (req, res) => {
         // Set the JWT token in an HTTP-only cookie
         res.cookie('token', token, {
             httpOnly: true, // Prevent access via JavaScript
-            secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+            secure: Boolean(process.env.IS_PRODUCTION),
             maxAge: 2 * 60 * 60 * 1000, // Token expires in 2 hours
             // maxAge: 15 * 1000, // Token expires in 15 seconds
             sameSite: 'Strict', // Prevent cross-site request forgery (CSRF)
@@ -100,16 +99,13 @@ export const updateUserAccount = async (req, res) => {
         const { id } = req.user;
         const { nickname } = req.body;
 
-        // Fetch the existing user
         const oldUser = await User.findById(id);
         if (!oldUser) {
             return res.status(404).json({ error: 'User not found' });
         }
 
-        // Object to store fields to update
         const updateFields = {};
 
-        // Validate and prepare fields for update
         if (nickname !== undefined) {
             const nicknameValidation = validateNickname(nickname);
             if (!nicknameValidation.valid) {
@@ -118,12 +114,10 @@ export const updateUserAccount = async (req, res) => {
             updateFields.nickname = nickname;
         }
 
-        // Ensure there are fields to update
         if (Object.keys(updateFields).length === 0) {
             return res.status(400).json({ error: 'No valid fields provided for update.' });
         }
 
-        // Update the user
         const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true }).lean();
         const { password: unusedPassword, ...restUser } = updatedUser;
         return res.status(200).json({ data: restUser });
@@ -193,15 +187,13 @@ export const updateUserPassword = async (req, res) => {
             return res.status(400).json({ error: passwordValidation.message });
         }
 
-        // Hash the new password
         const hashedPassword = await hashPassword(newPassword);
 
-        // Update the user's password
         await User.findByIdAndUpdate(id, { password: hashedPassword }, { new: true });
 
         res.clearCookie('token', {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: Boolean(process.env.IS_PRODUCTION),
             sameSite: 'Strict',
         });
 
@@ -217,13 +209,11 @@ export const registerUser = async (req, res) => {
     try {
         const { email, nickname, password } = req.body;
 
-        // Check if the user already exists
         const userDuplicated = await User.findOne({ email });
         if (userDuplicated) {
             return res.status(400).json({ error: 'User already exists' });
         }
 
-        // Validate nickname and password
         const nicknameValidation = validateNickname(nickname);
         if (!nicknameValidation.valid) {
             return res.status(400).json({ error: nicknameValidation.message });
@@ -234,11 +224,9 @@ export const registerUser = async (req, res) => {
             return res.status(400).json({ error: passwordValidation.message });
         }
 
-        // Create the user in the database with status 'pending'
         const newUser = new User({ email, nickname, password });
         const user = await newUser.save();
 
-        // Generate a JWT token for email confirmation
         const token = jwt.sign({ userId: user._id }, process.env.EMAIL_CONFIRMATION_SECRET, {
             expiresIn: '15m',
         });
@@ -268,12 +256,10 @@ export const registerUser = async (req, res) => {
 // Confirm Email Endpoint
 export const confirmEmail = async (req, res) => {
     try {
-        const { token } = req.body; // Extract token from query string
+        const { token } = req.body;
 
-        // Verify token
         const decoded = jwt.verify(token, process.env.EMAIL_CONFIRMATION_SECRET);
 
-        // Update user's status to 'active'
         const user = await User.findById(decoded.userId);
         if (!user || user.status !== 'pending') {
             return res.status(400).json({ error: 'Invalid or already confirmed token' });
@@ -300,12 +286,7 @@ export const resendConfirmationEmail = async (req, res) => {
             return res.status(400).json({ error: 'User already confirmed or does not exist.' });
         }
 
-        // Create new token for the resend email
-        const token = jwt.sign(
-            { userId: user._id },
-            process.env.EMAIL_CONFIRMATION_SECRET,
-            { expiresIn: '15m' }, // 15 minutes expiration
-        );
+        const token = jwt.sign({ userId: user._id }, process.env.EMAIL_CONFIRMATION_SECRET, { expiresIn: '15m' });
 
         const { data, error } = await sendConfirmationEmail(email, token);
 

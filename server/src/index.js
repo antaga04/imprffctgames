@@ -6,6 +6,12 @@ import { connectToDatabase } from './config/db.js';
 import mainRouter from './api/routes/index.js';
 import cookieParser from 'cookie-parser';
 import { generalLimiter } from './utils/rateLimiters.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 connectToDatabase();
 
@@ -33,8 +39,10 @@ app.use((_req, res, next) => {
 });
 app.disable('x-powered-by');
 
+app.use(express.static(path.resolve(__dirname, '../public')));
+
 app.get('/', (req, res) => {
-    res.status(200).send('Server is up and running');
+    res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
 
 app.use('/api', mainRouter);

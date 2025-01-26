@@ -1,4 +1,4 @@
-# Puzlynk
+# Imprffct Games
 
 This simple mono-repo project using pnpm, React, TypeScript and tailwind for the client and node js with express and mongodb for the server.
 

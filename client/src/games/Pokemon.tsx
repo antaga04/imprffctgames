@@ -260,8 +260,6 @@ const Game: React.FC = () => {
                                             alt={g.pokemon.name}
                                             className="w-20 h-20 object-contain"
                                         />
-                                        {/* <span className="text-green-500 text-base mt-2">{g.pokemon.name}</span>
-                                        <span className="text-red-500 text-base mt-2">{g.guess}</span> */}
                                         <Feedback correct={g.pokemon.name} guess={g.guess} />
                                     </div>
                                 ),
