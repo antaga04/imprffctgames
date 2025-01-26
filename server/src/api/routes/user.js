@@ -13,11 +13,11 @@ import {
 } from '../controllers/user.js';
 import { hasValidAuthJwt } from '../../middlewares/authenticated.js';
 import uploadFile from '../../middlewares/uploadFile.js';
-import { resendConfirmationLimiter, registerLimiter, avatarLimiter } from '../../utils/rateLimiters.js';
+import { resendConfirmationLimiter, avatarLimiter } from '../../utils/rateLimiters.js';
 
 const router = express.Router();
 
-router.post('/register', registerLimiter, registerUser);
+router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.put('/', hasValidAuthJwt, updateUserAccount);
 
