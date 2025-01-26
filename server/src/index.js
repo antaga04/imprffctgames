@@ -2,13 +2,22 @@ import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
 import cors from 'cors';
-import rateLimit from 'express-rate-limit';
 import { connectToDatabase } from './config/db.js';
 import mainRouter from './api/routes/index.js';
+import cookieParser from 'cookie-parser';
+import { generalLimiter } from './utils/rateLimiters.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 connectToDatabase();
 
 const app = express();
+
+app.use(cookieParser());
 
 app.use(
     cors({
@@ -19,14 +28,7 @@ app.use(
     }),
 );
 
-const limiter = rateLimit({
-    windowMs: 3 * 60 * 1000,
-    limit: 50,
-    standardHeaders: false,
-    legacyHeaders: false,
-});
-
-app.use(limiter);
+app.use(generalLimiter);
 
 app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ limit: '1mb', extended: true }));
@@ -37,8 +39,10 @@ app.use((_req, res, next) => {
 });
 app.disable('x-powered-by');
 
+app.use(express.static(path.resolve(__dirname, '../public')));
+
 app.get('/', (req, res) => {
-    res.status(200).send('Server is up and running');
+    res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
 
 app.use('/api', mainRouter);

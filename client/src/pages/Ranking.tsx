@@ -12,15 +12,11 @@ import {
 import axios from 'axios';
 import BackButton from '@/components/ui/BackButton';
 import MyAvatar from '@/components/ui/MyAvatar';
-
-const games: Game[] = [
-    { gameId: import.meta.env.VITE_POKEMON_ID, gameName: 'Pokemon' },
-    { gameId: import.meta.env.VITE_PUZZLE15_ID, gameName: '15 Puzzle' },
-];
+import { GAMES } from '@/lib/constants';
 
 const Ranking: React.FC = () => {
     const storageGameId = localStorage.getItem('rankingGame');
-    const defaultGame = games.find((game) => game.gameName === storageGameId) || games[0];
+    const defaultGame = GAMES.find((game) => game.gameName === storageGameId) || GAMES[0];
 
     const [selectedGame, setSelectedGame] = useState<Game>(defaultGame);
     const [scores, setScores] = useState<Score[]>([]);
@@ -54,7 +50,7 @@ const Ranking: React.FC = () => {
     }, [selectedGame]);
 
     const handleGameChange = (gameId: string) => {
-        const game = games.find((g) => g.gameId === gameId);
+        const game = GAMES.find((g) => g.gameId === gameId);
         if (game) {
             setSelectedGame(game);
             localStorage.setItem('rankingGame', game.gameName);
@@ -81,7 +77,7 @@ const Ranking: React.FC = () => {
                             <SelectValue placeholder="Select a game" />
                         </SelectTrigger>
                         <SelectContent>
-                            {games.map((game) => (
+                            {GAMES.map((game) => (
                                 <SelectItem key={game.gameId} value={game.gameId}>
                                     {game.gameName}
                                 </SelectItem>

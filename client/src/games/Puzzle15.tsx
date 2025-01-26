@@ -1,16 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Confetti from 'react-confetti';
 import GameWrapper from '@/components/layouts/GameWrapper';
-import { useAuth } from '@/context/AuthContext';
-import { uploadScore } from '@/services/uploadScore';
-import { toast } from 'sonner';
 import CoolDownButton from '@/components/ui/CoolDownButton';
 import { getTargetIndex } from '@/lib/gameUtils';
+import { useGameCompletion } from '@/hooks/useCompletion';
+import { useTempScore } from '@/hooks/useTempScore';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const EMPTY_INDEX = CELL_COUNT - 1;
+const GAME_ID = import.meta.env.VITE_PUZZLE15_ID;
 
 const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSignal, onGameFinish }) => {
     const [localTime, setLocalTime] = useState(0);
@@ -53,9 +53,13 @@ const Game: React.FC = () => {
     const [gameStarted, setGameStarted] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
     const [resetSignal, setResetSignal] = useState(0);
-    const { isAuthenticated } = useAuth();
+
+    const handleCompletion = useGameCompletion(GAME_ID);
+    const { setTempScore } = useTempScore();
+    const hasHandledCompletion = useRef(false);
 
     useEffect(() => {
+        hasHandledCompletion.current = false;
         shuffleBoard();
     }, []);
 
@@ -86,6 +90,8 @@ const Game: React.FC = () => {
     }, [board]);
 
     useEffect(() => {
+        console.log('hello');
+
         if (isSolved() && gameStarted) {
             setShowConfetti(true);
             setIsRunning(false);
@@ -93,35 +99,12 @@ const Game: React.FC = () => {
     }, [isSolved, gameStarted]);
 
     const handleGameCompletion = async (time: number) => {
+        if (hasHandledCompletion.current) return; // Prevent re-execution
+        hasHandledCompletion.current = true;
+
         const scoreData = { moves, time };
-        const gameId = import.meta.env.VITE_PUZZLE15_ID;
-
-        if (isAuthenticated) {
-            const loadingToastId = toast.loading('Uploading score...');
-
-            try {
-                const response = await uploadScore(scoreData, gameId);
-                const { message, data } = response.data;
-
-                toast.dismiss(loadingToastId);
-
-                if (response.status === 200) {
-                    toast.warning(
-                        `${message}. Previous score: Moves: ${data.scoreData.moves}, Time: ${data.scoreData.time}`,
-                    );
-                } else if (response.status === 201) {
-                    toast.success(
-                        `${message}. New score: Moves: ${data.scoreData.moves}, Time: ${data.scoreData.time}`,
-                    );
-                } else {
-                    toast.error(response.data.error);
-                }
-            } catch (error) {
-                console.error('Error uploading score: ', error);
-                toast.dismiss(loadingToastId);
-                toast.error('Error uploading score.');
-            }
-        }
+        setTempScore({ scoreData, gameId: GAME_ID });
+        handleCompletion(scoreData);
     };
 
     const canMoveTile = useCallback(
@@ -255,7 +238,7 @@ const Game: React.FC = () => {
             </div>
             {isSolved() && gameStarted && (
                 <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white rounded-lg shadow-lg p-6 mx-4 sm:mx-8 md:w-1/3">
+                    <div className="bg-white rounded-lg shadow-lg p-6 mx-4">
                         <div className="text-center text-gray-800 space-y-4">
                             <h2 className="text-3xl font-bold text-[var(--blueish)]">Congratulations!</h2>
                             <p className="text-lg">You solved the puzzle 🚀</p>

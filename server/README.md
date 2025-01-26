@@ -1,4 +1,4 @@
-# Puzlynk Server
+# Imprffct Games Server
 
 API de puntuaciones y juegos. Continiene una lista de Games. También hay Scores asociadas a un User autenticado el la base de datos y a un Game.
 
@@ -30,7 +30,7 @@ const User = {
     email: 'email_del_user',
     password: 'contraseña_del_user',
     scores: ['lista', 'scores', 'user'],
-    rol: 'rol_del_user', // siempre será user
+    role: 'rol_del_user', // siempre será user
 };
 ```
 
@@ -79,7 +79,7 @@ const User = {
 
 - Si el endpoint es 'Protected' será necesario estar registrado como User.
 - Para acceder a los endpoints 'Protected' se usará un Bearer token.
-- Si el endpoint es 'Admin' será necesario ser un User con rol 'admin.
+- Si el endpoint es 'Admin' será necesario ser un User con role 'admin.
 - Los scores se almacenan en un objeto flexible, por lo que puedes almacenar cualquier tipo de dato.
 
 ### > Para cualquier duda puedes contartarme al email antaga04@gmail.com :)

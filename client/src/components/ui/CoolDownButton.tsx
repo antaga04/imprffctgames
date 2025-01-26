@@ -7,6 +7,7 @@ const CoolDownButton: React.FC<CoolDownButtonProps> = ({
     hoverBgColor = 'hover:bg-blue-700',
     textColor = 'text-white',
     className,
+    coolTime = 1000,
 }) => {
     const [cooldown, setCooldown] = useState<boolean>(false);
 
@@ -14,7 +15,7 @@ const CoolDownButton: React.FC<CoolDownButtonProps> = ({
         if (!cooldown) {
             onSubmit();
             setCooldown(true);
-            setTimeout(() => setCooldown(false), 1000);
+            setTimeout(() => setCooldown(false), coolTime);
         }
     };
 

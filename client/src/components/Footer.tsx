@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import SocialLink from '@/components/ui/SocialLink';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/hooks/useAuth';
 
 const Footer = () => {
     const { isAuthenticated } = useAuth();

@@ -3,19 +3,28 @@
  * @param {Object} existingScore - Existing score to compare against
  * @param {Object} newScore - New score to compare
  * @param {string} scoringLogic - Scoring logic of the game
- * @returns
+ * @returns {boolean} - Returns true if `newScore` is better than `existingScore`, false otherwise
  */
 export function compareScores(existingScore, newScore, scoringLogic) {
-    if (scoringLogic === 'guesses_correct_total') {
-        // Higher `correct` wins; tiebreaker is higher `total`
-        if (newScore.correct > existingScore.correct) return true;
-        if (newScore.correct === existingScore.correct && newScore.total > existingScore.total) return true;
-    } else if (scoringLogic === 'moves_time') {
-        // Lower `time` wins; tiebreaker is lower `moves`
-        if (newScore.time < existingScore.time) return true;
-        if (newScore.time === existingScore.time && newScore.moves < existingScore.moves) return true;
+    switch (scoringLogic) {
+        case 'guesses_correct_total': {
+            const existingCalculatedScore = calculateGuessesCorrectTotal(existingScore);
+            const newCalculatedScore = calculateGuessesCorrectTotal(newScore);
+
+            return newCalculatedScore > existingCalculatedScore; // Higher score wins
+        }
+
+        case 'moves_time': {
+            // Lower `time` wins; tiebreaker is lower `moves`
+            if (newScore.time !== existingScore.time) {
+                return newScore.time < existingScore.time;
+            }
+            return newScore.moves < existingScore.moves;
+        }
+
+        default:
+            throw new Error('Unknown scoring logic');
     }
-    return false;
 }
 
 /**
@@ -59,14 +68,8 @@ export const sortScores = (scores, scoringLogic) => {
     switch (scoringLogic) {
         case 'guesses_correct_total':
             return scores.sort((a, b) => {
-                const p = 2; // Penalty factor
-                const aCorrect = a.scoreData.correct;
-                const aTotal = a.scoreData.total;
-                const bCorrect = b.scoreData.correct;
-                const bTotal = b.scoreData.total;
-
-                const aScore = aCorrect * Math.pow(aCorrect / aTotal, p);
-                const bScore = bCorrect * Math.pow(bCorrect / bTotal, p);
+                const aScore = calculateGuessesCorrectTotal(a.scoreData);
+                const bScore = calculateGuessesCorrectTotal(b.scoreData);
 
                 return bScore - aScore; // Higher score first
             });
@@ -83,3 +86,14 @@ export const sortScores = (scores, scoringLogic) => {
             throw new Error('Unknown scoring logic');
     }
 };
+
+/**
+ * Calculate the score for 'guesses_correct_total' logic.
+ * @param {Object} score - Score object with `correct` and `total` properties.
+ * @param {number} penaltyFactor - Penalty factor for the calculation.
+ * @returns {number} - Calculated score value.
+ */
+function calculateGuessesCorrectTotal(score, penaltyFactor = 1.1) {
+    const { correct, total } = score;
+    return correct * Math.pow(correct / total, penaltyFactor);
+}

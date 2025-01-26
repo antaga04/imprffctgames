@@ -3,10 +3,13 @@ import User from '../api/models/user.js';
 
 export const hasValidAuthJwt = (req, res, next) => {
     try {
-        const { authorization } = req.headers;
-        const [, token] = authorization.split(' ');
-        const payload = verifytoken(token);
+        const token = req.cookies.token; // Get token from cookies
 
+        if (!token) {
+            return res.status(401).json({ error: 'Not authenticated' });
+        }
+
+        const payload = verifytoken(token); // Verify and decode the token
         req.user = payload;
 
         next();
@@ -18,7 +21,7 @@ export const hasValidAuthJwt = (req, res, next) => {
 export const isAdmin = async (req, res, next) => {
     try {
         const user = await User.findById(req.user.id);
-        if (user.rol === 'admin') {
+        if (user.role === 'admin') {
             next();
         } else {
             return res.status(401).json({ error: 'Unauthorized' });

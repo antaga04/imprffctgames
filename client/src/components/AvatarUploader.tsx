@@ -10,8 +10,6 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
     const [avatarPreview, setAvatarPreview] = useState(currentAvatar || null);
     const [avatar, setAvatar] = useState<File | null>(null);
 
-    const token = localStorage.getItem('jwt');
-
     useEffect(() => {
         if (currentAvatar) {
             setAvatarPreview(currentAvatar);
@@ -37,18 +35,13 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
 
     const handleSaveAvatar = async () => {
         if (!avatar) return;
-        if (!token) {
-            console.error('No token found');
-            return;
-        }
-
         const formData = new FormData();
         formData.append('avatar', avatar);
 
         const saveAvatar = async () => {
             const response = await axios.put(UPLOAD_URL, formData, {
+                withCredentials: true,
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     'Content-Type': 'multipart/form-data',
                 },
             });

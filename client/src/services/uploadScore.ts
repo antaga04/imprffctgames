@@ -2,8 +2,6 @@ import axios from 'axios';
 
 export const uploadScore = async (scoreData: unknown, gameId: string) => {
     try {
-        const token = localStorage.getItem('jwt');
-
         const response = await axios.post(
             `${import.meta.env.VITE_API_URL}/scores/`,
             {
@@ -11,14 +9,12 @@ export const uploadScore = async (scoreData: unknown, gameId: string) => {
                 game_id: gameId,
             },
             {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
+                withCredentials: true, // Include cookies in the request
             },
         );
         return response;
     } catch (error) {
         console.error('Error uploading score:', error);
-        throw new Error('Failed to upload score');
+        throw error;
     }
 };

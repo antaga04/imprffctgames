@@ -1,5 +1,10 @@
 import { AtSign, KeyRound, User } from 'lucide-react';
 
+export const GAMES: Game[] = [
+    { gameId: import.meta.env.VITE_POKEMON_ID, gameName: 'Pokemon' },
+    { gameId: import.meta.env.VITE_PUZZLE15_ID, gameName: '15 Puzzle' },
+];
+
 const EMAIL_INPUT = {
     label: 'Email',
     name: 'email',
@@ -52,6 +57,6 @@ export const LOGIN_INPUTS = [EMAIL_INPUT, PASSWORD_INPUT];
 
 export const REGISTER_INPUTS = [NICKNAME_INPUT, EMAIL_INPUT, PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT];
 
-export const ACCOUNT_INPUTS = [NICKNAME_INPUT, EMAIL_INPUT];
+export const ACCOUNT_INPUTS = [EMAIL_INPUT, NICKNAME_INPUT];
 
 export const PASSWORD_INPUTS = [CURRENT_PASSWORD_INPUT, NEW_PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT];
