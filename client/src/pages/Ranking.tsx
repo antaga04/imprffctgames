@@ -14,6 +14,8 @@ import BackButton from '@/components/ui/BackButton';
 import MyAvatar from '@/components/ui/MyAvatar';
 import { GAMES } from '@/lib/constants';
 
+const PAGINATED_ITEMS = 5;
+
 const Ranking: React.FC = () => {
     const storageGameId = localStorage.getItem('rankingGame');
     const defaultGame = GAMES.find((game) => game.gameName === storageGameId) || GAMES[0];
@@ -31,7 +33,7 @@ const Ranking: React.FC = () => {
         setIsLoading(true);
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/scores/${gameId}`, {
-                params: { page, limit: 10 },
+                params: { page, limit: PAGINATED_ITEMS },
             });
 
             setScores(response.data.data);
@@ -64,7 +66,7 @@ const Ranking: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col text-black md:mt-40 mt-32">
+        <div className="flex flex-col text-black mt-32 mb-16">
             <BackButton />
             <h1 className="text-4xl font-bold text-center text-white neon-text mb-8">Leaderboard</h1>
             <div className="w-full max-w-4xl mx-auto bg-card rounded-lg shadow-lg p-6">
@@ -113,7 +115,7 @@ const Ranking: React.FC = () => {
                                     scores.map((score, index) => (
                                         <TableRow key={score._id}>
                                             <TableCell className="font-medium text-center">
-                                                {(pagination.currentPage - 1) * 10 + index + 1}
+                                                {(pagination.currentPage - 1) * PAGINATED_ITEMS + index + 1}
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center whitespace-nowrap">

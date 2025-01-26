@@ -44,6 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     if (err.response && err.response.status === 401) {
                         toast.warning('Your session has expired. Please log in again.');
                         localStorage.removeItem('hasSession');
+                        sessionStorage.setItem('hasShownRegisterToast', 'true');
                     } else {
                         console.error('An unexpected error occurred:', error);
                         toast.error('An unexpected error occurred.');

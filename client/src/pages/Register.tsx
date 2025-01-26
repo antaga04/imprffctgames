@@ -94,7 +94,7 @@ const RegisterForm = () => {
 
 const Register = () => {
     return (
-        <div className="w-full flex-1 flex justify-center mt-24">
+        <div className="w-full flex-1 flex justify-center mt-24 mb-14">
             <BackButton />
             <div className="flex flex-col w-full md:p-4 mx-auto md:-mt-3 max-w-[425px] md:max-w-[500px]">
                 <SigninLogo />

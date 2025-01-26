@@ -11,6 +11,7 @@ import { AuthProvider } from '@/contexts/AuthProvider';
 import PrivateRoute from '@/components/PrivateRoute';
 import ConfirmEmail from '@/pages/ConfirmEmail';
 import { TempScoreProvider } from './contexts/TempScoreProvider';
+import ResendEmail from './pages/ResendEmail';
 
 function App() {
     console.log(`
@@ -41,6 +42,7 @@ Hi there! 👋 I hope you like what you see here. Enjoy! 🚀
                         <Route path="/ranking" element={<Ranking />} />
                         <Route path="/games/:id" element={<Game />} />
                         <Route path="/confirm-email" element={<ConfirmEmail />} />
+                        <Route path="/resend-email" element={<ResendEmail />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
                 </AuthProvider>
