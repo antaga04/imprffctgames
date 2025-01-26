@@ -52,13 +52,15 @@ const ConfirmEmail = () => {
             await axios.post(`${import.meta.env.VITE_API_URL}/users/resend-email`, { email });
             toast.success('Email sent successfully.');
         } catch (error) {
-            console.error('Error sending email: ', error);
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.error || 'Error sending email';
-                toast.error(errorMessage);
-            } else {
-                toast.error('An unexpected error occurred.');
-            }
+            const errorMessage =
+                typeof error === 'string'
+                    ? error
+                    : error && typeof error === 'object' && 'message' in error
+                      ? (error as { message: string }).message
+                      : 'An unknown error occurred sending email';
+
+            toast.error(errorMessage);
+            console.error('Sending email error:', error);
         } finally {
             toast.dismiss(loadingToastId);
         }

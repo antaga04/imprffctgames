@@ -243,3 +243,13 @@ type ScoreData = {
 type ScoreDataGeneric = {
     [key: string]: number | undefined;
 };
+
+/* --------------- Error --------------- */
+interface MyError {
+    response?: {
+        data?: {
+            error?: string;
+        };
+    };
+    message?: string;
+}

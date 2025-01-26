@@ -59,6 +59,14 @@ const RegisterForm = () => {
                 },
             );
         } catch (error) {
+            const errorMessage =
+                typeof error === 'string'
+                    ? error
+                    : error && typeof error === 'object' && 'message' in error
+                      ? (error as { message: string }).message
+                      : 'An unknown error occurred during registration';
+
+            toast.error(errorMessage);
             console.error('Registration error:', error);
         }
     };
