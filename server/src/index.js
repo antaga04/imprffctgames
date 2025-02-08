@@ -5,11 +5,10 @@ import cors from 'cors';
 import { connectToDatabase } from './config/db.js';
 import mainRouter from './api/routes/index.js';
 import cookieParser from 'cookie-parser';
-import { generalLimiter } from './utils/rateLimiters.js';
+import { generalLimiter } from './middlewares/rateLimiters.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-// Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
