@@ -4,7 +4,6 @@ import axios, { AxiosError } from 'axios';
 import { toast } from 'sonner';
 import { useTempScore } from '@/hooks/useTempScore';
 import { handleScoreUpload } from '@/lib/scoreHandler';
-import { encryptData } from '@/lib/encrypt';
 
 const LOGIN_URL = import.meta.env.VITE_API_URL + '/users/login';
 const REGISTER_URL = import.meta.env.VITE_API_URL + '/users/register';
@@ -87,13 +86,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (tempScore) {
                 const { scoreData, gameId } = tempScore;
 
-                const score = encryptData({
-                    scoreData,
-                    game_id: gameId,
-                });
-
                 await handleScoreUpload({
-                    score,
+                    scoreData,
                     gameId,
                 });
 
@@ -126,13 +120,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             if (tempScore) {
                 const { scoreData, gameId } = tempScore;
 
-                const score = encryptData({
-                    scoreData,
-                    game_id: gameId,
-                });
-
                 await handleScoreUpload({
-                    score,
+                    scoreData,
                     gameId,
                 });
 

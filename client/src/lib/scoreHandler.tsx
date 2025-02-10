@@ -4,16 +4,21 @@ import { MedalIcon } from 'lucide-react';
 import { GAMES } from './constants';
 
 interface ScoreUploadOptions {
-    score: unknown;
+    scoreData: unknown;
     gameId: string;
 }
 
-export const handleScoreUpload = async ({ score, gameId }: ScoreUploadOptions) => {
+export const handleScoreUpload = async ({ scoreData, gameId }: ScoreUploadOptions) => {
     const loadingToastId = toast.loading('Uploading score...');
     try {
         const response = await axios.post(
             `${import.meta.env.VITE_API_URL}/scores/`,
-            { score },
+            {
+                score: {
+                    scoreData,
+                    game_id: gameId,
+                },
+            },
             { withCredentials: true },
         );
 

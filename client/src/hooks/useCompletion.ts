@@ -2,9 +2,7 @@ import { useAuth } from './useAuth';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { handleScoreUpload } from '@/lib/scoreHandler';
-import { AxiosError } from 'axios';
 import { useTempScore } from './useTempScore';
-import { encryptData } from '@/lib/encrypt';
 
 export const useGameCompletion = (gameId: string) => {
     const navigate = useNavigate();
@@ -14,18 +12,13 @@ export const useGameCompletion = (gameId: string) => {
     const handleCompletion = async (scoreData: ScoreData) => {
         if (isAuthenticated) {
             try {
-                const score = encryptData({
-                    scoreData,
-                    game_id: gameId,
-                });
-
                 await handleScoreUpload({
-                    score,
+                    scoreData,
                     gameId,
                 });
                 clearTempScore();
             } catch (error) {
-                const err = error as AxiosError;
+                const err = error as MyError;
 
                 if (err?.response?.status === 401) {
                     toast.warning('Session expired. Please log in to upload your score.', {
@@ -35,8 +28,8 @@ export const useGameCompletion = (gameId: string) => {
                         },
                     });
                 } else {
-                    console.error('Error uploading score: ', error);
-                    toast.error('Error uploading score.');
+                    console.error('Error uploading score: ', err?.response?.data?.error);
+                    toast.error(err?.response?.data?.error || 'Error uploading score.');
                 }
             }
         } else {

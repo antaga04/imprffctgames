@@ -13,6 +13,7 @@ import axios from 'axios';
 import BackButton from '@/components/ui/BackButton';
 import MyAvatar from '@/components/ui/MyAvatar';
 import { GAMES } from '@/lib/constants';
+import { toast } from 'sonner';
 
 const PAGINATED_ITEMS = 5;
 
@@ -39,8 +40,9 @@ const Ranking: React.FC = () => {
             setScores(response.data.data);
             setPagination(response.data.pagination);
             setIsLoading(false);
-        } catch (err) {
-            console.log(err);
+        } catch (error) {
+            const err = error as MyError;
+            toast.error(err.response?.data?.error || 'An error occurred fetching scores.');
             setIsLoading(false);
         }
     };
@@ -124,11 +126,11 @@ const Ranking: React.FC = () => {
                                                             <MyAvatar
                                                                 url={score.user_id.avatar}
                                                                 alt="User Avatar"
-                                                                width="w-8"
-                                                                height="h-8"
+                                                                width="w-9"
+                                                                height="h-9"
                                                             />
                                                         ) : (
-                                                            <span className="w-8 h-8 rounded-full text-white bg-[var(--blue)] flex items-center justify-center">
+                                                            <span className="w-9 h-9 rounded-full text-white bg-[var(--blue)] flex items-center justify-center">
                                                                 {score.user_id.nickname.slice(0, 2).toUpperCase()}
                                                             </span>
                                                         )}
