@@ -6,6 +6,7 @@ import CoolDownButton from '@/components/ui/CoolDownButton';
 import { getTargetIndex } from '@/lib/gameUtils';
 import { useGameCompletion } from '@/hooks/useCompletion';
 import { useTempScore } from '@/hooks/useTempScore';
+import axios from 'axios';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
@@ -48,11 +49,13 @@ const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSig
 
 const Game: React.FC = () => {
     const [board, setBoard] = useState(Array.from({ length: CELL_COUNT }, (_, i) => i));
-    const [moves, setMoves] = useState(0);
+    const [moves, setMoves] = useState<Move[]>([]);
     const [isRunning, setIsRunning] = useState(false);
     const [gameStarted, setGameStarted] = useState(false);
     const [showConfetti, setShowConfetti] = useState(false);
     const [resetSignal, setResetSignal] = useState(0);
+    const [boardHash, setBoardHash] = useState('');
+    const [gameSessionId, setGameSessionId] = useState('');
 
     const handleCompletion = useGameCompletion(GAME_ID);
     const { setTempScore } = useTempScore();
@@ -63,26 +66,29 @@ const Game: React.FC = () => {
         shuffleBoard();
     }, []);
 
-    const shuffleBoard = useCallback(() => {
-        let newBoard;
-        do {
-            newBoard = Array.from({ length: CELL_COUNT }, (_, i) => i);
-            for (let i = newBoard.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newBoard[i], newBoard[j]] = [newBoard[j], newBoard[i]];
-            }
-        } while (!isSolvable(newBoard));
+    const shuffleBoard = useCallback(async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/puzzle15`);
+            const { board, hash, gameSessionId } = response.data;
 
-        setBoard(newBoard);
-        resetGameState();
+            if (board && hash) {
+                setBoard(board);
+                setBoardHash(hash);
+                setGameSessionId(gameSessionId);
+                resetGameState();
+            }
+        } catch (error) {
+            console.error('Error fetching board:', error);
+        }
     }, []);
 
     const resetGameState = () => {
-        setMoves(0);
+        setMoves([]);
         setIsRunning(false);
         setGameStarted(false);
         setShowConfetti(false);
         setResetSignal((prev) => prev + 1); // Timer reset
+        hasHandledCompletion.current = false;
     };
 
     const isSolved = useCallback(() => {
@@ -90,8 +96,6 @@ const Game: React.FC = () => {
     }, [board]);
 
     useEffect(() => {
-        console.log('hello');
-
         if (isSolved() && gameStarted) {
             setShowConfetti(true);
             setIsRunning(false);
@@ -99,10 +103,10 @@ const Game: React.FC = () => {
     }, [isSolved, gameStarted]);
 
     const handleGameCompletion = async (time: number) => {
-        if (hasHandledCompletion.current) return; // Prevent re-execution
+        if (hasHandledCompletion.current) return;
         hasHandledCompletion.current = true;
 
-        const scoreData = { moves, time };
+        const scoreData = { moves, time, hash: boardHash, gameSessionId };
         setTempScore({ scoreData, gameId: GAME_ID });
         handleCompletion(scoreData);
     };
@@ -129,7 +133,9 @@ const Game: React.FC = () => {
                 const emptyIndex = newBoard.indexOf(EMPTY_INDEX);
                 [newBoard[tileIndex], newBoard[emptyIndex]] = [newBoard[emptyIndex], newBoard[tileIndex]];
                 setBoard(newBoard);
-                setMoves((prev) => prev + 1);
+
+                const timestamp = Date.now();
+                setMoves((prevMoves) => [...prevMoves, { from: emptyIndex, to: tileIndex, timestamp }]);
 
                 if (!gameStarted) {
                     setGameStarted(true);
@@ -144,29 +150,6 @@ const Game: React.FC = () => {
         (tile: number, index: number): boolean => tile === index && tile !== EMPTY_INDEX,
         [],
     );
-
-    const isSolvable = (board: number[]): boolean => {
-        const inversionCount = board.reduce((count, tile, i) => {
-            if (tile === EMPTY_INDEX) return count;
-            for (let j = i + 1; j < board.length; j++) {
-                if (board[j] !== EMPTY_INDEX && board[i] > board[j]) {
-                    count++;
-                }
-            }
-            return count;
-        }, 0);
-
-        const emptyRowFromBottom = GRID_SIZE - Math.floor(board.indexOf(EMPTY_INDEX) / GRID_SIZE);
-
-        if (GRID_SIZE % 2 === 1) {
-            return inversionCount % 2 === 0;
-        } else {
-            return (
-                (inversionCount % 2 === 0 && emptyRowFromBottom % 2 === 1) ||
-                (inversionCount % 2 === 1 && emptyRowFromBottom % 2 === 0)
-            );
-        }
-    };
 
     useEffect(() => {
         if (isSolved()) return;
@@ -213,7 +196,7 @@ const Game: React.FC = () => {
                     resetSignal={resetSignal}
                     onGameFinish={handleGameCompletion} // callback to capture final time
                 />
-                <span className="font-mono min-w-[6ch] text-right">Moves: {String(moves).padStart(3, '0')}</span>
+                <span className="font-mono min-w-[6ch] text-right">Moves: {String(moves.length).padStart(3, '0')}</span>
             </p>
             <div className="grid grid-cols-4 gap-2 p-4 bg-gray-300 rounded-lg shadow-lg text-black">
                 {board.map((tile, index) => (

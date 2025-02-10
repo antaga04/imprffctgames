@@ -139,13 +139,13 @@ interface TimerDecrementProps {
 
 interface PokemonInputProps {
     nameLength: number;
-    onSubmit: (input: string) => void;
+    onSubmit: (input: string, keyIntervals: number[]) => void;
 }
 
 interface PokemonData {
-    id: number;
-    name: string;
-    image: string;
+    _id: number;
+    nameLength: number;
+    sprite: string;
 }
 
 interface GameStats {
@@ -236,7 +236,8 @@ type TempScoreContextType = {
 type ScoreData = {
     correct?: number;
     total?: number;
-    moves?: number;
+    guesses?: Guess[];
+    moves?: Move[];
     time?: number;
 };
 
@@ -244,12 +245,37 @@ type ScoreDataGeneric = {
     [key: string]: number | undefined;
 };
 
+interface Move {
+    from: number;
+    to: number;
+    timestamp: number; // Timestamp in seconds
+}
+
+interface Guess {
+    _id: string;
+    guess: string;
+}
+
+interface Results {
+    isValid: boolean;
+    correct: number;
+    total: number;
+    results: Result[];
+}
+
+interface Result {
+    guessedName: string;
+    correctName: string;
+    isCorrect: boolean;
+}
+
 /* --------------- Error --------------- */
 interface MyError {
     response?: {
         data?: {
             error?: string;
         };
+        status?: number;
     };
     message?: string;
 }

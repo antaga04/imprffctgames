@@ -5,8 +5,8 @@ import GameWrapper from '@/components/layouts/GameWrapper';
 import CoolDownButton from '@/components/ui/CoolDownButton';
 import { useGameCompletion } from '@/hooks/useCompletion';
 import { useTempScore } from '@/hooks/useTempScore';
+import axios from 'axios';
 
-const usedIds = new Set<number>(); // Set to track used IDs to avoid duplicates
 const INITIAL_TIME = 60;
 const GAME_ID = import.meta.env.VITE_POKEMON_ID;
 
@@ -77,11 +77,29 @@ const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSi
 // Input Component for Pokémon Name
 const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => {
     const [input, setInput] = useState<string>('');
+    const [keystrokeTimes, setKeystrokeTimes] = useState<number[]>([]);
 
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        const now = Date.now();
+
         if (event.key === 'Enter' && input.length === nameLength) {
-            onSubmit(input);
+            const keyIntervals = keystrokeTimes.map((time, i, arr) => (i > 0 ? time - arr[i - 1] : 0)).slice(1);
+
+            onSubmit(input, keyIntervals);
             setInput('');
+            setKeystrokeTimes([]);
+        } else if (event.key.length === 1) {
+            setKeystrokeTimes((prev) => [...prev, now]);
+        }
+    };
+
+    const handleOnSubmit = () => {
+        if (input.length === nameLength) {
+            const keyIntervals = keystrokeTimes.map((time, i, arr) => (i > 0 ? time - arr[i - 1] : 0)).slice(1);
+
+            onSubmit(input, keyIntervals);
+            setInput('');
+            setKeystrokeTimes([]);
         }
     };
 
@@ -94,11 +112,6 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
                 ))}
             </InputOTPGroup>
         );
-    };
-
-    const handleOnSubmit = () => {
-        onSubmit(input);
-        setInput('');
     };
 
     return (
@@ -124,158 +137,164 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
 };
 
 const Game: React.FC = () => {
-    const [pokemonData, setPokemonData] = useState<PokemonData | null>(null);
-    const [gameStats, setGameStats] = useState<GameStats>({ guesses: [] });
-    const [showConfetti, setShowConfetti] = useState<boolean>(false);
-    const [gameOver, setGameOver] = useState<boolean>(false);
-    const [playAgainKey, setPlayAgainKey] = useState<number>(0);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [gameSessionId, setGameSessionId] = useState('');
+    const [pokemonData, setPokemonData] = useState<PokemonData[]>([]);
+    const [guesses, setGuesses] = useState<Guess[]>([]);
+    const [batchNumber, setBatchNumber] = useState(3);
+    const [currentPokemonIndex, setCurrentPokemonIndex] = useState(0);
+    const [results, setResults] = useState<Results | null>(null);
+    const [gameOver, setGameOver] = useState(false);
+    const [playAgainKey, setPlayAgainKey] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [checkingResults, setCheckingResults] = useState(false);
 
     const { setTempScore } = useTempScore();
     const handleCompletion = useGameCompletion(GAME_ID);
     const hasHandledCompletion = useRef(false);
 
-    const pokemonCache = useRef<Record<number, PokemonData>>({});
-
-    const fetchPokemon = async () => {
+    const fetchInitialPokemons = async () => {
         setLoading(true);
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/pokemon`);
+            const { gameSessionId, pokemons } = response.data;
 
-        let randomId;
-
-        do {
-            randomId = Math.floor(Math.random() * 151) + 1;
-        } while (usedIds.has(randomId));
-
-        usedIds.add(randomId);
-
-        if (pokemonCache.current[randomId]) {
-            setPokemonData(pokemonCache.current[randomId]);
-        } else {
-            try {
-                const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomId}`);
-                const data = await response.json();
-                const newPokemon: PokemonData = {
-                    id: randomId,
-                    name: data.name.toLowerCase(),
-                    image: data.sprites.other['official-artwork'].front_default,
-                };
-                pokemonCache.current[randomId] = newPokemon;
-                setPokemonData(newPokemon);
-            } catch (error) {
-                console.error('Error fetching Pokémon data: ', error);
-            }
+            setPokemonData(pokemons);
+            setGameSessionId(gameSessionId);
+        } catch (error) {
+            console.error('Error fetching Pokémon data: ', error);
         }
-
         setLoading(false);
     };
 
+    const fetchNewBatch = async () => {
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/pokemon/${gameSessionId}/${batchNumber}`);
+            const { pokemons } = response.data;
+            setPokemonData((prev) => [...prev, ...pokemons]); // Append new batch
+            setBatchNumber((prev) => prev + 1);
+        } catch (error) {
+            console.error('Error fetching Pokémon batch: ', error);
+        }
+    };
+
     useEffect(() => {
-        fetchPokemon();
+        fetchInitialPokemons();
     }, [playAgainKey]);
 
-    const handleGuess = (guess: string) => {
-        if (!pokemonData) return;
+    const handleGuess = (guess: string, keystrokeTimes: number[]) => {
+        const newGuess = {
+            _id: pokemonData[currentPokemonIndex]._id.toString(),
+            guess,
+            keystrokeTimes,
+        };
 
-        const isCorrect = guess.toLocaleLowerCase() === pokemonData.name;
+        setGuesses((prev) => [...prev, newGuess]);
 
-        setGameStats((prevStats) => ({
-            guesses: [
-                ...prevStats.guesses,
-                {
-                    pokemon: pokemonData,
-                    correct: isCorrect,
-                    guess: guess,
-                },
-            ],
-        }));
+        if (currentPokemonIndex === pokemonData.length - 2) {
+            fetchNewBatch();
+        }
 
-        fetchPokemon();
+        setLoading(true);
+        setTimeout(() => {
+            setLoading(false);
+            setCurrentPokemonIndex((prev) => prev + 1);
+        }, 100);
     };
 
     const handleGameOver = async () => {
-        if (hasHandledCompletion.current) return; // Prevent re-execution
+        if (hasHandledCompletion.current) return;
         hasHandledCompletion.current = true;
 
         setGameOver(true);
-        setShowConfetti(true);
+        setCheckingResults(true);
 
-        const correct = gameStats.guesses.filter((g) => g.correct).length;
-        const total = gameStats.guesses.length;
+        try {
+            const scoreData = { guesses, gameSessionId };
 
-        const scoreData = { correct, total };
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/pokemon/results`, scoreData);
 
-        setTempScore({ scoreData, gameId: GAME_ID });
+            setResults(response.data);
+            setTempScore({ scoreData, gameId: GAME_ID });
+            handleCompletion(scoreData);
+        } catch (error) {
+            console.error('Error fetching results:', error);
+        }
 
-        handleCompletion(scoreData);
+        setCheckingResults(false);
     };
 
     const handlePlayAgain = () => {
-        setGameStats({ guesses: [] });
-        setShowConfetti(false);
+        setGuesses([]);
         setGameOver(false);
         setPlayAgainKey((prev) => prev + 1);
+        setCurrentPokemonIndex(0);
+        setResults(null);
         hasHandledCompletion.current = false;
+        setBatchNumber(3);
+        setCheckingResults(false);
+        setGameSessionId('');
+        setPokemonData([]);
     };
 
     return (
         <section className="flex flex-col justify-center items-center">
-            {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
             {gameOver ? (
                 <>
+                    <Confetti recycle={false} numberOfPieces={200} />
                     <div className="inline-flex items-center justify-between min-w-[300px] h-12 gap-4 mb-3">
                         <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
                         <h3 className="text-amber-400 text-2xl">Time's up!</h3>
                     </div>
-                    <h2 className="text-white text-2xl">
-                        You guessed{' '}
-                        <span className="devil-detail">
-                            {gameStats.guesses.map((g) => g.correct).filter(Boolean).length}/{gameStats.guesses.length}
-                        </span>{' '}
-                        Pokémon!
-                    </h2>
-                    <div className="my-6 max-w-3xl mx-auto">
-                        <div className="flex flex-wrap gap-4 mt-4 items-center justify-center">
-                            {gameStats.guesses.map((g, idx) =>
-                                g.correct ? (
-                                    <div
-                                        key={idx}
-                                        className="flex flex-col items-center border border-green-500 p-2 rounded relative"
-                                    >
-                                        <span className="absolute top-0 right-1 text-white text-sm">{idx + 1}</span>
-                                        <img
-                                            src={g.pokemon.image}
-                                            alt={g.pokemon.name}
-                                            className="w-20 h-20 object-contain"
-                                        />
-                                        <span className="text-green-500 text-base mt-2">{g.pokemon.name}</span>
-                                    </div>
-                                ) : (
-                                    <div
-                                        key={idx}
-                                        className="flex flex-col items-center border border-red-500 p-2 rounded relative"
-                                    >
-                                        <span className="absolute top-0 right-1 text-white text-sm">{idx + 1}</span>
-                                        <img
-                                            src={g.pokemon.image}
-                                            alt={g.pokemon.name}
-                                            className="w-20 h-20 object-contain"
-                                        />
-                                        <Feedback correct={g.pokemon.name} guess={g.guess} />
-                                    </div>
-                                ),
-                            )}
-                            {pokemonData && (
-                                <div className="flex flex-col items-center border border-white p-2 rounded">
-                                    <img
-                                        src={pokemonData.image}
-                                        alt={pokemonData.name}
-                                        className="w-20 h-20 object-contain"
-                                    />
-                                    <span className="text-white text-base mt-2">{pokemonData.name}</span>
+                    {checkingResults ? (
+                        <p className="text-white">Checking results...</p>
+                    ) : (
+                        <>
+                            <h2 className="text-white text-2xl">
+                                You guessed{' '}
+                                <span className="devil-detail">
+                                    {results?.correct}/{results?.total}
+                                </span>{' '}
+                                Pokémon!
+                            </h2>
+                            <div className="my-6 max-w-3xl mx-auto">
+                                <div className="flex flex-wrap gap-4 mt-4 items-center justify-center">
+                                    {results?.results.map((g, idx) =>
+                                        g.isCorrect ? (
+                                            <div
+                                                key={idx}
+                                                className="flex flex-col items-center border border-green-500 p-2 rounded relative"
+                                            >
+                                                <span className="absolute top-0 right-1 text-white text-sm">
+                                                    {idx + 1}
+                                                </span>
+                                                <img
+                                                    src={pokemonData[idx].sprite}
+                                                    alt={g.guessedName}
+                                                    className="w-20 h-20 object-contain"
+                                                />
+                                                <span className="text-green-500 text-base mt-2">{g.guessedName}</span>
+                                            </div>
+                                        ) : (
+                                            <div
+                                                key={idx}
+                                                className="flex flex-col items-center border border-red-500 p-2 rounded relative"
+                                            >
+                                                <span className="absolute top-0 right-1 text-white text-sm">
+                                                    {idx + 1}
+                                                </span>
+                                                <img
+                                                    src={pokemonData[idx].sprite}
+                                                    alt={g.correctName}
+                                                    className="w-20 h-20 object-contain"
+                                                />
+                                                <Feedback correct={g.correctName} guess={g.guessedName} />
+                                            </div>
+                                        ),
+                                    )}
                                 </div>
-                            )}
-                        </div>
-                    </div>
+                            </div>
+                        </>
+                    )}
                 </>
             ) : (
                 <>
@@ -283,24 +302,9 @@ const Game: React.FC = () => {
                         <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
                         <div className="flex flex-col text-white">
                             <DecrementTimer onGameFinished={handleGameOver} resetSignal={playAgainKey} />
-
                             <div className="flex justify-between gap-4 items-center">
-                                <div
-                                    className={`w-3 h-3 rounded-full ${
-                                        gameStats.guesses.some((g) => g.pokemon.id === pokemonData?.id)
-                                            ? gameStats.guesses.find((g) => g.pokemon.id === pokemonData?.id)?.correct
-                                                ? 'bg-green-500'
-                                                : 'bg-red-500'
-                                            : 'bg-transparent'
-                                    }`}
-                                ></div>
                                 <span className="font-mono min-w-[6ch] text-right">
-                                    Correct:{' '}
-                                    {String(gameStats.guesses.map((g) => g.correct).filter(Boolean).length).padStart(
-                                        2,
-                                        '0',
-                                    )}
-                                    /{String(gameStats.guesses.length).padStart(2, '0')}
+                                    {String(guesses.length).padStart(2, '0')}
                                 </span>
                             </div>
                         </div>
@@ -312,14 +316,17 @@ const Game: React.FC = () => {
                             </div>
                         ) : (
                             <img
-                                src={pokemonData?.image}
+                                src={pokemonData[currentPokemonIndex]?.sprite || ''}
                                 alt="Who's that Pokémon?"
                                 className="w-full h-full object-cover filter grayscale select-none"
                                 draggable="false"
                             />
                         )}
                     </div>
-                    <PokemonInput nameLength={pokemonData?.name.replace(' ', '').length || 6} onSubmit={handleGuess} />
+                    <PokemonInput
+                        nameLength={pokemonData[currentPokemonIndex]?.nameLength || 0}
+                        onSubmit={handleGuess}
+                    />
                 </>
             )}
         </section>
@@ -329,7 +336,7 @@ const Game: React.FC = () => {
 // Main Pokemon Game Component
 const PokemonGame: React.FC = () => {
     console.log(
-        '%cHey, you! %cI see you peeking around the DevTools... %cNo cheating allowed! 😎',
+        '%cHey, you! %cI see you peeking around the DevTools... %cNo cheating allowed! ☝️🤓',
         'color: darkorange; font-size: 16px; font-weight: bold;',
         'color: limegreen; font-size: 16px; font-weight: bold;',
         'color: red; font-size: 16px; font-weight: bold; text-decoration: underline;',
