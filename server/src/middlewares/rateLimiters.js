@@ -2,7 +2,7 @@ import { createRateLimiter } from '../utils/rateLimiters.js';
 
 export const generalLimiter = createRateLimiter({
     windowMs: 3 * 60 * 1000,
-    limit: 5,
+    limit: 50,
     message: 'Too many requests, please wait before trying again.',
 });
 
