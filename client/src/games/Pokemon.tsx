@@ -79,10 +79,15 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
     const [input, setInput] = useState<string>('');
     const [keystrokeTimes, setKeystrokeTimes] = useState<number[]>([]);
 
+    const lastSubmitTimeRef = useRef<number>(0);
+
     const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
         const now = Date.now();
 
-        if (event.key === 'Enter' && input.length === nameLength) {
+        if (event.key === 'Enter') {
+            if (now - lastSubmitTimeRef.current < 1000) return;
+
+            lastSubmitTimeRef.current = now;
             const keyIntervals = keystrokeTimes.map((time, i, arr) => (i > 0 ? time - arr[i - 1] : 0)).slice(1);
 
             onSubmit(input, keyIntervals);
@@ -94,13 +99,11 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
     };
 
     const handleOnSubmit = () => {
-        if (input.length === nameLength) {
-            const keyIntervals = keystrokeTimes.map((time, i, arr) => (i > 0 ? time - arr[i - 1] : 0)).slice(1);
+        const keyIntervals = keystrokeTimes.map((time, i, arr) => (i > 0 ? time - arr[i - 1] : 0)).slice(1);
 
-            onSubmit(input, keyIntervals);
-            setInput('');
-            setKeystrokeTimes([]);
-        }
+        onSubmit(input, keyIntervals);
+        setInput('');
+        setKeystrokeTimes([]);
     };
 
     const renderInputGroups = () => {
