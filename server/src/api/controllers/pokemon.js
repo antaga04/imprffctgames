@@ -31,7 +31,7 @@ export const generatePokemonSession = async (req, res) => {
             return {
                 _id: pokemon._id,
                 nameLength: pokemon.name.length,
-                sprite: pokemon.pokeSprite,
+                sprite: pokemon.sprite,
             };
         });
 
@@ -74,7 +74,7 @@ export const getPokemonBatch = async (req, res) => {
             return {
                 _id: pokemon._id,
                 nameLength: pokemon.name.length,
-                sprite: pokemon.pokeSprite,
+                sprite: pokemon.sprite,
             };
         });
 

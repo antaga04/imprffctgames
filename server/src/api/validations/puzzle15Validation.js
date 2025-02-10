@@ -57,23 +57,26 @@ export async function validatePuzzle15ScoreData(scoreData) {
     const { moves, time, gameSessionId } = scoreData;
 
     // Validate moves and time
-    if (!Array.isArray(moves) || typeof time !== 'number') return false;
+    if (!Array.isArray(moves) || typeof time !== 'number') {
+        console.log('moves or time invalid');
+        return { isValid: false };
+    }
     if (moves.length === 0 || time < 2) {
         console.log('moves or time invalid');
-        return false;
+        return { isValid: false };
     }
 
     // Fetch the GameSession from the database
     const gameSession = await GameSession.findById(gameSessionId);
     if (!gameSession) {
         console.log('Game session does not exist');
-        return false; // Session doesn't exist
+        return { isValid: false }; // Session doesn't exist
     }
 
     // Check if the session hash matches the one in the game session
     if (gameSession.hash !== scoreData.hash) {
         console.log('Hashes do not match');
-        return false;
+        return { isValid: false };
     }
 
     let board = gameSession.state; // Initial board state
@@ -89,19 +92,19 @@ export async function validatePuzzle15ScoreData(scoreData) {
         timestamp = Number(timestamp);
         if (isNaN(timestamp)) {
             console.log('Invalid timestamp detected');
-            return false;
+            return { isValid: false };
         }
 
         // Ensure from and to positions are valid
         if (!isValidMove(from, to, board)) {
             console.log('Invalid move detected');
-            return false;
+            return { isValid: false };
         }
 
         // Ensure timestamps are reasonable
         if (lastTimestamp !== null && timestamp <= lastTimestamp) {
             console.log('Bad timestamp: Moves must occur in chronological order');
-            return false; // Move must happen after the last one
+            return { isValid: false }; // Move must happen after the last one
         }
 
         // Check for excessive time between moves
@@ -122,25 +125,31 @@ export async function validatePuzzle15ScoreData(scoreData) {
         [board[from], board[to]] = [board[to], board[from]];
     }
 
-    // Check total game time consistency with reported time
-    const totalGameTime = Date.now() - gameSession.createdAt.getTime();
-    const bufferTime = 2000; // 2-second buffer
-    if (Math.abs(totalGameTime - totalMoveTime) > time + bufferTime) {
+    const totalGameTime = lastTimestamp - moves[0].timestamp;
+
+    const bufferTime = 1500;
+    if (Math.abs(totalGameTime - time * 1000) > bufferTime) {
         console.log('Total game time does not match the recorded time');
-        return false;
+        return { isValid: false };
     }
 
     // Check for suspiciously fast sequences (e.g., 5+ moves in 1 second)
     if (suspiciousMoveCount > 5) {
         console.log('Suspiciously fast sequence of moves detected');
-        return false;
+        return { isValid: false };
     }
 
     // Validate that the board is correctly solved (solved when it's in ascending order)
     if (board.some((val, index) => val !== index)) {
         console.log('Board is not solved');
-        return false;
+        return { isValid: false };
     }
 
-    return true;
+    return {
+        isValid: true,
+        newScore: {
+            moves: moves.length,
+            time,
+        },
+    };
 }
