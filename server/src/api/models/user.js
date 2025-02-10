@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
     avatar: { type: String },
     scores: [{ type: mongoose.Types.ObjectId, ref: 'Score' }],
     role: { type: String, enum: { values: ['user', 'admin'] } },
-    status: { type: String, enum: { values: ['pending', 'active'] }, default: 'pending' },
+    status: { type: String, enum: { values: ['pending', 'active', 'banned'] }, default: 'pending' },
+    strikes: { type: Number, default: 0 },
 });
 
 userSchema.pre('save', async function () {
