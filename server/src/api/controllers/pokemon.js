@@ -1,4 +1,4 @@
-import Pokemon from '../models/Pokemon.js';
+import Pokemon from '../models/pokemon.js';
 import GameSession from '../models/gameSession.js';
 import { getRandomSequence } from '../../utils/randomSequence.js';
 
