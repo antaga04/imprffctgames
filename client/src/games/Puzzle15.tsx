@@ -56,6 +56,7 @@ const Game: React.FC = () => {
     const [resetSignal, setResetSignal] = useState(0);
     const [boardHash, setBoardHash] = useState('');
     const [gameSessionId, setGameSessionId] = useState('');
+    const [loading, setLoading] = useState(false);
 
     const handleCompletion = useGameCompletion(GAME_ID);
     const { setTempScore } = useTempScore();
@@ -67,6 +68,7 @@ const Game: React.FC = () => {
     }, []);
 
     const shuffleBoard = useCallback(async () => {
+        setLoading(true);
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/puzzle15`);
             const { board, hash, gameSessionId } = response.data;
@@ -79,6 +81,8 @@ const Game: React.FC = () => {
             }
         } catch (error) {
             console.error('Error fetching board:', error);
+        } finally {
+            setLoading(false);
         }
     }, []);
 
@@ -198,7 +202,12 @@ const Game: React.FC = () => {
                 />
                 <span className="font-mono min-w-[6ch] text-right">Moves: {String(moves.length).padStart(3, '0')}</span>
             </p>
-            <div className="grid grid-cols-4 gap-2 p-4 bg-gray-300 rounded-lg shadow-lg text-black">
+            <div className="grid grid-cols-4 gap-2 p-4 bg-gray-300 rounded-lg shadow-lg text-black relative">
+                {loading && (
+                    <span className="w-full h-full absolute backdrop-blur-sm flex justify-center items-center font-bold">
+                        Loading...
+                    </span>
+                )}
                 {board.map((tile, index) => (
                     <button
                         key={tile}
