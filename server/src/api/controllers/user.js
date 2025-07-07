@@ -33,10 +33,15 @@ export const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        const emailValidation = validateEmail(email);
+        if (!emailValidation.valid) {
+            return res.status(400).json({ error: emailValidation.message });
+        }
+
         const user = await User.findOne({ email }).select('-role').lean();
 
         if (!user) {
-            return res.status(400).json({ error: `User doesn't exist` });
+            return res.status(400).json({ error: `Incorrect email or password` });
         }
 
         if (user.status !== 'active') {
@@ -211,6 +216,11 @@ export const registerUser = async (req, res) => {
     try {
         const { email, nickname, password } = req.body;
 
+        const emailValidation = validateEmail(email);
+        if (!emailValidation.valid) {
+            return res.status(400).json({ error: emailValidation.message });
+        }
+
         const userDuplicated = await User.findOne({ email });
         if (userDuplicated) {
             return res.status(400).json({ error: 'User already exists' });
@@ -281,6 +291,12 @@ export const confirmEmail = async (req, res) => {
 // Resend Confirmation Email Endpoint
 export const resendConfirmationEmail = async (req, res) => {
     const { email } = req.body;
+
+    const emailValidation = validateEmail(email);
+    if (!emailValidation.valid) {
+        return res.status(400).json({ error: emailValidation.message });
+    }
+
     try {
         const user = await User.findOne({ email });
 
