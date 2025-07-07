@@ -203,6 +203,7 @@ type TimerIncrementProps = {
 type DecrementTimerProps = {
     onGameFinished: () => void;
     resetSignal: number;
+    gameSessionId: string | null; // Used to start the decrement timer
 };
 
 type GameItemProps = {

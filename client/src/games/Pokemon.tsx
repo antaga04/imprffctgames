@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import Confetti from 'react-confetti';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import GameWrapper from '@/components/layouts/GameWrapper';
@@ -46,26 +46,41 @@ const Feedback: React.FC<Feedback> = ({ correct, guess }) => {
     );
 };
 
-const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal }) => {
+const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal, gameSessionId }) => {
     const [timeLeft, setTimeLeft] = useState<number>(INITIAL_TIME);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+    const clearTimer = useCallback(() => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+        }
+    }, []);
 
     useEffect(() => {
-        setTimeLeft(INITIAL_TIME);
+        clearTimer();
 
-        const interval = setInterval(() => {
-            setTimeLeft((prevTime) => Math.max(prevTime - 1, 0));
+        if (!gameSessionId) {
+            setTimeLeft(INITIAL_TIME);
+            return;
+        }
+
+        setTimeLeft(INITIAL_TIME);
+        intervalRef.current = setInterval(() => {
+            setTimeLeft((prev) => {
+                if (prev <= 1) {
+                    clearTimer();
+                    onGameFinished();
+                    return 0;
+                }
+                return prev - 1;
+            });
         }, 1000);
 
-        return () => clearInterval(interval);
-    }, [resetSignal]);
+        return clearTimer;
+    }, [resetSignal, gameSessionId, clearTimer, onGameFinished]);
 
-    useEffect(() => {
-        if (timeLeft === 0) {
-            onGameFinished();
-        }
-    }, [timeLeft, onGameFinished]);
-
-    const timeColorClass = useMemo(() => (timeLeft < 11 ? 'text-red-600' : 'text-white'), [timeLeft]);
+    const timeColorClass = timeLeft < 11 ? 'text-red-600' : 'text-white';
 
     return (
         <p className="font-mono min-w-[6ch] text-right">
@@ -140,7 +155,7 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
 };
 
 const Game: React.FC = () => {
-    const [gameSessionId, setGameSessionId] = useState('');
+    const [gameSessionId, setGameSessionId] = useState(null);
     const [pokemonData, setPokemonData] = useState<PokemonData[]>([]);
     const [guesses, setGuesses] = useState<Guess[]>([]);
     const [batchNumber, setBatchNumber] = useState(3);
@@ -160,6 +175,8 @@ const Game: React.FC = () => {
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/pokemon`);
             const { gameSessionId, pokemons } = response.data;
+
+            console.log(gameSessionId);
 
             setPokemonData(pokemons);
             setGameSessionId(gameSessionId);
@@ -235,7 +252,7 @@ const Game: React.FC = () => {
         hasHandledCompletion.current = false;
         setBatchNumber(3);
         setCheckingResults(false);
-        setGameSessionId('');
+        setGameSessionId(null);
         setPokemonData([]);
     };
 
@@ -304,7 +321,11 @@ const Game: React.FC = () => {
                     <div className="inline-flex items-center justify-between h-12 gap-4 mb-3">
                         <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
                         <div className="flex flex-col text-white">
-                            <DecrementTimer onGameFinished={handleGameOver} resetSignal={playAgainKey} />
+                            <DecrementTimer
+                                onGameFinished={handleGameOver}
+                                resetSignal={playAgainKey}
+                                gameSessionId={gameSessionId}
+                            />
                             <div className="flex justify-between gap-4 items-center">
                                 <span className="font-mono min-w-[6ch] text-right">
                                     {String(guesses.length).padStart(2, '0')}
