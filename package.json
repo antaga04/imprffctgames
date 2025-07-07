@@ -2,13 +2,13 @@
     "name": "imprffct-games",
     "version": "1.0.0",
     "description": "This simple proyect mono-repo using pnpm, React ts and node js with express and mongodb.",
-    "devDependencies": {
-        "prettier": "^3.6.2"
-    },
     "scripts": {
         "format": "prettier --write ."
     },
     "keywords": [],
     "author": "antaga04",
-    "license": "ISC"
+    "license": "ISC",
+    "devDependencies": {
+        "prettier": "^3.6.2"
+    }
 }
