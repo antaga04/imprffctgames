@@ -3,42 +3,24 @@ export const games = {
         name: 'Tic Tac Toe',
         url: 'tictactoe',
         thumbnail: '/tic-tac-toe.png',
+        loader: () => import('@/games/TicTacToe').then((m) => m.default),
     },
     puzzle15: {
         name: '15 Puzzle',
-        url: '15puzzle',
+        url: 'puzzle15',
         thumbnail: '/15.png',
+        loader: () => import('@/games/Puzzle15').then((m) => m.default),
     },
     pokemon: {
         name: "Who's that Pokémon",
         url: 'pokemon',
         thumbnail: '/pokemon.png',
-    },
-    /*
-    hangman: {
-        name: 'Hangman',
-        url: 'hangman',
-        thumbnail: '/hangman.png',
-    },
-    sudoku: {
-        name: 'Sudoku',
-        url: 'sudoku',
-        thumbnail: '/sudoku.png',
-    },
-    wordle: {
-        name: 'Wordle',
-        url: 'wordle',
-        thumbnail: '/wordle.svg',
+        loader: () => import('@/games/Pokemon').then((m) => m.default),
     },
     lizardtype: {
         name: 'Lizardtype',
         url: 'lizardtype',
         thumbnail: '/iguana.png',
+        loader: () => import('@/games/LizardType').then((m) => m.default),
     },
-    tetris: {
-        name: 'Tetris',
-        url: 'tetris',
-        thumbnail: '/tetris.png',
-    },
- */
 };

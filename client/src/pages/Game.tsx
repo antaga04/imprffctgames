@@ -1,38 +1,36 @@
 import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { games } from '@/lib/games';
 import GameNotFound from '@/pages/GameNotFound';
-import TicTacToe from '@/games/TicTacToe';
-import Puzzle15 from '@/games/Puzzle15';
-import Wordle from '@/games/Wordle';
-import Pokemon from '@/games/Pokemon';
-import Hangman from '@/games/Hangman';
 
 const Game = () => {
     const { id } = useParams();
+    const [GameComponent, setGameComponent] = useState<React.ComponentType | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [valid, setValid] = useState(true);
 
-    let gameComponent;
+    useEffect(() => {
+        const gameEntry = games[id as keyof typeof games];
 
-    switch (id) {
-        case 'tictactoe':
-            gameComponent = <TicTacToe />;
-            break;
-        case '15puzzle':
-            gameComponent = <Puzzle15 />;
-            break;
-        case 'wordle':
-            gameComponent = <Wordle />;
-            break;
-        case 'pokemon':
-            gameComponent = <Pokemon />;
-            break;
-        case 'hangman':
-            gameComponent = <Hangman />;
-            break;
-        default:
-            gameComponent = <GameNotFound />;
-            break;
-    }
+        if (gameEntry?.loader) {
+            setValid(true);
+            setLoading(true);
+            gameEntry.loader().then((Comp) => {
+                setGameComponent(() => Comp);
+                setLoading(false);
+            });
+        } else {
+            setValid(false);
+            setGameComponent(null);
+            setLoading(false);
+        }
+    }, [id]);
 
-    return <div className="game-container">{gameComponent}</div>;
+    if (loading)
+        return <div className="flex flex-col items-center justify-center min-h-screen p-6">Loading game...</div>;
+    if (!valid || !GameComponent) return <GameNotFound />;
+
+    return <GameComponent />;
 };
 
 export default Game;
