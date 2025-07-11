@@ -1,41 +1,105 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Confetti from 'react-confetti';
 import GameWrapper from '@/components/layouts/GameWrapper';
 import CoolDownButton from '@/components/ui/CoolDownButton';
+import { User, Users } from 'lucide-react';
+
+const PLAYER = {
+    X: 'X',
+    O: 'O',
+} as const;
+
+const GAME_MODE = {
+    SINGLE: 'single',
+    MULTI: 'multi',
+} as const;
+
+const GAME_STATUS = {
+    PLAYING: 'playing',
+    WON: 'won',
+    DRAW: 'draw',
+} as const;
 
 const Game = () => {
     const [board, setBoard] = useState<Board>(Array(9).fill(null));
-    const [currentPlayer, setCurrentPlayer] = useState<Player>('X');
-    const [status, setStatus] = useState<string>(`Player X's turn`);
-    const [winner, setWinner] = useState<Player>(null);
+    const [currentPlayer, setCurrentPlayer] = useState<Player>(PLAYER.X);
+    const [gameStatus, setGameStatus] = useState<GameStatus>(GAME_STATUS.PLAYING);
+    const [statusMessage, setStatusMessage] = useState<string>(`Player ${PLAYER.X}'s turn`);
     const [showConfetti, setShowConfetti] = useState<boolean>(false);
     const [highlightSquares, setHighlightSquares] = useState<number[]>([]);
+    const [stats, setStats] = useState<{ playerX: number; playerO: number; playernull: number }>({
+        playerX: 0,
+        playerO: 0,
+        playernull: 0,
+    });
+    const [gameMode, setGameMode] = useState<GameMode>(GAME_MODE.SINGLE);
 
-    const handleSquareClick = (index: number): void => {
-        if (board[index] || winner) return;
+    const machineMove = (currentBoard: Board): void => {
+        const availableSquares = currentBoard
+            .map((square, index) => (square === null ? index : null))
+            .filter((index) => index !== null) as number[];
 
+        if (availableSquares.length === 0) return;
+
+        const randomIndex = availableSquares[Math.floor(Math.random() * availableSquares.length)];
+
+        setTimeout(() => {
+            handleMove(randomIndex, PLAYER.O);
+        }, 300);
+    };
+
+    const handleMove = (index: number, player: Player): void => {
         const newBoard = [...board];
-        newBoard[index] = currentPlayer;
+        newBoard[index] = player;
         setBoard(newBoard);
 
-        const result = checkForWinner(newBoard);
-        if (result) {
-            setWinner(result.player);
-            setHighlightSquares(result.combination);
+        const winnerResult = checkForWinner(newBoard);
+
+        if (winnerResult) {
+            setGameStatus(GAME_STATUS.WON);
+            setHighlightSquares(winnerResult.combination);
             setShowConfetti(true);
-            setStatus(`${result.player} wins! Congratulations!`);
+            setStatusMessage(`${winnerResult.player} wins! Congratulations!`);
+
+            setStats((prevStats) => {
+                const updatedStats = { ...prevStats };
+                updatedStats[`player${winnerResult.player}`]++;
+                return updatedStats;
+            });
             return;
         }
 
         if (checkForDraw(newBoard)) {
-            setStatus("It's a draw! Well played.");
+            setGameStatus(GAME_STATUS.DRAW);
+            setStatusMessage("It's a draw! Well played.");
+            setStats((prevStats) => {
+                const updatedStats = { ...prevStats };
+                updatedStats.playernull++;
+                return updatedStats;
+            });
             return;
         }
 
-        const nextPlayer = currentPlayer === 'X' ? 'O' : 'X';
+        const nextPlayer = player === PLAYER.X ? PLAYER.O : PLAYER.X;
         setCurrentPlayer(nextPlayer);
-        setStatus(`Player ${nextPlayer}'s turn`);
+        setStatusMessage(`Player ${nextPlayer}'s turn`);
     };
+
+    const handleSquareClick = (index: number): void => {
+        if (board[index] || gameStatus !== GAME_STATUS.PLAYING) return;
+
+        if (gameMode === GAME_MODE.SINGLE && currentPlayer === PLAYER.O) return;
+
+        handleMove(index, currentPlayer);
+    };
+
+    // manage machine moves
+    useEffect(() => {
+        if (gameMode === GAME_MODE.SINGLE && currentPlayer === PLAYER.O && gameStatus === GAME_STATUS.PLAYING) {
+            machineMove(board);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentPlayer, gameMode, gameStatus, board]);
 
     const checkForWinner = (board: Board): WinnerResult => {
         const winningCombinations = [
@@ -65,9 +129,9 @@ const Game = () => {
 
     const resetGame = (): void => {
         setBoard(Array(9).fill(null));
-        setCurrentPlayer('X');
-        setStatus(`Player X's turn`);
-        setWinner(null);
+        setCurrentPlayer(PLAYER.X);
+        setGameStatus(GAME_STATUS.PLAYING);
+        setStatusMessage(`Player ${PLAYER.X}'s turn`);
         setShowConfetti(false);
         setHighlightSquares([]);
     };
@@ -76,7 +140,7 @@ const Game = () => {
         <>
             {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
 
-            <p className="text-lg mb-4 text-slate-300">{status}</p>
+            <p className="text-lg mb-4 text-slate-300">{statusMessage}</p>
             <div
                 role="grid"
                 aria-label="Tic Tac Toe game board"
@@ -91,7 +155,11 @@ const Game = () => {
                         style={{
                             backgroundColor: highlightSquares.includes(index) ? '#5ec269' : '',
                         }}
-                        className="w-20 h-20 flex items-center justify-center text-3xl cursor-pointer rounded-md bg-gray-100 hover:bg-gray-50 duration-200 ease-in-out"
+                        className={`w-20 h-20 flex items-center justify-center text-3xl rounded-md bg-gray-50 hover:bg-gray-100 duration-200 ease-in-out ${
+                            gameMode === GAME_MODE.SINGLE && currentPlayer != PLAYER.X
+                                ? 'cursor-not-allowed opacity-75'
+                                : 'cursor-pointer'
+                        }`}
                         onClick={() => handleSquareClick(index)}
                     >
                         {value}
@@ -99,13 +167,38 @@ const Game = () => {
                 ))}
             </div>
 
-            <CoolDownButton
-                text="Reset Game"
-                onSubmit={resetGame}
-                bgColor="bg-red-600"
-                hoverBgColor="hover:bg-red-700"
-                className="mt-6"
-            />
+            <section className="flex items-center gap-3 mt-6 text-lg text-slate-300">
+                <p id="player1" className="flex flex-col items-center justify-center ">
+                    <span>Player (X)</span>
+                    <span className="text-2xl">{stats.playerX}</span>
+                </p>
+                <p id="tie" className="flex flex-col items-center justify-center ">
+                    <span>-</span>
+                    <span className="text-2xl">{stats.playernull}</span>
+                </p>
+                <p id="player2" className="flex flex-col items-center justify-center ">
+                    <span>Player (O)</span>
+                    <span className="text-2xl">{stats.playerO}</span>
+                </p>
+            </section>
+
+            <section className="flex items-center mt-6 gap-3">
+                <CoolDownButton
+                    text="New Game"
+                    onSubmit={resetGame}
+                    bgColor="bg-red-600"
+                    hoverBgColor="hover:bg-red-700"
+                />
+                <CoolDownButton
+                    title="Switch Game Mode"
+                    text={gameMode === GAME_MODE.SINGLE ? <User /> : <Users />}
+                    onSubmit={() =>
+                        setGameMode((prev) => (prev === GAME_MODE.SINGLE ? GAME_MODE.MULTI : GAME_MODE.SINGLE))
+                    }
+                    bgColor="bg-gray-600"
+                    hoverBgColor="hover:bg-gray-700"
+                />
+            </section>
         </>
     );
 };

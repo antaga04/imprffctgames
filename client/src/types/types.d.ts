@@ -61,13 +61,14 @@ type AuthLinkSwitcherTypes = {
 };
 
 type CoolDownButtonProps = {
-    text: string;
+    text: string | React.ReactNode;
     onSubmit: () => void;
     bgColor?: string;
     hoverBgColor?: string;
     textColor?: string;
     className?: string;
     coolTime?: number;
+    title?: string;
 };
 
 type SingOutProps = {
@@ -212,8 +213,10 @@ type GameItemProps = {
     thumbnail: string;
 };
 
-type Player = 'X' | 'O' | null;
-type Board = Player[];
+type Player = 'X' | 'O';
+type Board = (Player | null)[];
+type GameMode = 'single' | 'multi';
+type GameStatus = 'playing' | 'won' | 'draw';
 type WinnerResult = { player: Player; combination: number[] } | null;
 
 type Feedback = {

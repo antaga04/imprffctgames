@@ -8,6 +8,7 @@ const CoolDownButton: React.FC<CoolDownButtonProps> = ({
     textColor = 'text-white',
     className,
     coolTime = 1000,
+    title,
 }) => {
     const [cooldown, setCooldown] = useState<boolean>(false);
 
@@ -21,6 +22,7 @@ const CoolDownButton: React.FC<CoolDownButtonProps> = ({
 
     return (
         <button
+            title={title}
             onClick={handleOnSubmit}
             disabled={cooldown}
             className={`px-4 py-2 rounded ${
