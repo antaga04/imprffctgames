@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Confetti from 'react-confetti';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
 import GameWrapper from '@/components/layouts/GameWrapper';
@@ -48,37 +48,26 @@ const Feedback: React.FC<Feedback> = ({ correct, guess }) => {
 
 const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal, gameSessionId }) => {
     const [timeLeft, setTimeLeft] = useState<number>(INITIAL_TIME);
-    const intervalRef = useRef<NodeJS.Timeout | null>(null);
-
-    const clearTimer = useCallback(() => {
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
-        }
-    }, []);
 
     useEffect(() => {
-        clearTimer();
+        setTimeLeft(INITIAL_TIME);
 
         if (!gameSessionId) {
-            setTimeLeft(INITIAL_TIME);
             return;
         }
 
-        setTimeLeft(INITIAL_TIME);
-        intervalRef.current = setInterval(() => {
-            setTimeLeft((prev) => {
-                if (prev <= 1) {
-                    clearTimer();
-                    onGameFinished();
-                    return 0;
-                }
-                return prev - 1;
-            });
+        const interval = setInterval(() => {
+            setTimeLeft((prevTime) => Math.max(prevTime - 1, 0));
         }, 1000);
 
-        return clearTimer;
-    }, [resetSignal, gameSessionId, clearTimer, onGameFinished]);
+        return () => clearInterval(interval);
+    }, [resetSignal, gameSessionId]);
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            onGameFinished();
+        }
+    }, [timeLeft, onGameFinished]);
 
     const timeColorClass = timeLeft < 11 ? 'text-red-600' : 'text-white';
 
