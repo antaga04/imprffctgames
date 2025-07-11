@@ -2,7 +2,7 @@ import User from '../../api/models/user.js';
 import { hashPassword, verifyPassword } from '../../utils/password.js';
 import { signToken } from '../../utils/jwt.js';
 import deleteCloudinaryImage from '../../utils/cloudinary.js';
-import { validateNickname, validatePassword } from '../../utils/validation.js';
+import { validateEmail, validateNickname, validatePassword } from '../../utils/validation.js';
 import jwt from 'jsonwebtoken';
 import { sendConfirmationEmail } from '../../utils/email.js';
 
