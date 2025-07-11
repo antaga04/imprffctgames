@@ -30,7 +30,7 @@ type ProfileData = {
     email: string;
     currentPassword: string;
     newPassword: string;
-    avatar: string;
+    avatar: string | null;
     scores: Score[];
 };
 

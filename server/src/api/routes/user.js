@@ -10,6 +10,7 @@ import {
     verifyUser,
     logoutUser,
     resendConfirmationEmail,
+    deleteUserAvatar,
 } from '../controllers/user.js';
 import { hasValidAuthJwt } from '../../middlewares/authenticated.js';
 import uploadFile from '../../middlewares/uploadFile.js';
@@ -35,6 +36,7 @@ router.post(
 router.put('/newpassword', hasValidAuthJwt, updateUserPassword);
 router.get('/', hasValidAuthJwt, getUser);
 router.put('/avatar', hasValidAuthJwt, avatarLimiter, uploadFile.single('avatar'), updateUserAvatar);
+router.delete('/avatar', hasValidAuthJwt, deleteUserAvatar);
 
 router.get('/verify', hasValidAuthJwt, verifyUser);
 router.post('/logout', logoutUser);

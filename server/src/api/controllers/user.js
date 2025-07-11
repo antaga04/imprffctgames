@@ -93,10 +93,31 @@ export const updateUserAvatar = async (req, res) => {
             return res.status(201).json({ data: path });
         }
 
-        return res.status(200).json({ message: 'Avatar deleted successfully' });
+        return res.status(200).json({ message: 'Avatar uploaded successfully' });
     } catch (error) {
         console.error('Error updating avatar:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const deleteUserAvatar = async (req, res) => {
+    const { id } = req.user;
+
+    try {
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        if (user.avatar) {
+            await deleteCloudinaryImage(user.avatar);
+            await User.findByIdAndUpdate(id, { avatar: null }, { new: true });
+        }
+
+        return res.status(200).json({ message: 'Avatar deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting avatar:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 
