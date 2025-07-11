@@ -14,14 +14,12 @@ import BackButton from '@/components/ui/BackButton';
 import MyAvatar from '@/components/ui/MyAvatar';
 import { GAMES } from '@/lib/constants';
 import { toast } from 'sonner';
+import { useSearchParams } from 'react-router-dom';
 
 const PAGINATED_ITEMS = 5;
 
 const Ranking: React.FC = () => {
-    const storageGameId = localStorage.getItem('rankingGame');
-    const defaultGame = GAMES.find((game) => game.gameName === storageGameId) || GAMES[0];
-
-    const [selectedGame, setSelectedGame] = useState<Game>(defaultGame);
+    const [searchParams, setSearchParams] = useSearchParams();
     const [scores, setScores] = useState<Score[]>([]);
     const [pagination, setPagination] = useState<PaginationInfo>({
         currentPage: 1,
@@ -30,51 +28,79 @@ const Ranking: React.FC = () => {
     });
     const [isLoading, setIsLoading] = useState(false);
 
-    const fetchScores = async (gameId: string, page: number) => {
-        setIsLoading(true);
-        try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/scores/${gameId}`, {
-                params: { page, limit: PAGINATED_ITEMS },
-            });
+    const slugToGame = (slug: string) => GAMES.find((g) => g.gameName.toLowerCase() === slug.toLowerCase());
 
-            setScores(response.data.data);
-            setPagination(response.data.pagination);
-            setIsLoading(false);
-        } catch (error) {
-            const err = error as MyError;
-            toast.error(err.response?.data?.error || 'An error occurred fetching scores.');
-            setIsLoading(false);
-        }
-    };
+    const gameSlugParam = searchParams.get('game');
+    const pageParam = parseInt(searchParams.get('page') || '1', 10);
+
+    const storageGameId = localStorage.getItem('rankingGame');
+    const defaultGame = GAMES.find((game) => game.gameName === storageGameId) || GAMES[0];
+
+    const selectedGame = slugToGame(gameSlugParam || '') || defaultGame;
+    const currentPage = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
+
+    const isGameValid = !!slugToGame(gameSlugParam || '');
+    const isPageValid = !isNaN(pageParam) && pageParam >= 1;
 
     useEffect(() => {
-        if (selectedGame) {
-            fetchScores(selectedGame.gameId, 1);
+        const fetchScores = async () => {
+            setIsLoading(true);
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_API_URL}/scores/${selectedGame.gameId}`, {
+                    params: { page: currentPage, limit: PAGINATED_ITEMS },
+                });
+
+                setScores(response.data.data);
+                setPagination(response.data.pagination);
+            } catch (error) {
+                const err = error as MyError;
+                toast.error(err.response?.data?.error || 'An error occurred fetching scores.');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchScores();
+    }, [selectedGame.gameId, currentPage]);
+
+    // Initialize search params if not set or invalid
+    useEffect(() => {
+        if (!gameSlugParam && !searchParams.get('page')) {
+            setSearchParams({ game: defaultGame.gameName, page: '1' });
+        } else if (!isGameValid || !isPageValid) {
+            setSearchParams({ game: defaultGame.gameName, page: '1' });
         }
-    }, [selectedGame]);
+        // eslint-disable-next-line
+    }, []);
 
     const handleGameChange = (gameId: string) => {
         const game = GAMES.find((g) => g.gameId === gameId);
         if (game) {
-            setSelectedGame(game);
             localStorage.setItem('rankingGame', game.gameName);
+            setSearchParams({ game: game.gameName, page: '1' });
         }
     };
 
     const handlePageChange = (newPage: number) => {
-        if (selectedGame && newPage >= 1 && newPage <= pagination.totalPages) {
-            fetchScores(selectedGame.gameId, newPage);
+        if (newPage >= 1 && newPage <= pagination.totalPages) {
+            setSearchParams({ game: selectedGame.gameName, page: newPage.toString() });
         }
     };
 
     return (
         <div className="flex flex-col text-black mt-32 mb-16">
-            <BackButton />
+            <BackButton url="/" />
             <h1 className="text-4xl font-bold text-center text-white neon-text mb-8">Leaderboard</h1>
             <div className="w-full max-w-4xl mx-auto bg-card rounded-lg shadow-lg p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-semibold text-primary">
-                        {selectedGame ? `${selectedGame.gameName} Rankings` : 'Select a Game'}
+                        {selectedGame ? (
+                            <>
+                                <span className="error-underline">{selectedGame.gameName}</span> Ranking
+                            </>
+                        ) : (
+                            'Select a Game'
+                        )}
                     </h2>
                     <Select onValueChange={handleGameChange} value={selectedGame?.gameId || ''}>
                         <SelectTrigger className="w-[180px]">
