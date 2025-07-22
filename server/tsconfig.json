@@ -16,7 +16,5 @@
             "@/controllers/*": ["src/api/controllers/*"],
             "@/validations/*": ["src/api/validations/*"]
         }
-    },
-    "include": ["src/**/*", "api/**/*"], // Include all files in the `src` folder
-    "exclude": ["node_modules", "dist"] // Exclude unnecessary folders
+    }
 }
