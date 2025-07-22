@@ -6,7 +6,7 @@
     "main": "src/index.js",
     "scripts": {
         "dev": "tsx watch src/index.ts",
-        "build": "tsc",
+        "build": "tsup src/index.ts --format esm --dts --out-dir dist",
         "start": "tsx src/index.ts"
     },
     "keywords": [],
@@ -40,6 +40,7 @@
         "@types/node": "^22.16.0",
         "@types/request-ip": "^0.0.41",
         "tsconfig-paths": "^4.2.0",
+        "tsup": "^8.5.0",
         "tsx": "^4.20.3",
         "typescript": "^5.8.3"
     }
