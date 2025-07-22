@@ -8,11 +8,7 @@
         "forceConsistentCasingInFileNames": true,
         "strict": true,
         "skipLibCheck": true,
-        "baseUrl": ".", // root of your project
-        "allowJs": true, // compile .js files
-        "checkJs": true, // enable type checking for .js files
-        "outDir": "dist", // optional: if you want to compile
-        "noEmit": true, // don't output JS yet
+        "baseUrl": ".",
         "paths": {
             "@/*": ["src/*"],
             "@/models/*": ["src/api/models/*"],
