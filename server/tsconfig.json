@@ -3,21 +3,18 @@
         "target": "es2022",
         "module": "ESNext",
         "moduleResolution": "node",
-        "rootDir": "./",
         "esModuleInterop": true,
-        "forceConsistentCasingInFileNames": true,
         "strict": true,
         "skipLibCheck": true,
-        "baseUrl": ".",
-        "outDir": "./",
+        "forceConsistentCasingInFileNames": true,
+        "baseUrl": "./src",
         "paths": {
-            "@/*": ["src/*"],
-            "@/models/*": ["src/api/models/*"],
-            "@/routes/*": ["src/api/routes/*"],
-            "@/controllers/*": ["src/api/controllers/*"],
-            "@/validations/*": ["src/api/validations/*"]
+            "@/*": ["*"],
+            "@/models/*": ["api/models/*"],
+            "@/routes/*": ["api/routes/*"],
+            "@/controllers/*": ["api/controllers/*"],
+            "@/validations/*": ["api/validations/*"]
         }
     },
-    "include": ["src/**/*", "api/**/*"], // Include all files in the `src` folder
-    "exclude": ["node_modules", "dist"] // Exclude unnecessary folders
+    "include": ["src/**/*"]
 }
