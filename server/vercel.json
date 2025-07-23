@@ -3,7 +3,7 @@
     "buildCommand": "pnpm run build",
     "builds": [
         {
-            "src": "api/index.ts",
+            "src": "dist/server/index.js",
             "use": "@vercel/node"
         }
     ],
