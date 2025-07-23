@@ -1,8 +1,8 @@
-import express from 'express';
+import { Router } from 'express';
 import { getAllScores, uploadScore, deleteScore, getScoresByGameId } from '@/controllers/score';
 import { hasValidAuthJwt, isAdmin } from '@/middlewares/authenticated';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.get('/', getAllScores);
 router.get('/:game_id', getScoresByGameId);

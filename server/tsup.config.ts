@@ -10,6 +10,10 @@ export default defineConfig({
     esbuildOptions(options) {
         options.alias = {
             '@': './src',
+            '@/models': 'src/api/models',
+            '@/routes': 'src/api/routes',
+            '@/controllers': 'src/api/controllers',
+            '@/validations': 'src/api/validations',
         };
     },
 });

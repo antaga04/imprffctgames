@@ -1,7 +1,7 @@
-import express from 'express';
+import { Router } from 'express';
 import { checkPokemonResults, generatePokemonSession, getPokemonBatch } from '@/controllers/pokemon';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.post('/', generatePokemonSession);
 router.get('/:gameSessionId/:batchNumber', getPokemonBatch);

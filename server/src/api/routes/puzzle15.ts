@@ -1,7 +1,7 @@
-import express from 'express';
+import { Router } from 'express';
 import { generateBoard } from '@/controllers/puzzle15';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.get('/', generateBoard);
 

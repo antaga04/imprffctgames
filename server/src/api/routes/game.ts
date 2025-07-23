@@ -1,9 +1,9 @@
-import express from 'express';
+import { Router } from 'express';
 import { getAllGames, createGame, updateGameById, deleteGame, getGameById } from '@/controllers/game';
 import uploadFile from '@/middlewares/uploadFile';
 import { hasValidAuthJwt, isAdmin } from '@/middlewares/authenticated';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.get('/', getAllGames);
 router.get('/:id', getGameById);

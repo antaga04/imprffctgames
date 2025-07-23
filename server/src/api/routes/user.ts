@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import {
     registerUser,
     loginUser,
@@ -18,7 +18,7 @@ import { resendConfirmationLimiter, avatarLimiter, registerLimiter } from '@/mid
 import { emailValidationMiddleware } from '@/middlewares/emailValidationAPI';
 import { mxRecordLookup } from '@/middlewares/mxRecordLookup';
 
-const router = express.Router();
+const router: Router = Router();
 
 router.post('/register', registerLimiter, mxRecordLookup, emailValidationMiddleware, registerUser);
 router.post('/login', loginUser);

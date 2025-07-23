@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction, Express } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 connectToDatabase();
 
-const app = express();
+const app: Express = express();
 
 app.use(cookieParser());
 
