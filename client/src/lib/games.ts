@@ -2,13 +2,13 @@ export const games = {
     tictactoe: {
         name: 'Tic Tac Toe',
         url: 'tictactoe',
-        thumbnail: '/tic-tac-toe.png',
+        thumbnail: '/tictactoe.png',
         loader: () => import('@/games/TicTacToe').then((m) => m.default),
     },
     puzzle15: {
         name: '15 Puzzle',
         url: 'puzzle15',
-        thumbnail: '/15.png',
+        thumbnail: '/15puzzle.png',
         loader: () => import('@/games/Puzzle15').then((m) => m.default),
     },
     pokemon: {
@@ -20,7 +20,7 @@ export const games = {
     lizardtype: {
         name: 'Lizardtype',
         url: 'lizardtype',
-        thumbnail: '/iguana.png',
+        thumbnail: '/lizardtype.png',
         loader: () => import('@/games/LizardType').then((m) => m.default),
     },
 };
