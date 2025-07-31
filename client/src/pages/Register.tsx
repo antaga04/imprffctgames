@@ -55,7 +55,7 @@ const RegisterForm = () => {
                 {
                     loading: 'Registering...',
                     success: 'Confirmation email has been resent. Please check your inbox.',
-                    error: (error) => error.response?.data?.message || 'An error occurred during registration.',
+                    error: (error) => error.response?.data?.error || 'An error occurred during registration.',
                 },
             );
         } catch (error) {

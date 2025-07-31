@@ -3,6 +3,7 @@ import Confetti from 'react-confetti';
 import GameWrapper from '@/components/layouts/GameWrapper';
 import CoolDownButton from '@/components/ui/CoolDownButton';
 import { User, Users } from 'lucide-react';
+import { toast } from 'sonner';
 
 const PLAYER = {
     X: 'X',
@@ -136,6 +137,11 @@ const Game = () => {
         setHighlightSquares([]);
     };
 
+    const changeGamemode = (): void => {
+        setGameMode((prev) => (prev === GAME_MODE.SINGLE ? GAME_MODE.MULTI : GAME_MODE.SINGLE));
+        toast.info(`${gameMode === GAME_MODE.SINGLE ? 'Multiplayer' : 'Single Player'} mode activated!`);
+    };
+
     return (
         <>
             {showConfetti && <Confetti recycle={false} numberOfPieces={200} />}
@@ -192,9 +198,7 @@ const Game = () => {
                 <CoolDownButton
                     title="Switch Game Mode"
                     text={gameMode === GAME_MODE.SINGLE ? <User /> : <Users />}
-                    onSubmit={() =>
-                        setGameMode((prev) => (prev === GAME_MODE.SINGLE ? GAME_MODE.MULTI : GAME_MODE.SINGLE))
-                    }
+                    onSubmit={changeGamemode}
                     bgColor="bg-gray-600"
                     hoverBgColor="hover:bg-gray-700"
                 />
@@ -205,7 +209,10 @@ const Game = () => {
 
 const TicTacToe = () => {
     return (
-        <GameWrapper title="Tic Tac Toe">
+        <GameWrapper
+            title="Tic Tac Toe"
+            instructions="Click on a square to place your mark. The first player to get three in a row wins!"
+        >
             <Game />
         </GameWrapper>
     );
