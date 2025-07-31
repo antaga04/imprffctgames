@@ -126,7 +126,7 @@ const Ranking: React.FC = () => {
                                     <TableHead>Date</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody className="h-[265px] overflow-y-auto">
                                 {isLoading ? (
                                     <TableRow>
                                         <TableCell colSpan={4} className="text-center font-mono text-md">
