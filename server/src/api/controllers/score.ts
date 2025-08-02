@@ -100,7 +100,7 @@ export const getScoresByGameId = async (req: Request, res: Response) => {
 
 export const uploadScore = async (req: Request, res: Response) => {
     try {
-        const { scoreData, game_id } = req.body.scoreData;
+        const { scoreData, game_id } = req.body.score;
         const { id: user_id } = (req as AuthenticatedRequest).user;
 
         if (!user_id || !game_id || !scoreData) {
