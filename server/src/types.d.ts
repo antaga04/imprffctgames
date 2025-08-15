@@ -19,7 +19,7 @@ interface ApiError<T> {
     success: false;
     i18n: string;
     message: string;
-    error?: Record<string, T>;
+    errors?: Record<string, T>;
 }
 
 type ApiResponse<T = any> = ApiSuccess<T> | ApiError<T>;
@@ -27,6 +27,8 @@ type ApiResponse<T = any> = ApiSuccess<T> | ApiError<T>;
 type PasswordValidationResult =
     | { valid: true }
     | { valid: false; errors: Partial<Record<PasswordValidationErrorKey, string>> };
+
+type SimpleValidationResult = { valid: true } | { valid: false; message: string };
 
 type PasswordValidationErrorKey = 'length' | 'lowercase' | 'uppercase' | 'digit' | 'specialChar' | 'general';
 
