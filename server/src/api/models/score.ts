@@ -17,6 +17,7 @@ const scoreSchema = new mongoose.Schema<ScoreDocument>(
             type: Object,
             required: true,
         }, // Flexible structure based on the game's scoring logic
+        variant: { type: String, required: false }, // e.g., '15s'
     },
     {
         timestamps: true,

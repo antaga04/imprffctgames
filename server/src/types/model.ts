@@ -4,8 +4,7 @@ export interface ScoreDocument extends Document {
     user_id: Types.ObjectId;
     game_id: Types.ObjectId;
     scoreData: Record<string, any>;
-    createdAt: Date;
-    updatedAt: Date;
+    variant?: string;
 }
 
 export interface PokemonSchema extends Document {
@@ -27,7 +26,7 @@ export interface UserSchema extends Document {
 }
 
 export const SCORING_TYPES = ['guesses_correct_total', 'moves_time'] as const;
-export const GAME_TYPES = ['quiz', 'puzzle', 'word_game', 'memory_game'] as const;
+export const GAME_TYPES = ['quiz', 'puzzle', 'word_game', 'memory_game', 'typing'] as const;
 
 export type ScoringLogic = (typeof SCORING_TYPES)[number];
 export type GameType = (typeof GAME_TYPES)[number];
@@ -38,6 +37,7 @@ export interface GameSchema extends Document {
     type: GameType;
     cover?: string;
     scoringLogic: ScoringLogic;
+    variants?: GameVariant[];
 }
 
 export interface GameSessionSchema extends Document {
@@ -47,6 +47,10 @@ export interface GameSessionSchema extends Document {
     state: Types.Array<any>;
     validatedResults?: Record<string, any> | null;
     session_expiry: Date;
-    createdAt: Date;
-    updatedAt: Date;
+    variant?: string;
+}
+
+interface GameVariant {
+    key: string; // e.g., "15s"
+    label: string; // e.g., "15 seconds"
 }

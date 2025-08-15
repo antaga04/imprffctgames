@@ -11,6 +11,12 @@ const gameSchema = new mongoose.Schema<GameSchema>({
         required: true,
         enum: SCORING_TYPES,
     },
+    variants: [
+        {
+            key: { type: String, required: true }, // e.g., '15s'
+            label: { type: String, required: true }, // e.g., '15 seconds'
+        },
+    ],
 });
 
 const Game = mongoose.model<GameSchema>('Game', gameSchema, 'Game');
