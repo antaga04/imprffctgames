@@ -50,11 +50,14 @@ const Ranking: React.FC = () => {
                     params: { page: currentPage, limit: PAGINATED_ITEMS },
                 });
 
-                setScores(response.data.data);
-                setPagination(response.data.pagination);
+                const { payload } = response.data;
+
+                setScores(payload.paginatedData);
+                setPagination(payload.pagination);
             } catch (error) {
+                console.error('Error fetching scores:', error);
                 const err = error as MyError;
-                toast.error(err.response?.data?.error || 'An error occurred fetching scores.');
+                toast.error(err.response?.data?.message || 'An error occurred fetching scores.');
             } finally {
                 setIsLoading(false);
             }

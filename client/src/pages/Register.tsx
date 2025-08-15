@@ -49,26 +49,14 @@ const RegisterForm = () => {
             return;
         }
 
-        try {
-            toast.promise(
-                register(nickname, email, password).then(() => navigate('/login')),
-                {
-                    loading: 'Registering...',
-                    success: 'Confirmation email has been resent. Please check your inbox.',
-                    error: (error) => error.response?.data?.error || 'An error occurred during registration.',
-                },
-            );
-        } catch (error) {
-            const errorMessage =
-                typeof error === 'string'
-                    ? error
-                    : error && typeof error === 'object' && 'message' in error
-                      ? (error as { message: string }).message
-                      : 'An unknown error occurred during registration';
-
-            toast.error(errorMessage);
-            console.error('Registration error:', error);
-        }
+        toast.promise(
+            register(nickname, email, password).then(() => navigate('/login')),
+            {
+                loading: 'Registering...',
+                success: 'Confirmation email has been resent. Please check your inbox.',
+                error: (error) => error.response?.data?.error || 'An error occurred during registration.',
+            },
+        );
     };
 
     return (

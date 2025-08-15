@@ -6,6 +6,7 @@ import CoolDownButton from '@/components/ui/CoolDownButton';
 import { useGameCompletion } from '@/hooks/useCompletion';
 import { useTempScore } from '@/hooks/useTempScore';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 const INITIAL_TIME = 60;
 const GAME_ID = import.meta.env.VITE_POKEMON_ID;
@@ -163,14 +164,14 @@ const Game: React.FC = () => {
         setLoading(true);
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/pokemon`);
-            const { gameSessionId, pokemons } = response.data;
-
-            console.log(gameSessionId);
+            const { gameSessionId, pokemons } = response.data.payload;
 
             setPokemonData(pokemons);
             setGameSessionId(gameSessionId);
         } catch (error) {
             console.error('Error fetching Pokémon data: ', error);
+            const err = error as MyError;
+            toast.error(err.response?.data?.message || 'Error fetching Pokémon data.');
         }
         setLoading(false);
     };
@@ -178,11 +179,13 @@ const Game: React.FC = () => {
     const fetchNewBatch = async () => {
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/pokemon/${gameSessionId}/${batchNumber}`);
-            const { pokemons } = response.data;
+            const { pokemons } = response.data.payload;
             setPokemonData((prev) => [...prev, ...pokemons]); // Append new batch
             setBatchNumber((prev) => prev + 1);
         } catch (error) {
             console.error('Error fetching Pokémon batch: ', error);
+            const err = error as MyError;
+            toast.error(err.response?.data?.message || 'Error fetching Pokémon data.');
         }
     };
 
@@ -222,11 +225,13 @@ const Game: React.FC = () => {
 
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/pokemon/results`, scoreData);
 
-            setResults(response.data);
+            setResults(response.data.payload);
             setTempScore({ scoreData, gameId: GAME_ID });
             handleCompletion(scoreData);
         } catch (error) {
             console.error('Error fetching results:', error);
+            const err = error as MyError;
+            toast.error(err.response?.data?.message || 'Error fetching Pokémon results.');
         }
 
         setCheckingResults(false);

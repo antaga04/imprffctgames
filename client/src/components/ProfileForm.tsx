@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import AuthInput from './ui/AuthInput';
 import { toast } from 'sonner';
 import { updateAccount, updatePassword } from '@/services/userServices';
-import axios from 'axios';
 import { ACCOUNT_INPUTS, PASSWORD_INPUTS } from '@/lib/constants';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -40,21 +39,18 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
 
         setLoading(true);
 
-        try {
-            await updateAccount({ nickname: fields.nickname });
-            setProfileData({ ...profileData, ...fields });
-            toast.success('Profile updated successfully!');
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.error || 'Failed to update profile.';
-                toast.error(errorMessage);
-            } else {
-                toast.error('An unexpected error occurred.');
-            }
-        } finally {
-            setLoading(false);
-            setIsEdited(false);
-        }
+        toast.promise(updateAccount({ nickname: fields.nickname }), {
+            loading: 'Updating profile...',
+            success: () => {
+                setProfileData({ ...profileData, ...fields });
+                return 'Profile updated successfully!';
+            },
+            error: (err) => err.response?.data?.message || 'Update failed. Please try again.',
+            finally: () => {
+                setLoading(false);
+                setIsEdited(false);
+            },
+        });
     };
 
     const handleCancel = () => {
@@ -103,22 +99,21 @@ const PasswordTab: React.FC = () => {
 
         setLoading(true);
 
-        try {
-            await updatePassword({ password: fields.currentPassword, newPassword: fields.newPassword });
-            toast.success('Password updated successfully!');
-            setFields({ currentPassword: '', newPassword: '', confirmPassword: '' });
-            logout();
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                const errorMessage = error.response?.data?.error || 'Failed to update password.';
-                toast.error(errorMessage);
-            } else {
-                toast.error('An unexpected error occurred.');
-            }
-        } finally {
-            setLoading(false);
-            setIsEdited(false);
-        }
+        toast.promise(updatePassword({ password: fields.currentPassword, newPassword: fields.newPassword }), {
+            loading: 'Updating password...',
+            success: () => {
+                setFields({ currentPassword: '', newPassword: '', confirmPassword: '' });
+                logout();
+                return 'Password updated successfully!';
+            },
+            error: (err) => {
+                return err.response?.data?.message || 'Update failed. Please try again.';
+            },
+            finally: () => {
+                setLoading(false);
+                setIsEdited(false);
+            },
+        });
     };
 
     const handleCancel = () => {

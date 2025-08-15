@@ -3,6 +3,7 @@ import BackButton from '@/components/ui/BackButton';
 import AvatarUploader from '@/components/AvatarUploader';
 import ProfileForm from '@/components/ProfileForm';
 import { fetchUserData } from '@/services/userServices';
+import { toast } from 'sonner';
 
 const Profile = () => {
     const [profileData, setProfileData] = useState<ProfileData>({
@@ -17,11 +18,13 @@ const Profile = () => {
     const fetchUser = async () => {
         try {
             const response = await fetchUserData();
-            const { data } = response.data;
+            const { payload } = response.data;
 
-            setProfileData(data);
+            setProfileData(payload);
         } catch (error) {
             console.error('Error fetching user data:', error);
+            const err = error as MyError;
+            toast.error(err.response?.data?.message || 'Error fetching user data.');
         }
     };
 

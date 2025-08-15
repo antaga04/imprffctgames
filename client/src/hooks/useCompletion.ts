@@ -28,8 +28,8 @@ export const useGameCompletion = (gameId: string) => {
                         },
                     });
                 } else {
-                    console.error('Error uploading score: ', err?.response?.data?.error);
-                    toast.error(err?.response?.data?.error || 'Error uploading score.');
+                    console.error('Error uploading score: ', error);
+                    toast.error(err?.response?.data?.message || 'Error uploading score.');
                 }
             }
         } else {

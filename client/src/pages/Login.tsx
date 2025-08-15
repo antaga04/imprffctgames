@@ -39,16 +39,11 @@ const LoginFrom = () => {
             return;
         }
 
-        try {
-            toast.promise(login(email, password), {
-                loading: 'Logging in...',
-                success: 'Logged in successfully!',
-                error: (err) => err.response?.data?.error || 'Login failed. Please try again.',
-            });
-        } catch (error) {
-            console.error('Login error:', error);
-            toast.error('An error occurred during login.');
-        }
+        toast.promise(login(email, password), {
+            loading: 'Logging in...',
+            success: 'Logged in successfully!',
+            error: (err) => err.response?.data?.message || 'Login failed. Please try again.',
+        });
     };
 
     return (

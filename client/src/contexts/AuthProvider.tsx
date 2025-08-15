@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import { toast } from 'sonner';
 import { useTempScore } from '@/hooks/useTempScore';
 import { handleScoreUpload } from '@/lib/scoreHandler';
@@ -38,15 +38,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         loading: false,
                     });
                 } catch (error) {
-                    const err = error as AxiosError;
+                    const err = error as MyError;
 
-                    if (err.response && err.response.status === 401) {
+                    if (err?.response?.status === 401) {
                         toast.warning('Your session has expired. Please log in again.');
                         localStorage.removeItem('hasSession');
                         sessionStorage.setItem('hasShownRegisterToast', 'true');
                     } else {
                         console.error('An unexpected error occurred:', error);
-                        toast.error('An unexpected error occurred.');
+                        toast.error(err.response?.data?.message || 'An unexpected error occurred.');
                     }
 
                     setAuthState({
@@ -111,6 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             localStorage.removeItem('hasSession');
         } catch (error) {
             console.error('Logout failed:', error);
+            throw error;
         }
     };
 

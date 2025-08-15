@@ -7,6 +7,7 @@ import { getTargetIndex } from '@/lib/gameUtils';
 import { useGameCompletion } from '@/hooks/useCompletion';
 import { useTempScore } from '@/hooks/useTempScore';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
@@ -71,7 +72,7 @@ const Game: React.FC = () => {
         setLoading(true);
         try {
             const response = await axios.get(`${import.meta.env.VITE_API_URL}/puzzle15`);
-            const { board, hash, gameSessionId } = response.data;
+            const { board, hash, gameSessionId } = response.data.payload;
 
             if (board && hash) {
                 setBoard(board);
@@ -81,6 +82,8 @@ const Game: React.FC = () => {
             }
         } catch (error) {
             console.error('Error fetching board:', error);
+            const err = error as MyError;
+            toast.error(err.response?.data?.message || 'Error fetching board.');
         } finally {
             setLoading(false);
         }
