@@ -54,7 +54,7 @@ function isValidMove(from: number, to: number): boolean {
  * @returns {boolean} - Returns `true` if the score data is valid; `false` otherwise.
  */
 export async function validatePuzzle15ScoreData(
-    scoreData: Puzzle15SubmittedScore,
+    scoreData: Puzzle15ScoreData,
 ): Promise<{ isValid: boolean; newScore: any }> {
     const { moves, time, gameSessionId } = scoreData;
 

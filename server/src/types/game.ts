@@ -1,8 +1,10 @@
 type Puzzle15Board = number[];
 
-type PokemonScore = {
-    game_id: string;
-    scoreData: PokemonScoreData;
+type Puzzle15ScoreData = {
+    moves: Array<any>;
+    time: number;
+    gameSessionId: string;
+    hash: string;
 };
 
 type PokemonScoreData = {
@@ -32,11 +34,4 @@ type StoredPokemonScore = {
             isCorrect: boolean;
         },
     ];
-};
-
-type Puzzle15SubmittedScore = {
-    moves: Array<any>;
-    time: number;
-    gameSessionId: string;
-    hash: string;
 };
