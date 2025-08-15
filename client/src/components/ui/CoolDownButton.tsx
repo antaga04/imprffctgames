@@ -9,6 +9,7 @@ const CoolDownButton: React.FC<CoolDownButtonProps> = ({
     className,
     coolTime = 1000,
     title,
+    blank = false,
 }) => {
     const [cooldown, setCooldown] = useState<boolean>(false);
 
@@ -25,9 +26,7 @@ const CoolDownButton: React.FC<CoolDownButtonProps> = ({
             title={title}
             onClick={handleOnSubmit}
             disabled={cooldown}
-            className={`px-4 py-2 rounded ${
-                cooldown ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed' : bgColor
-            } ${hoverBgColor} ${textColor} ${className ?? ''}`}
+            className={`${!blank && 'px-4 py-2 rounded'} ${cooldown ? 'bg-gray-400 hover:bg-gray-500 cursor-not-allowed' : bgColor} ${hoverBgColor} ${textColor} ${className ?? ''}`}
         >
             {text}
         </button>
