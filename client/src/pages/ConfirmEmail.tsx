@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'sonner';
 import BackButton from '@/components/ui/BackButton';
+import { verifyEmail } from '@/services/requests';
 
 const ConfirmEmail = () => {
     const location = useLocation();
@@ -14,22 +14,12 @@ const ConfirmEmail = () => {
 
     useEffect(() => {
         if (token) {
-            const loadingToastId = toast.loading('Verifing email...');
-            axios
-                .post(`${import.meta.env.VITE_API_URL}/users/confirm-email`, { token })
-                .then((response) => {
-                    const message = response.data?.message || 'Email confirmed!';
-                    console.log(message);
-                    toast.success(message);
-                })
-                .catch((error) => {
-                    console.error('Error verifing email: ', error);
-                    toast.error(error.response?.data?.error || 'Something went wrong.');
-                })
-                .finally(() => {
-                    toast.dismiss(loadingToastId);
-                    navigate('/login');
-                });
+            toast.promise(verifyEmail(token), {
+                loading: 'Verifying email...',
+                success: (res) => res || 'Email verified successfully!',
+                error: (err) => err.response?.data?.message || 'Error verifying email.',
+                finally: () => navigate('/login'),
+            });
         } else {
             toast.error('No token provided.');
         }
