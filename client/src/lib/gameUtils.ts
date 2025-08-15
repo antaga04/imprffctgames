@@ -1,3 +1,14 @@
+export const scoreFormatter = (data: ScoreData, game: Game) => {
+    switch (game.gameName) {
+        case 'Pokemon':
+            return `${data.correct}/${data.total}`;
+        case '15 Puzzle':
+            return `Moves: ${data.moves}, Time: ${data.time}`;
+        default:
+            return JSON.stringify(data); // Fallback
+    }
+};
+
 // Helper function to determine movement direction based on the pressed key
 export const getTargetIndex = (key: string, emptyIndex: number, emptyRow: number, emptyCol: number, gridSize = 4) => {
     const GRID_SIZE = gridSize;

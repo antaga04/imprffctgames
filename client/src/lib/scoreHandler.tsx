@@ -2,6 +2,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { MedalIcon } from 'lucide-react';
 import { GAMES } from './constants';
+import { scoreFormatter } from './gameUtils';
 
 interface ScoreUploadOptions {
     scoreData: unknown;
@@ -23,43 +24,21 @@ export const handleScoreUpload = async ({ scoreData, gameId }: ScoreUploadOption
         );
 
         toast.dismiss(loadingToastId);
-        const { message, data } = response.data;
+        const { message, payload } = response.data;
 
         // Game-specific formatters
         const game = GAMES.find((game) => game.gameId === gameId);
         if (!game) return; // If the game doesn't exist, don't proceed
 
-        const previousScoreFormatter = (data: ScoreData) => {
-            switch (game.gameName) {
-                case 'Pokemon':
-                    return `${data.correct}/${data.total}`;
-                case '15 Puzzle':
-                    return `Moves: ${data.moves}, Time: ${data.time}`;
-                default:
-                    return JSON.stringify(data); // Fallback
-            }
-        };
-
-        const newScoreDescription = (data: ScoreData) => {
-            switch (game.gameName) {
-                case 'Pokemon':
-                    return `${data.correct}/${data.total}`;
-                case '15 Puzzle':
-                    return `Moves: ${data.moves}, Time: ${data.time}`;
-                default:
-                    return JSON.stringify(data); // Fallback
-            }
-        };
-
         if (response.status === 200) {
-            toast.warning(`${message}. Previous score: ${previousScoreFormatter(data.scoreData)}`);
+            toast.warning(`${message}. Previous score: ${scoreFormatter(payload.scoreData, game)}`);
         } else if (response.status === 201) {
             toast(
                 <>
                     <MedalIcon className="mr-4" />
                     <div className="flex flex-col">
                         <h2 className="text-base font-bold">{message}</h2>
-                        <p className="text-sm">New score: {newScoreDescription(data.scoreData)}</p>
+                        <p className="text-sm">New score: {scoreFormatter(payload.scoreData, game)}</p>
                     </div>
                 </>,
                 {
@@ -68,7 +47,7 @@ export const handleScoreUpload = async ({ scoreData, gameId }: ScoreUploadOption
                 },
             );
         } else {
-            toast.error(response.data.error);
+            toast.error(response.data.message || 'Score upload failed');
         }
     } catch (error) {
         console.error('Error uploading score: ', error);
