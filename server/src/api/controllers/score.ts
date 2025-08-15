@@ -137,7 +137,7 @@ export const uploadScore = async (req: Request, res: Response) => {
             return sendError(res, 400, {
                 i18n: 'score.missing_fields',
                 message: 'Missing required fields',
-                error: errors,
+                errors: errors,
             });
         }
 

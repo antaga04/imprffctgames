@@ -70,7 +70,7 @@ export const createGame = async (req: Request, res: Response) => {
             return sendError(res, 400, {
                 i18n: 'games.missing_fields',
                 message: 'Missing required fields',
-                error: errors,
+                errors: errors,
             });
         }
 
@@ -79,7 +79,7 @@ export const createGame = async (req: Request, res: Response) => {
             return sendError(res, 400, {
                 i18n: 'games.invalid_scoring_logic',
                 message: 'Invalid scoringLogic.',
-                error: {
+                errors: {
                     accepted: SCORING_TYPES.join(', '),
                 },
             });
@@ -89,7 +89,7 @@ export const createGame = async (req: Request, res: Response) => {
             return sendError(res, 400, {
                 i18n: 'games.invalid_type',
                 message: 'Invalid type.',
-                error: {
+                errors: {
                     accepted: GAME_TYPES.join(', '),
                 },
             });
@@ -147,7 +147,7 @@ export const updateGameById = async (req: Request, res: Response) => {
             return sendError(res, 400, {
                 i18n: 'games.invalid_scoring_logic',
                 message: 'Invalid scoringLogic.',
-                error: {
+                errors: {
                     accepted: SCORING_TYPES.join(', '),
                 },
             });
@@ -157,7 +157,7 @@ export const updateGameById = async (req: Request, res: Response) => {
             return sendError(res, 400, {
                 i18n: 'games.invalid_type',
                 message: 'Invalid game type.',
-                error: {
+                errors: {
                     accepted: GAME_TYPES.join(', '),
                 },
             });

@@ -52,7 +52,7 @@ app.use('*', (req, res, next) => {
     return sendError(res, 404, {
         i18n: 'not_found',
         message: 'Route not found',
-        error: {
+        errors: {
             route: req.originalUrl,
         },
     });
@@ -64,7 +64,7 @@ app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
     return sendError(res, 500, {
         i18n: 'internal_server_error',
         message: 'Internal Server Error',
-        error: {
+        errors: {
             message: error.message,
         },
     });

@@ -395,8 +395,8 @@ export const registerUser = async (req: Request, res: Response) => {
         if (error) {
             return sendError(res, 400, {
                 i18n: 'user.email_error',
-                message: error,
-                error: {
+                message: error.message,
+                errors: {
                     payload: data,
                 },
             });
@@ -480,8 +480,8 @@ export const resendConfirmationEmail = async (req: Request, res: Response) => {
         if (error) {
             return sendError(res, 400, {
                 i18n: 'user.email_error',
-                message: error,
-                error: {
+                message: error.message,
+                errors: {
                     payload: data,
                 },
             });
