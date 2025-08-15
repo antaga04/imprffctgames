@@ -61,7 +61,7 @@ type AuthLinkSwitcherTypes = {
 };
 
 type CoolDownButtonProps = {
-    text: string | React.ReactNode;
+    text: string | React.ReactNode | JSX.Element;
     onSubmit: () => void;
     bgColor?: string;
     hoverBgColor?: string;
@@ -69,6 +69,7 @@ type CoolDownButtonProps = {
     className?: string;
     coolTime?: number;
     title?: string;
+    blank?: boolean; // If true, applies dafault styling for a button
 };
 
 type SingOutProps = {
@@ -278,8 +279,17 @@ interface MyError {
     response?: {
         data?: {
             error?: string;
+            i18n?: string;
+            message?: string;
         };
         status?: number;
     };
     message?: string;
+}
+
+interface ApiError {
+    success: false;
+    i18n: string;
+    message: string;
+    error?: Record<string, T>;
 }
