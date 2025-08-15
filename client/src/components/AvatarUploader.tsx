@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { Camera, Eraser } from 'lucide-react';
 import MyAvatar from './ui/MyAvatar';
+import CoolDownButton from './ui/CoolDownButton';
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL + '/users/avatar/';
 
@@ -40,46 +41,49 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
 
         const saveAction = async () => {
             if (pendingDelete) {
-                await axios.delete(UPLOAD_URL, { withCredentials: true });
+                const response = await axios.delete(UPLOAD_URL, { withCredentials: true });
                 setProfileData((prevData: ProfileData) => ({
                     ...prevData,
                     avatar: null,
                 }));
                 setPendingDelete(false);
-                return null;
+
+                return response.data.message;
             } else {
                 const formData = new FormData();
                 formData.append('avatar', newAvatar!);
+
                 const response = await axios.put(UPLOAD_URL, formData, {
                     withCredentials: true,
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
                 });
-                const updatedAvatar = response.data.data;
+
+                const { i18n, payload } = response.data;
+
                 setProfileData((prevData: ProfileData) => ({
                     ...prevData,
-                    avatar: updatedAvatar,
+                    avatar: payload,
                 }));
-                setAvatarPreview(updatedAvatar);
+                setAvatarPreview(payload);
                 setNewAvatar(null);
-                return updatedAvatar;
+                return i18n;
             }
         };
 
-        try {
-            toast.promise(saveAction, {
-                loading: pendingDelete ? 'Deleting avatar...' : 'Saving avatar...',
-                success: pendingDelete ? 'Avatar deleted successfully!' : 'Avatar updated successfully!',
-                error: (err) => err.response?.data?.error || 'Operation failed. Please try again.',
-            });
-        } catch (error) {
-            console.error('Error saving avatar changes:', error);
-            toast.error('An error occurred.');
-        }
+        toast.promise(saveAction, {
+            loading: pendingDelete ? 'Deleting avatar...' : 'Saving avatar...',
+            success: (res) => (res || pendingDelete ? 'Avatar deleted successfully!' : 'Avatar updated successfully!'),
+            error: (err) => err.response?.data?.message || 'Operation failed. Please try again.',
+        });
     };
 
     const handleDeleteAvatar = () => {
+        if (!currentAvatar) {
+            toast.warning('No avatar to delete.');
+            return;
+        }
         setNewAvatar(null);
         setAvatarPreview(null);
         setPendingDelete(true);
@@ -115,12 +119,16 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
                         accept="image/*"
                         onChange={handleAvatarChange}
                     />
-                    <button
-                        onClick={handleDeleteAvatar}
-                        className="cursor-pointer p-1 bg-red-500 hover:bg-red-600 text-red-500 hover:text-red-600"
-                    >
-                        <Eraser className="text-black/80 h-6 w-6" />
-                    </button>
+                    <CoolDownButton
+                        onSubmit={handleDeleteAvatar}
+                        className="p-1 transition-colors duration-200"
+                        bgColor="bg-red-500"
+                        hoverBgColor="hover:bg-red-600"
+                        textColor="text-red-500 hover:text-red-600"
+                        text={<Eraser className="text-black/80 h-6 w-6" />}
+                        coolTime={2000}
+                        blank={true}
+                    />
                 </div>
             </div>
             <div className="mt-2 flex gap-2">
