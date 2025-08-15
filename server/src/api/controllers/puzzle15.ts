@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { generateBoardHash } from '@/utils/crypto';
 import { generateSolvableBoard } from '@/utils/puzzle15';
 import GameSession from '@/models/gameSession';
+import { sendError, sendSuccess } from '@/utils/response';
 
 const GAME_ID = process.env.PUZZLE15_ID;
 
@@ -20,9 +21,20 @@ export const generateBoard = async (req: Request, res: Response) => {
 
         await newSession.save();
 
-        res.json({ board, hash, gameSessionId: newSession._id });
+        return sendSuccess(res, 201, {
+            i18n: 'puzzle15.generateBoard.success',
+            message: 'Puzzle board generated successfully.',
+            payload: {
+                board,
+                hash,
+                gameSessionId: newSession._id,
+            },
+        });
     } catch (error) {
-        console.error('Error generating board or session:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        console.error('[generateBoard] Error:', error);
+        return sendError(res, 500, {
+            i18n: 'puzzle15.generateBoard.error',
+            message: 'Failed to generate puzzle board.',
+        });
     }
 };

@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import { connectToDatabase } from '@/config/db';
 import mainRouter from '@/api/routes/index';
 import { generalLimiter } from '@/middlewares/rateLimiters';
+import { sendError } from './utils/response';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -48,13 +49,25 @@ app.use('/api', mainRouter);
 
 // Controlador de rutas no encontradas
 app.use('*', (req, res, next) => {
-    res.status(404).json({ data: 'Not found' });
+    return sendError(res, 404, {
+        i18n: 'not_found',
+        message: 'Route not found',
+        error: {
+            route: req.originalUrl,
+        },
+    });
 });
 
 // Controlador de errores generales del servidor
 app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
     console.log('>>>> Server error:', error);
-    res.status(500).json({ data: 'Internal Server Error' });
+    return sendError(res, 500, {
+        i18n: 'internal_server_error',
+        message: 'Internal Server Error',
+        error: {
+            message: error.message,
+        },
+    });
 });
 
 const PORT = process.env.PORT;
