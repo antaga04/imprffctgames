@@ -18,7 +18,7 @@ try {
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: () => ({
-        folder: 'puzlynk',
+        folder: 'imprffctgames',
         allowed_formats: ['png', 'jpg', 'jpeg', 'gif', 'webp'],
     }),
 });
