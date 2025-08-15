@@ -4,10 +4,10 @@ import { sendError } from './response';
 
 export const handleMongooseError = (err: any, res: Response) => {
     if (err instanceof mongoose.Error.ValidationError) {
-        const messages = Object.values(err.errors).map((e) => e.message);
         return sendError(res, 400, {
             i18n: 'server.error.validation',
-            message: messages.join(', '),
+            message: 'Validation error',
+            errors: err.errors,
         });
     }
 
