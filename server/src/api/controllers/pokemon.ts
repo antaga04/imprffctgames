@@ -3,8 +3,10 @@ import Pokemon from '@/models/pokemon';
 import GameSession from '@/models/gameSession';
 import { getRandomSequence } from '@/utils/randomSequence';
 import { PokemonSchema } from '@/types/model';
+import { sendError, sendSuccess } from '@/utils/response';
+import { applyStrike } from '@/utils/scoreUtils';
 
-// Generate the random Pokémon sequence for the session
+// POST /pokemon - Generate the random Pokémon sequence for the session
 export const generatePokemonSession = async (req: Request, res: Response) => {
     try {
         const sequence = getRandomSequence(1, 151, 55);
@@ -37,17 +39,24 @@ export const generatePokemonSession = async (req: Request, res: Response) => {
             };
         });
 
-        res.json({
-            gameSessionId: newSession._id,
-            pokemons: firstBatchData,
+        return sendSuccess(res, 200, {
+            i18n: 'pokemon.session_created',
+            message: 'Game session created successfully.',
+            payload: {
+                gameSessionId: newSession._id,
+                pokemons: firstBatchData,
+            },
         });
     } catch (error) {
-        console.error('Error generating Pokémon session:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        console.error('[generatePokemonSession]: Error:', error);
+        return sendError(res, 500, {
+            i18n: 'pokemon.session_creation_failed',
+            message: 'Failed to create Pokémon session.',
+        });
     }
 };
 
-// Fetch additional Pokémon batches for the user
+// GET /:gameSessionId/:batchNumber - Fetch additional Pokémon batches for the user
 export const getPokemonBatch = async (req: Request, res: Response) => {
     try {
         const { gameSessionId, batchNumber } = req.params;
@@ -55,13 +64,19 @@ export const getPokemonBatch = async (req: Request, res: Response) => {
 
         const batchNum = parseInt(batchNumber, 10);
         if (isNaN(batchNum) || batchNum < 2) {
-            return res.status(400).json({ message: 'Invalid batch number.' });
+            return sendError(res, 400, {
+                i18n: 'pokemon.invalid_batch_number',
+                message: 'Invalid batch number provided.',
+            });
         }
 
         const session = await GameSession.findById(gameSessionId);
 
         if (!session) {
-            return res.status(404).json({ message: 'Game session not found.' });
+            return sendError(res, 404, {
+                i18n: 'pokemon.session_not_found',
+                message: 'Game session not found.',
+            });
         }
 
         const sequence = session.state;
@@ -87,31 +102,54 @@ export const getPokemonBatch = async (req: Request, res: Response) => {
             };
         });
 
-        res.json({
-            pokemons: batchData,
+        return sendSuccess(res, 200, {
+            i18n: 'pokemon.batch_fetched',
+            message: 'Batch of Pokémon fetched successfully.',
+            payload: {
+                pokemons: batchData,
+            },
         });
     } catch (error) {
-        console.error('Error fetching Pokémon batch:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        console.error('[getPokemonBatch] Error:', error);
+        return sendError(res, 500, {
+            i18n: 'pokemon.batch_fetch_failed',
+            message: 'Failed to fetch Pokémon batch.',
+        });
     }
 };
 
+// POST /check-results - Check the user's guesses against the Pokémon sequence
 export const checkPokemonResults = async (req: Request, res: Response) => {
     try {
         const { gameSessionId, guesses } = req.body as PokemonScoreData;
+        const { id } = req.user ?? {};
 
         const session = await GameSession.findById(gameSessionId);
         if (!session) {
-            return res.status(404).json({ error: 'Game session not found' });
+            return sendError(res, 404, {
+                i18n: 'pokemon.session_not_found',
+                message: 'Game session not found.',
+            });
         }
 
-        const bufferTime = 3000;
+        const bufferTime = 2500;
         const requiredGameDuration = 60000;
         const gameDuration = Date.now() - session.createdAt.getTime();
 
-        if (gameDuration < requiredGameDuration - bufferTime) {
-            // TODO: give the user a strike
-            return res.status(403).json({ error: 'Game is still ongoing' });
+        if (gameDuration < requiredGameDuration) {
+            await applyStrike(id);
+            return sendError(res, 400, {
+                i18n: 'pokemon.game_duration_too_short',
+                message: 'Game duration is too short.',
+            });
+        }
+
+        if (gameDuration > Date.now() + bufferTime) {
+            await applyStrike(id);
+            return sendError(res, 400, {
+                i18n: 'pokemon.game_duration_exceeded',
+                message: 'Game duration has exceeded the allowed time.',
+            });
         }
 
         const sequence = session.state as number[];
@@ -170,11 +208,21 @@ export const checkPokemonResults = async (req: Request, res: Response) => {
         await session.save();
 
         const responseData = { ...session.validatedResults };
-        delete responseData.flaggedAsBot;
 
-        return res.json(responseData);
+        if (flaggedAsBot) {
+            await applyStrike(id);
+        }
+
+        return sendSuccess(res, 200, {
+            i18n: 'pokemon.results_checked',
+            message: 'Pokémon results checked successfully.',
+            payload: responseData,
+        });
     } catch (error) {
-        console.error('Error checking Pokémon results:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error('[checkPokemonResults] Error:', error);
+        return sendError(res, 500, {
+            i18n: 'pokemon.results_check_failed',
+            message: 'Failed to check Pokémon results.',
+        });
     }
 };

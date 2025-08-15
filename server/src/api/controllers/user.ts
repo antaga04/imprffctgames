@@ -8,12 +8,20 @@ import { validateEmail, validateNickname, validatePassword } from '@/utils/valid
 import { sendConfirmationEmail } from '@/utils/email';
 import { AuthenticatedRequest, TokenPayload } from '@/types';
 import { handleMongooseError } from '@/utils/error';
+import { sendError, sendSuccess } from '@/utils/response';
 
 export const verifyUser = async (req: Request, res: Response) => {
     try {
-        res.status(200).json({ message: 'Session is valid' });
-    } catch (error) {
-        res.status(401).json({ error: 'Not authenticated' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.verified',
+            message: 'User is verified',
+        });
+    } catch (err) {
+        console.error('[verifyUser] Error: ', err);
+        return sendError(res, 401, {
+            i18n: 'user.not_authenticated',
+            message: 'Not authenticated',
+        });
     }
 };
 
@@ -26,9 +34,16 @@ export const logoutUser = (req: Request, res: Response) => {
             domain: process.env.COOKIE_DOMAIN,
         });
 
-        res.status(200).json({ message: 'Logged out successfully' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.logout_success',
+            message: 'User logged out successfully',
+        });
     } catch (err) {
-        res.status(500).json({ error: 'Error logging out' });
+        console.error('[logoutUser] Error: ', err);
+        return sendError(res, 500, {
+            i18n: 'user.logout_error',
+            message: 'An unexpected error occurred while logging out.',
+        });
     }
 };
 
@@ -38,25 +53,35 @@ export const loginUser = async (req: Request, res: Response) => {
 
         const emailValidation = validateEmail(email);
         if (!emailValidation.valid) {
-            return res.status(400).json({ error: emailValidation.message });
+            return sendError(res, 400, {
+                i18n: 'user.invalid_email',
+                message: emailValidation.message,
+            });
         }
 
         const user = await User.findOne({ email }).select('-role').lean();
 
         if (!user) {
-            return res.status(400).json({ error: `Incorrect email or password` });
+            return sendError(res, 400, {
+                i18n: 'user.incorrect_credentials',
+                message: 'Incorrect email or password',
+            });
         }
 
         if (user.status !== 'active') {
-            return res.status(400).json({
-                error: 'Your email is not confirmed. Please check your inbox for the confirmation email.',
+            return sendError(res, 400, {
+                i18n: 'user.email_not_confirmed',
+                message: 'Your email is not confirmed. Please check your inbox for the confirmation email.',
             });
         }
 
         const validPassword = await verifyPassword(password, user.password);
 
         if (!validPassword) {
-            return res.status(400).json({ error: `Incorrect email or password` });
+            return sendError(res, 400, {
+                i18n: 'user.incorrect_credentials',
+                message: 'Incorrect email or password',
+            });
         }
 
         const token = signToken({ id: user._id.toString() });
@@ -71,15 +96,27 @@ export const loginUser = async (req: Request, res: Response) => {
         });
 
         const { password: unusedPassword, ...restUser } = user;
-        res.status(200).json({ data: { user: restUser } });
+
+        return sendSuccess(res, 200, {
+            i18n: 'user.login_success',
+            message: 'User logged in successfully',
+            payload: restUser,
+        });
     } catch (err) {
-        res.status(400).json({ error: 'Error login' });
+        console.error('[loginUser] Error: ', err);
+        return sendError(res, 500, {
+            i18n: 'user.login_error',
+            message: 'Error logging in',
+        });
     }
 };
 
 export const updateUserAvatar = async (req: Request, res: Response) => {
     if (!req.file || !req.file.path) {
-        return res.status(400).json({ error: 'No file uploaded' });
+        return sendError(res, 400, {
+            i18n: 'user.no_file_uploaded',
+            message: 'No file uploaded',
+        });
     }
 
     const { path } = req.file;
@@ -88,7 +125,10 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
     try {
         const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return sendError(res, 404, {
+                i18n: 'user.not_found',
+                message: 'User not found',
+            });
         }
 
         if (user.avatar) {
@@ -97,13 +137,23 @@ export const updateUserAvatar = async (req: Request, res: Response) => {
 
         if (path) {
             await User.findByIdAndUpdate(id, { avatar: path }, { new: true });
-            return res.status(201).json({ data: path });
+            return sendSuccess(res, 201, {
+                i18n: 'user.avatar_updated',
+                message: 'Avatar updated successfully',
+                payload: path,
+            });
         }
 
-        return res.status(200).json({ message: 'Avatar uploaded successfully' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.avatar_uploaded',
+            message: 'Avatar uploaded successfully',
+        });
     } catch (error) {
-        console.error('Error updating avatar:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('[updateUserAvatar] Error:', error);
+        return sendError(res, 500, {
+            i18n: 'user.avatar_update_error',
+            message: 'Error updating avatar',
+        });
     }
 };
 
@@ -113,7 +163,10 @@ export const deleteUserAvatar = async (req: Request, res: Response) => {
     try {
         const user = await User.findById(id);
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return sendError(res, 404, {
+                i18n: 'user.not_found',
+                message: 'User not found',
+            });
         }
 
         if (user.avatar) {
@@ -121,10 +174,16 @@ export const deleteUserAvatar = async (req: Request, res: Response) => {
             await User.findByIdAndUpdate(id, { avatar: null }, { new: true });
         }
 
-        return res.status(200).json({ message: 'Avatar deleted successfully' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.avatar_deleted',
+            message: 'Avatar deleted successfully',
+        });
     } catch (error) {
-        console.error('Error deleting avatar:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        console.error('[deleteUserAvatar] Error:', error);
+        return sendError(res, 500, {
+            i18n: 'user.avatar_delete_error',
+            message: 'Error deleting avatar',
+        });
     }
 };
 
@@ -135,7 +194,10 @@ export const updateUserAccount = async (req: Request, res: Response) => {
 
         const oldUser = await User.findById(id);
         if (!oldUser) {
-            return res.status(404).json({ error: 'User not found' });
+            return sendError(res, 404, {
+                i18n: 'user.not_found',
+                message: 'User not found',
+            });
         }
 
         const updateFields = {} as Record<string, any>;
@@ -143,25 +205,39 @@ export const updateUserAccount = async (req: Request, res: Response) => {
         if (nickname !== undefined) {
             const nicknameValidation = validateNickname(nickname);
             if (!nicknameValidation.valid) {
-                return res.status(400).json({ error: nicknameValidation.message });
+                return sendError(res, 400, {
+                    i18n: 'user.invalid_nickname',
+                    message: nicknameValidation.message,
+                });
             }
             updateFields.nickname = nickname;
         }
 
         if (Object.keys(updateFields).length === 0) {
-            return res.status(400).json({ error: 'No valid fields provided for update.' });
+            return sendError(res, 400, {
+                i18n: 'user.no_valid_fields',
+                message: 'No valid fields provided for update.',
+            });
         }
 
         const updatedUser = await User.findByIdAndUpdate(id, updateFields, { new: true }).lean();
 
         if (!updatedUser) {
-            return res.status(404).json({ error: 'User not found' });
+            return sendError(res, 404, {
+                i18n: 'user.not_found',
+                message: 'User not found',
+            });
         }
 
         const { password: _, ...restUser } = updatedUser;
-        return res.status(200).json({ data: restUser });
+
+        return sendSuccess(res, 200, {
+            i18n: 'user.updated',
+            message: 'User updated successfully',
+            payload: restUser,
+        });
     } catch (err) {
-        console.error('Error updating user:', err);
+        console.error('[updateUserAccount] Error:', err);
         return handleMongooseError(err, res);
     }
 };
@@ -181,12 +257,23 @@ export const getUser = async (req: Request, res: Response) => {
             });
 
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return sendError(res, 404, {
+                i18n: 'user.not_found',
+                message: 'User not found',
+            });
         }
 
-        res.status(200).json({ data: user });
+        return sendSuccess(res, 200, {
+            i18n: 'user.fetched',
+            message: 'User details fetched successfully',
+            payload: user,
+        });
     } catch (error) {
-        res.status(400).json({ error: 'Error fetching user details' });
+        console.error('[getUser] Error:', error);
+        return sendError(res, 400, {
+            i18n: 'user.fetch_error',
+            message: 'Error fetching user details',
+        });
     }
 };
 
@@ -196,26 +283,42 @@ export const updateUserPassword = async (req: Request, res: Response) => {
         const { password, newPassword } = req.body;
 
         if (!password) {
-            return res.status(400).json({ error: 'No current password provided' });
+            return sendError(res, 400, {
+                i18n: 'user.no_current_password',
+                message: 'No current password provided',
+            });
         }
 
         if (!newPassword) {
-            return res.status(400).json({ error: 'No password provided' });
+            return sendError(res, 400, {
+                i18n: 'user.no_new_password',
+                message: 'No new password provided',
+            });
         }
 
         const oldUser = await User.findById(id);
         if (!oldUser) {
-            return res.status(404).json({ error: 'User not found' });
+            return sendError(res, 404, {
+                i18n: 'user.not_found',
+                message: 'User not found',
+            });
         }
 
         const validPassword = await verifyPassword(password, oldUser.password);
         if (!validPassword) {
-            return res.status(401).json({ error: 'Incorrect password' });
+            return sendError(res, 401, {
+                i18n: 'user.incorrect_password',
+                message: 'Incorrect password',
+            });
         }
 
         const passwordValidation = validatePassword(newPassword);
         if (!passwordValidation.valid) {
-            return res.status(400).json({ error: passwordValidation.message });
+            return sendError(res, 400, {
+                i18n: 'user.invalid_new_password',
+                message: 'New password is invalid',
+                errors: passwordValidation.errors,
+            });
         }
 
         const hashedPassword = await hashPassword(newPassword);
@@ -229,10 +332,16 @@ export const updateUserPassword = async (req: Request, res: Response) => {
             domain: process.env.COOKIE_DOMAIN,
         });
 
-        return res.status(200).json({ message: 'Password updated successfully' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.password_updated',
+            message: 'Password updated successfully',
+        });
     } catch (error) {
-        console.error('Error updating password:', error);
-        return res.status(500).json({ error: 'An unexpected error occurred while updating the password.' });
+        console.error('[updateUserPassword] Error:', error);
+        return sendError(res, 500, {
+            i18n: 'user.update_password_error',
+            message: 'An unexpected error occurred while updating the password.',
+        });
     }
 };
 
@@ -243,22 +352,35 @@ export const registerUser = async (req: Request, res: Response) => {
 
         const emailValidation = validateEmail(email);
         if (!emailValidation.valid) {
-            return res.status(400).json({ error: emailValidation.message });
+            return sendError(res, 400, {
+                i18n: 'user.invalid_email',
+                message: emailValidation.message,
+            });
         }
 
         const userDuplicated = await User.findOne({ email });
         if (userDuplicated) {
-            return res.status(400).json({ error: 'User already exists' });
+            return sendError(res, 400, {
+                i18n: 'user.duplicate_email',
+                message: 'User already exists',
+            });
         }
 
         const nicknameValidation = validateNickname(nickname);
         if (!nicknameValidation.valid) {
-            return res.status(400).json({ error: nicknameValidation.message });
+            return sendError(res, 400, {
+                i18n: 'user.invalid_nickname',
+                message: nicknameValidation.message,
+            });
         }
 
         const passwordValidation = validatePassword(password);
         if (!passwordValidation.valid) {
-            return res.status(400).json({ error: passwordValidation.message });
+            return sendError(res, 400, {
+                i18n: 'user.invalid_password',
+                message: 'Password is invalid',
+                errors: passwordValidation.errors,
+            });
         }
 
         const newUser = new User({ email, nickname, password });
@@ -271,13 +393,21 @@ export const registerUser = async (req: Request, res: Response) => {
         const { data, error } = await sendConfirmationEmail(email, token);
 
         if (error) {
-            return res.status(400).json({ error });
+            return sendError(res, 400, {
+                i18n: 'user.email_error',
+                message: error,
+                error: {
+                    payload: data,
+                },
+            });
         }
-        console.log(data);
 
-        res.status(200).json({ message: 'Confirmation email sent. Please check your inbox.' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.confirmation_email_sent',
+            message: 'Confirmation email sent. Please check your inbox.',
+        });
     } catch (err: any) {
-        console.error('Error registering user:', err);
+        console.error('[registerUser] Error:', err);
         return handleMongooseError(err, res);
     }
 };
@@ -288,24 +418,36 @@ export const confirmEmail = async (req: Request, res: Response) => {
         const { token } = req.body;
 
         if (token == null || !token) {
-            return res.status(400).json({ error: 'Token is required' });
+            return sendError(res, 400, {
+                i18n: 'user.missing_token',
+                message: 'Missing token',
+            });
         }
 
         const decoded = jwt.verify(token, process.env.EMAIL_CONFIRMATION_SECRET!) as TokenPayload;
 
         const user = await User.findById(decoded.id);
         if (!user || user.status !== 'pending') {
-            return res.status(400).json({ error: 'Invalid or already confirmed token' });
+            return sendError(res, 400, {
+                i18n: 'user.invalid_token',
+                message: 'Token is invalid or already confirmed',
+            });
         }
 
         user.status = 'active';
 
         await User.findByIdAndUpdate(user.id, { status: 'active' }, { new: true });
 
-        res.status(200).json({ message: 'Email confirmed. Your account is now active.' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.email_confirmed',
+            message: 'Email confirmed. Your account is now active.',
+        });
     } catch (err) {
-        console.error(err);
-        res.status(400).json({ error: 'Invalid or expired token' });
+        console.error('[confirmEmail] Error:', err);
+        return sendError(res, 500, {
+            i18n: 'user.email_confirmation_error',
+            message: 'Something went wrong while confirming the email.',
+        });
     }
 };
 
@@ -315,14 +457,20 @@ export const resendConfirmationEmail = async (req: Request, res: Response) => {
 
     const emailValidation = validateEmail(email);
     if (!emailValidation.valid) {
-        return res.status(400).json({ error: emailValidation.message });
+        return sendError(res, 400, {
+            i18n: 'user.invalid_email',
+            message: emailValidation.message,
+        });
     }
 
     try {
         const user = await User.findOne({ email });
 
         if (!user || user.status === 'active') {
-            return res.status(400).json({ error: 'User already confirmed or does not exist.' });
+            return sendError(res, 400, {
+                i18n: 'user.already_confirmed',
+                message: 'User already confirmed or does not exist.',
+            });
         }
 
         const token = jwt.sign({ id: user._id }, process.env.EMAIL_CONFIRMATION_SECRET!, { expiresIn: '15m' });
@@ -330,13 +478,24 @@ export const resendConfirmationEmail = async (req: Request, res: Response) => {
         const { data, error } = await sendConfirmationEmail(email, token);
 
         if (error) {
-            return res.status(400).json({ error });
+            return sendError(res, 400, {
+                i18n: 'user.email_error',
+                message: error,
+                error: {
+                    payload: data,
+                },
+            });
         }
-        console.log(data);
 
-        res.status(200).json({ message: 'Confirmation email has been resent. Please check your inbox.' });
+        return sendSuccess(res, 200, {
+            i18n: 'user.confirmation_email_resent',
+            message: 'Confirmation email has been resent. Please check your inbox.',
+        });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error resending confirmation email.' });
+        console.error('[resendConfirmationEmail] Error:', err);
+        return sendError(res, 500, {
+            i18n: 'user.email_confirmation_error',
+            message: 'Error resending confirmation email.',
+        });
     }
 };

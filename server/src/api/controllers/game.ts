@@ -1,67 +1,97 @@
 import Game from '@/models/game';
 import { Request, Response } from 'express';
 import { SCORING_TYPES, GAME_TYPES } from '@/types/model';
+import { sendError, sendSuccess } from '@/utils/response';
+import { validateRequiredFields } from '@/utils/validation';
 
-// Get all games
+// GET /games - Get all games
 export const getAllGames = async (req: Request, res: Response) => {
     try {
         const games = await Game.find();
-        res.status(200).json({ success: true, data: games });
+
+        return sendSuccess(res, 200, {
+            i18n: 'games.fetched',
+            message: 'Games retrieved successfully',
+            payload: games,
+        });
     } catch (error) {
         console.error('[getAllGames] Error:', error);
-        res.status(500).json({ success: false, error: 'Error retrieving games' });
+
+        return sendError(res, 500, {
+            i18n: 'games.fetch_failed',
+            message: 'Failed to retrieve games',
+        });
     }
 };
 
-// Get a game by ID
+// GET /games/:id - Get a game by ID
 export const getGameById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
 
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({ success: false, error: 'Invalid game ID' });
+            return sendError(res, 400, {
+                i18n: 'games.invalid_id',
+                message: 'Invalid game ID',
+            });
         }
 
         const game = await Game.findById(id);
 
         if (!game) {
-            return res.status(404).json({ success: false, error: 'Game not found' });
+            return sendError(res, 404, {
+                i18n: 'games.not_found',
+                message: 'Game not found',
+            });
         }
 
-        res.status(200).json({ success: true, data: game });
+        return sendSuccess(res, 200, {
+            i18n: 'games.fetched',
+            message: 'Game retrieved successfully',
+            payload: game,
+        });
     } catch (error) {
         console.error('[getGameById] Error:', error);
-        res.status(500).json({ success: false, error: 'Error retrieving game' });
+        return sendError(res, 500, {
+            i18n: 'games.fetch_failed',
+            message: 'Error retrieving game',
+        });
     }
 };
 
-// Create a new game
+// POST /games - Create a new game
 export const createGame = async (req: Request, res: Response) => {
     try {
         const { name, difficulty, type, scoringLogic } = req.body;
 
-        const requiredFields: Record<string, any> = { name, difficulty, type, scoringLogic };
-        const missingFields = Object.keys(requiredFields).filter((field) => !requiredFields[field]);
-
-        if (missingFields.length > 0) {
-            return res.status(400).json({
-                success: false,
-                error: `Missing required fields: ${missingFields.join(', ')}`,
+        // Collect missing fields
+        const errors = validateRequiredFields(req.body, ['name', 'difficulty', 'type', 'scoringLogic']);
+        if (Object.keys(errors).length > 0) {
+            return sendError(res, 400, {
+                i18n: 'games.missing_fields',
+                message: 'Missing required fields',
+                error: errors,
             });
         }
 
         // Validate scoringLogic
         if (!SCORING_TYPES.includes(scoringLogic)) {
-            return res.status(400).json({
-                success: false,
-                error: `Invalid scoringLogic. Must be one of: ${SCORING_TYPES.join(', ')}`,
+            return sendError(res, 400, {
+                i18n: 'games.invalid_scoring_logic',
+                message: 'Invalid scoringLogic.',
+                error: {
+                    accepted: SCORING_TYPES.join(', '),
+                },
             });
         }
 
         if (!GAME_TYPES.includes(type)) {
-            return res.status(400).json({
-                success: false,
-                error: `Invalid type. Must be one of: ${GAME_TYPES.join(', ')}`,
+            return sendError(res, 400, {
+                i18n: 'games.invalid_type',
+                message: 'Invalid type.',
+                error: {
+                    accepted: GAME_TYPES.join(', '),
+                },
             });
         }
 
@@ -69,7 +99,10 @@ export const createGame = async (req: Request, res: Response) => {
 
         const alreadyExists = await Game.findOne({ name });
         if (alreadyExists) {
-            return res.status(400).json({ success: false, error: 'Game with this name already exists' });
+            return sendError(res, 400, {
+                i18n: 'games.already_exists',
+                message: 'Game with this name already exists',
+            });
         }
 
         const newGame = new Game({
@@ -82,35 +115,51 @@ export const createGame = async (req: Request, res: Response) => {
 
         await newGame.save();
 
-        res.status(201).json({ success: true, data: newGame, message: 'Game created successfully!' });
+        return sendSuccess(res, 201, {
+            i18n: 'games.created',
+            message: 'Game created successfully!',
+            payload: newGame,
+        });
     } catch (error) {
         console.error('[createGame] Error:', error);
-        res.status(500).json({ success: false, error: 'Error creating game' });
+        return sendError(res, 500, {
+            i18n: 'games.create_failed',
+            message: 'Failed to create game',
+        });
     }
 };
 
-// Update a game by ID
+// PUT /games/:id - Update a game by ID
 export const updateGameById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         const { name, difficulty, type, scoringLogic } = req.body;
 
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({ success: false, error: 'Invalid game ID' });
+            return sendError(res, 400, {
+                i18n: 'games.invalid_id',
+                message: 'Invalid game ID',
+            });
         }
 
         // Validate scoringLogic
         if (scoringLogic && !SCORING_TYPES.includes(scoringLogic)) {
-            return res.status(400).json({
-                success: false,
-                error: `Invalid scoringLogic. Must be one of: ${SCORING_TYPES.join(', ')}`,
+            return sendError(res, 400, {
+                i18n: 'games.invalid_scoring_logic',
+                message: 'Invalid scoringLogic.',
+                error: {
+                    accepted: SCORING_TYPES.join(', '),
+                },
             });
         }
 
         if (type && !GAME_TYPES.includes(type)) {
-            return res.status(400).json({
-                success: false,
-                error: `Invalid type. Must be one of: ${GAME_TYPES.join(', ')}`,
+            return sendError(res, 400, {
+                i18n: 'games.invalid_type',
+                message: 'Invalid game type.',
+                error: {
+                    accepted: GAME_TYPES.join(', '),
+                },
             });
         }
 
@@ -129,34 +178,48 @@ export const updateGameById = async (req: Request, res: Response) => {
         );
 
         if (!updatedGame) {
-            return res.status(404).json({ success: false, error: 'Game not found' });
+            return sendError(res, 404, {
+                i18n: 'games.not_found',
+                message: 'Game not found',
+            });
         }
 
-        res.status(200).json({ success: true, data: updatedGame, message: 'Game updated successfully!' });
+        return sendSuccess(res, 200, {
+            i18n: 'games.updated',
+            message: 'Game updated successfully!',
+            payload: updatedGame,
+        });
     } catch (error) {
         console.error('[updateGameById] Error:', error);
-        res.status(500).json({ success: false, error: 'Error updating game' });
+        return sendError(res, 500, {
+            i18n: 'games.update_failed',
+            message: 'Error updating game',
+        });
     }
 };
 
-// Delete a game by ID
+// DELETE /games/:id - Delete a game by ID
 export const deleteGame = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
 
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).json({ success: false, error: 'Invalid game ID' });
+            return sendError(res, 400, { i18n: 'games.invalid_id', message: 'Invalid game ID' });
         }
 
         const deletedGame = await Game.findByIdAndDelete(id);
 
         if (!deletedGame) {
-            return res.status(404).json({ success: false, error: 'Game not found' });
+            return sendError(res, 404, { i18n: 'games.not_found', message: 'Game not found' });
         }
 
-        res.status(200).json({ success: true, message: 'Game deleted successfully!' });
+        return sendSuccess(res, 200, {
+            i18n: 'games.deleted',
+            message: 'Game deleted successfully',
+            payload: deletedGame,
+        });
     } catch (error) {
         console.error('[deleteGame] Error:', error);
-        res.status(500).json({ success: false, error: 'Error deleting game' });
+        return sendError(res, 500, { i18n: 'games.delete_failed', message: 'Error deleting game' });
     }
 };

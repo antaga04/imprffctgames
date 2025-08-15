@@ -4,10 +4,18 @@ import User from '@/models/user';
 import { validatePokemonScoreData } from '@/validations/pokemonValidation';
 import { validatePuzzle15ScoreData } from '@/validations/puzzle15Validation';
 import { paginate } from '@/utils/paginationHelper';
-import { comparePokemonScores, comparePuzzle15Scores, sortPokemonScores, sortPuzzle15Scores } from '@/utils/scoreUtils';
+import {
+    applyStrike,
+    comparePokemonScores,
+    comparePuzzle15Scores,
+    sortPokemonScores,
+    sortPuzzle15Scores,
+} from '@/utils/scoreUtils';
 import { AuthenticatedRequest } from '@/types';
 import { Types } from 'mongoose';
 import { ScoreDocument } from '@/types/model';
+import { sendError, sendSuccess } from '@/utils/response';
+import { validateRequiredFields } from '@/utils/validation';
 
 const POKEMON_ID = process.env.POKEMON_ID!;
 const PUZZLE15_ID = process.env.PUZZLE15_ID!;
@@ -30,11 +38,17 @@ export const getAllScores = async (req: Request, res: Response) => {
         const { game_id } = req.query;
 
         if (!game_id || typeof game_id !== 'string') {
-            return res.status(400).json({ success: false, error: 'Game ID is required' });
+            return sendError(res, 400, {
+                i18n: 'score.invalid_game_id',
+                message: 'Game ID is required',
+            });
         }
 
         if (!Types.ObjectId.isValid(game_id)) {
-            return res.status(400).json({ success: false, error: 'Invalid game ID format' });
+            return sendError(res, 400, {
+                i18n: 'score.invalid_game_id',
+                message: 'Invalid game ID format',
+            });
         }
 
         const scores = await Score.find({ game_id })
@@ -42,16 +56,16 @@ export const getAllScores = async (req: Request, res: Response) => {
             .populate('game_id', 'name cover')
             .sort({ scoreData: -1 });
 
-        res.status(200).json({
-            success: true,
-            data: scores,
+        return sendSuccess(res, 200, {
+            i18n: 'score.scores_retrieved',
             message: 'Scores retrieved successfully!',
+            payload: scores,
         });
     } catch (error) {
         console.error('[getAllScores] Error:', error);
-        res.status(500).json({
-            success: false,
-            error: 'Error retrieving scores',
+        return sendError(res, 500, {
+            i18n: 'score.error_retrieving',
+            message: 'Error retrieving scores',
         });
     }
 };
@@ -60,12 +74,22 @@ export const deleteScore = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
         if (!Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ error: 'Invalid score ID format' });
+            return sendError(res, 400, {
+                i18n: 'score.invalid_id',
+                message: 'Invalid score ID format',
+            });
         }
         await Score.deleteOne({ _id: id });
-        res.status(200).json({ data: 'OK', message: 'Score successfully Deleted!' });
+        return sendSuccess(res, 200, {
+            i18n: 'score.deleted',
+            message: 'Score successfully Deleted!',
+        });
     } catch (error) {
-        res.status(400).json({ error: 'Error deleting Score' });
+        console.error('[deleteScore] Error:', error);
+        return sendError(res, 400, {
+            i18n: 'score.error_deleting',
+            message: 'Error deleting Score',
+        });
     }
 };
 
@@ -86,15 +110,20 @@ export const getScoresByGameId = async (req: Request, res: Response) => {
         // Paginate the sorted scores
         const { paginatedData, pagination } = paginate(sortedScores, String(page), String(limit));
 
-        res.status(200).json({
-            success: true,
-            data: paginatedData,
-            pagination,
+        return sendSuccess(res, 200, {
+            i18n: 'score.scores_retrieved',
             message: 'Scores retrieved successfully!',
+            payload: {
+                paginatedData,
+                pagination,
+            },
         });
     } catch (error) {
         console.error('[getScoresByGameId] Error:', error);
-        res.status(500).json({ success: false, error: 'Error retrieving scores' });
+        return sendError(res, 500, {
+            i18n: 'score.error_retrieving',
+            message: 'Error retrieving scores',
+        });
     }
 };
 
@@ -103,22 +132,30 @@ export const uploadScore = async (req: Request, res: Response) => {
         const { scoreData, game_id } = req.body.score;
         const { id: user_id } = (req as AuthenticatedRequest).user;
 
-        if (!user_id || !game_id || !scoreData) {
-            return res.status(400).json({ success: false, error: 'Missing required fields' });
+        const errors = validateRequiredFields({ ...req.body.score, user_id }, ['user_id', 'game_id', 'scoreData']);
+        if (Object.keys(errors).length > 0) {
+            return sendError(res, 400, {
+                i18n: 'score.missing_fields',
+                message: 'Missing required fields',
+                error: errors,
+            });
         }
 
         const gameLogic = GAME_SCORING[game_id];
         if (!gameLogic) {
-            return res.status(400).json({ success: false, error: 'Invalid game ID' });
+            return sendError(res, 400, {
+                i18n: 'score.invalid_game_id',
+                message: 'Invalid game ID',
+            });
         }
 
         const { isValid, newScore } = await gameLogic.validate(scoreData);
         if (!isValid) {
-            await User.updateOne({ _id: user_id }, { $inc: { strikes: 1 } });
+            await applyStrike(user_id);
 
-            return res.status(400).json({
-                success: false,
-                error: 'Score data invalid. Potential cheating detected 👺.',
+            return sendError(res, 400, {
+                i18n: 'score.invalid_score_data',
+                message: 'Score data invalid. Potential cheating detected 👺.',
             });
         }
 
@@ -126,10 +163,10 @@ export const uploadScore = async (req: Request, res: Response) => {
 
         if (existingScore) {
             if (!gameLogic.compare(existingScore.scoreData as StoredPuzzle15Score & StoredPokemonScore, newScore)) {
-                return res.status(200).json({
-                    success: true,
+                return sendSuccess(res, 200, {
+                    i18n: 'score.lower_score',
                     message: 'New score is not better than the existing score',
-                    data: existingScore,
+                    payload: existingScore,
                 });
             }
             existingScore.scoreData = newScore;
@@ -140,13 +177,16 @@ export const uploadScore = async (req: Request, res: Response) => {
             await User.findByIdAndUpdate(user_id, { $push: { scores: existingScore._id } }, { new: true });
         }
 
-        res.status(201).json({
-            success: true,
-            data: existingScore,
+        return sendSuccess(res, existingScore ? 200 : 201, {
+            i18n: 'score.uploaded',
             message: 'Score uploaded successfully!',
+            payload: existingScore,
         });
     } catch (error) {
         console.error('[uploadScore] Error:', error);
-        res.status(500).json({ success: false, error: 'Error creating score' });
+        return sendError(res, 500, {
+            i18n: 'score.error_uploading',
+            message: 'Error uploading score',
+        });
     }
 };
