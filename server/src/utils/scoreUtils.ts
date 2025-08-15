@@ -1,3 +1,4 @@
+import User from '@/api/models/user';
 import { ScoreDocument } from '@/types/model';
 
 export function comparePokemonScores(existingScore: StoredPokemonScore, newScore: StoredPokemonScore) {
@@ -37,4 +38,15 @@ export function sortPuzzle15Scores(scores: ScoreDocument[]) {
 function calculateGuessesCorrectTotal(score: StoredPokemonScore, penaltyFactor = 1.1) {
     const { correct, total } = score;
     return correct * Math.pow(correct / total, penaltyFactor);
+}
+
+export async function applyStrike(userId: string | undefined) {
+    // TODO: give the user guest session a strike
+    if (userId && userId.length > 0) {
+        try {
+            await User.findByIdAndUpdate(userId, { $inc: { strikes: 1 } });
+        } catch (error) {
+            console.error('Failed to apply strike:', error);
+        }
+    }
 }
