@@ -1,22 +1,14 @@
 import { Response } from 'express';
 import { ApiError, ApiSuccess } from '@/types';
 
-export function sendSuccess<T>(
-    res: Response,
-    status: number,
-    partial: Omit<ApiSuccess<T>, 'success'>,
-): Response<ApiSuccess<T>> {
+export function sendSuccess<T>(res: Response, status: number, partial: Omit<ApiSuccess<T>, 'success'>): Response {
     return res.status(status).json({
         success: true,
         ...partial,
     });
 }
 
-export function sendError<T>(
-    res: Response,
-    status: number,
-    partial: Omit<ApiError<T>, 'success'>,
-): Response<ApiError<T>> {
+export function sendError<T>(res: Response, status: number, partial: Omit<ApiError<T>, 'success'>): Response {
     return res.status(status).json({
         success: false,
         ...partial,
