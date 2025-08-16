@@ -52,6 +52,8 @@ export interface GameSessionSchema extends Document {
     validatedResults?: Record<string, any> | null;
     session_expiry: Date;
     variant?: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
 interface GameVariant {
