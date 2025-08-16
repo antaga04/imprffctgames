@@ -1,0 +1,28 @@
+[
+    {
+        "name": "Pokémon",
+        "difficulty": 4,
+        "type": "quiz",
+        "cover": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299858/imprffctgames/games/pokemon.webp",
+        "scoringLogic": "guesses_correct_total"
+    },
+    {
+        "name": "15 puzzle",
+        "difficulty": 3,
+        "type": "puzzle",
+        "cover": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299856/imprffctgames/games/15puzzle.webp",
+        "scoringLogic": "moves_time"
+    },
+    {
+        "name": "Lyzardtype",
+        "difficulty": 3,
+        "type": "typing",
+        "cover": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299857/imprffctgames/games/lizardtype.webp",
+        "scoringLogic": "wpm_time",
+        "variants": [
+            { "key": 15, "label": "15 seconds" },
+            { "key": 30, "label": "30 seconds" },
+            { "key": 60, "label": "60 seconds" }
+        ]
+    }
+]

@@ -1,0 +1,110 @@
+[
+    {
+        "nickname": "anakin",
+        "email": "anakin@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299850/imprffctgames/avatars/anakin.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "batman",
+        "email": "batman@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299850/imprffctgames/avatars/batman.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "benten",
+        "email": "benten@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299851/imprffctgames/avatars/benten.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "billcipher",
+        "email": "billcipher@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299852/imprffctgames/avatars/billcipher.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "franklinsaint",
+        "email": "franklinsaint@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299852/imprffctgames/avatars/franklinsaint.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "harveyspecter",
+        "email": "harveyspecter@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299853/imprffctgames/avatars/harveyspecter.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "ironman",
+        "email": "ironman@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299854/imprffctgames/avatars/ironman.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "martymcfly",
+        "email": "marty@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299854/imprffctgames/avatars/marty.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "spiderman",
+        "email": "spiderman@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299855/imprffctgames/avatars/spiderman.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "walterwhite",
+        "email": "walterwhite@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299856/imprffctgames/avatars/walterwhite.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "negan",
+        "email": "negan@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755351606/imprffctgames/avatars/negan_a4e2rw.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    },
+    {
+        "nickname": "bart",
+        "email": "bart@example.com",
+        "password": "1234567890",
+        "avatar": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755351606/imprffctgames/avatars/bart_yyfj0k.webp",
+        "role": "user",
+        "status": "active",
+        "strikes": 0
+    }
+]
