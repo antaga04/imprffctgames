@@ -13,7 +13,7 @@ const gameSchema = new mongoose.Schema<GameSchema>({
     },
     variants: [
         {
-            key: { type: String, required: true }, // e.g., '15s'
+            key: { type: Number, required: true }, // e.g., '15s'
             label: { type: String, required: true }, // e.g., '15 seconds'
         },
     ],

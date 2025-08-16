@@ -8,9 +8,13 @@ export interface ScoreDocument extends Document {
 }
 
 export interface PokemonSchema extends Document {
+    _id: string;
     pokeId: number;
     name: string;
-    sprite: string;
+    sprite: {
+        color: string;
+        gray: string;
+    };
 }
 
 export interface UserSchema extends Document {
@@ -25,7 +29,7 @@ export interface UserSchema extends Document {
     strikes: number;
 }
 
-export const SCORING_TYPES = ['guesses_correct_total', 'moves_time'] as const;
+export const SCORING_TYPES = ['guesses_correct_total', 'moves_time', 'wpm_time'] as const;
 export const GAME_TYPES = ['quiz', 'puzzle', 'word_game', 'memory_game', 'typing'] as const;
 
 export type ScoringLogic = (typeof SCORING_TYPES)[number];
@@ -51,6 +55,6 @@ export interface GameSessionSchema extends Document {
 }
 
 interface GameVariant {
-    key: string; // e.g., "15s"
+    key: number; // e.g., 15
     label: string; // e.g., "15 seconds"
 }
