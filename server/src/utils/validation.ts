@@ -1,12 +1,28 @@
-import { PasswordValidationErrorKey, PasswordValidationResult, SimpleValidationResult } from '@/types';
+import { PasswordValidationErrorKey, PasswordValidationResult, SimpleValidationResult } from '@/types/types';
 
 const emailRegex =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 export const validateNickname = (nickname: string): SimpleValidationResult => {
-    if (nickname == null || !nickname || typeof nickname !== 'string' || nickname.trim().length < 3) {
-        return { valid: false, message: 'Nickname must be at least 3 characters long and cannot be empty.' };
+    if (nickname == null || typeof nickname !== 'string' || nickname.trim() === '') {
+        return { valid: false, message: 'Nickname cannot be empty.' };
     }
+
+    if (nickname.length < 3) {
+        return { valid: false, message: 'Nickname must be at least 3 characters long.' };
+    }
+
+    if (nickname.length > 15) {
+        return { valid: false, message: 'Nickname must be at most 15 characters long.' };
+    }
+
+    if (!/^[a-z0-9_]+$/.test(nickname)) {
+        return {
+            valid: false,
+            message: 'Nickname must only contain lowercase letters, numbers, and underscores (no spaces or dashes).',
+        };
+    }
+
     return { valid: true };
 };
 
