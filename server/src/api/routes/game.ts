@@ -7,8 +7,8 @@ const router: Router = Router();
 
 router.get('/', getAllGames);
 router.get('/:slug', getGameBySlug);
-router.post('/', hasValidAuthJwt, isAdmin, uploadFile.single('cover'), createGame);
-router.put('/:id', hasValidAuthJwt, isAdmin, uploadFile.single('cover'), updateGameById);
+router.post('/', hasValidAuthJwt, isAdmin, uploadFile('cover', 'games'), createGame);
+router.put('/:id', hasValidAuthJwt, isAdmin, uploadFile('cover', 'games'), updateGameById);
 router.delete('/:id', hasValidAuthJwt, isAdmin, deleteGame);
 
 export default router;

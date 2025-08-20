@@ -35,7 +35,7 @@ router.post(
 
 router.put('/newpassword', hasValidAuthJwt, updateUserPassword);
 router.get('/', hasValidAuthJwt, getUser);
-router.put('/avatar', hasValidAuthJwt, avatarLimiter, uploadFile.single('avatar'), updateUserAvatar);
+router.put('/avatar', hasValidAuthJwt, avatarLimiter, uploadFile('avatar', 'avatars'), updateUserAvatar);
 router.delete('/avatar', hasValidAuthJwt, deleteUserAvatar);
 
 router.get('/verify', hasValidAuthJwt, verifyUser);
