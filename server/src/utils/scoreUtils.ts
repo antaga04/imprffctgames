@@ -40,13 +40,34 @@ function calculateGuessesCorrectTotal(score: StoredPokemonScore, penaltyFactor =
     return correct * Math.pow(correct / total, penaltyFactor);
 }
 
-export async function applyStrike(userId: string | undefined) {
+export async function applyStrike(userId: string | undefined): Promise<string | undefined> {
     // TODO: give the user guest session a strike
-    if (userId && userId.length > 0) {
-        try {
-            await User.findByIdAndUpdate(userId, { $inc: { strikes: 1 } });
-        } catch (error) {
-            console.error('Failed to apply strike:', error);
+    if (!userId) return;
+
+    try {
+        // Increment strikes and fetch the updated user
+        const user = await User.findByIdAndUpdate(
+            userId,
+            { $inc: { strikes: 1 } },
+            { new: true }, // return the updated document
+        );
+
+        if (!user) {
+            console.log(`User ${userId} not found when applying strike.`);
+            return;
         }
+
+        // If strikes reach 3 or more, ban the user
+        if (user.strikes >= 3 && user.status !== 'banned') {
+            user.status = 'banned';
+            await user.save();
+
+            console.log(`User ${user.nickname} (${user._id}) has been banned due to 3 strikes.`);
+            return 'You have been banned for 3 strikes.';
+        }
+
+        return 'You have been given a strike.';
+    } catch (error) {
+        console.error('Failed to apply strike:', error);
     }
 }
