@@ -1,37 +1,14 @@
 import { Request, Response } from 'express';
 import Score from '@/models/score';
 import User from '@/models/user';
-import { validatePokemonScoreData } from '@/validations/pokemonValidation';
-import { validatePuzzle15ScoreData } from '@/validations/puzzle15Validation';
 import { paginate } from '@/utils/paginationHelper';
-import {
-    applyStrike,
-    comparePokemonScores,
-    comparePuzzle15Scores,
-    sortPokemonScores,
-    sortPuzzle15Scores,
-} from '@/utils/scoreUtils';
-import { AuthenticatedRequest } from '@/types';
+import { applyStrike } from '@/utils/scoreUtils';
+import { AuthenticatedRequest } from '@/types/types';
 import { Types } from 'mongoose';
 import { ScoreDocument } from '@/types/model';
 import { sendError, sendSuccess } from '@/utils/response';
 import { validateRequiredFields } from '@/utils/validation';
-
-const POKEMON_ID = process.env.POKEMON_ID!;
-const PUZZLE15_ID = process.env.PUZZLE15_ID!;
-
-const GAME_SCORING = {
-    [POKEMON_ID]: {
-        validate: validatePokemonScoreData,
-        compare: comparePokemonScores,
-        sortScores: sortPokemonScores,
-    },
-    [PUZZLE15_ID]: {
-        validate: validatePuzzle15ScoreData,
-        compare: comparePuzzle15Scores,
-        sortScores: sortPuzzle15Scores,
-    },
-};
+import { getGameScoring } from '@/utils/gameRegistry';
 
 export const getAllScores = async (req: Request, res: Response) => {
     try {
@@ -96,14 +73,22 @@ export const deleteScore = async (req: Request, res: Response) => {
 export const getScoresByGameId = async (req: Request, res: Response) => {
     try {
         const { game_id } = req.params;
-        const { page = 1, limit = 10 } = req.query;
+        const { page = 1, limit = 10, variant } = req.query;
 
-        const scores = await Score.find({ game_id })
+        const scores = await Score.find({ game_id, variant })
             .populate('user_id', 'nickname avatar')
             .populate('game_id', 'name cover')
             .lean();
 
-        const gameLogic = GAME_SCORING[game_id];
+        const scoring = await getGameScoring();
+
+        const gameLogic = scoring[game_id];
+        if (!gameLogic) {
+            return sendError(res, 400, {
+                i18n: 'score.invalid_game_id',
+                message: 'Invalid game ID',
+            });
+        }
 
         const sortedScores = gameLogic.sortScores(scores as ScoreDocument[]);
 
@@ -141,7 +126,9 @@ export const uploadScore = async (req: Request, res: Response) => {
             });
         }
 
-        const gameLogic = GAME_SCORING[game_id];
+        const scoring = await getGameScoring();
+        const gameLogic = scoring[game_id];
+
         if (!gameLogic) {
             return sendError(res, 400, {
                 i18n: 'score.invalid_game_id',
@@ -163,7 +150,7 @@ export const uploadScore = async (req: Request, res: Response) => {
 
         if (existingScore) {
             if (!gameLogic.compare(existingScore.scoreData as StoredPuzzle15Score & StoredPokemonScore, newScore)) {
-                return sendSuccess(res, 200, {
+                return sendError(res, 409, {
                     i18n: 'score.lower_score',
                     message: 'New score is not better than the existing score',
                     payload: existingScore,
