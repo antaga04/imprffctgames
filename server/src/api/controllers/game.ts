@@ -24,19 +24,14 @@ export const getAllGames = async (req: Request, res: Response) => {
     }
 };
 
-// GET /games/:id - Get a game by ID
-export const getGameById = async (req: Request, res: Response) => {
+// GET /games/:slug - Get a game by slug
+export const getGameBySlug = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const { slug } = req.params;
 
-        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-            return sendError(res, 400, {
-                i18n: 'games.invalid_id',
-                message: 'Invalid game ID',
-            });
-        }
+        // TODO: add slug validation
 
-        const game = await Game.findById(id);
+        const game = await Game.findOne({ slug });
 
         if (!game) {
             return sendError(res, 404, {
@@ -51,7 +46,7 @@ export const getGameById = async (req: Request, res: Response) => {
             payload: game,
         });
     } catch (error) {
-        console.error('[getGameById] Error:', error);
+        console.error('[getGameBySlug] Error:', error);
         return sendError(res, 500, {
             i18n: 'games.fetch_failed',
             message: 'Error retrieving game',
