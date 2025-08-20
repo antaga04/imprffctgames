@@ -5,16 +5,25 @@ import { getRandomSequence } from '@/utils/randomSequence';
 import { PokemonSchema } from '@/types/model';
 import { sendError, sendSuccess } from '@/utils/response';
 import { applyStrike } from '@/utils/scoreUtils';
+import { POKEMON_SLUG } from '@/utils/constants';
+import { verifytoken } from '@/utils/jwt';
 
 // POST /pokemon - Generate the random Pokémon sequence for the session
 export const generatePokemonSession = async (req: Request, res: Response) => {
     try {
         const sequence = getRandomSequence(1, 151, 55);
 
+        // TODO: use the token to get the guest user
+        const token = req.cookies.token;
+        let payload = { id: 'guestUser' };
+        if (token) {
+            payload = verifytoken(token);
+        }
+
         const newSession = new GameSession({
-            game_id: process.env.POKEMON_ID,
+            user_id: payload.id,
+            game_slug: POKEMON_SLUG,
             state: sequence,
-            session_expiry: new Date(Date.now() + 5 * 60 * 1000),
         });
 
         await newSession.save();
@@ -35,7 +44,7 @@ export const generatePokemonSession = async (req: Request, res: Response) => {
             return {
                 _id: pokemon._id,
                 nameLength: pokemon.name.length,
-                sprite: pokemon.sprite,
+                sprite: { gray: pokemon.sprite.gray },
             };
         });
 
@@ -98,7 +107,9 @@ export const getPokemonBatch = async (req: Request, res: Response) => {
             return {
                 _id: pokemon._id,
                 nameLength: pokemon.name.length,
-                sprite: pokemon.sprite,
+                sprite: {
+                    gray: pokemon.sprite.gray,
+                },
             };
         });
 
@@ -131,6 +142,8 @@ export const checkPokemonResults = async (req: Request, res: Response) => {
                 message: 'Game session not found.',
             });
         }
+
+        session.gameplay = req.body.guesses;
 
         const bufferTime = 2500;
         const requiredGameDuration = 60000;
@@ -167,7 +180,8 @@ export const checkPokemonResults = async (req: Request, res: Response) => {
 
         let correctGuesses = 0;
         let results = [];
-        let flaggedAsBot = false;
+
+        let flaggedAsBot: { reason: string }[] = [];
 
         for (const guess of guesses) {
             const pokemon = pokemonMap[sequence[guesses.indexOf(guess)]];
@@ -182,20 +196,21 @@ export const checkPokemonResults = async (req: Request, res: Response) => {
                 if (keystrokeIntervals.length > 0) {
                     const minInterval = Math.min(...keystrokeIntervals);
                     const maxInterval = Math.max(...keystrokeIntervals);
-                    const avgInterval =
-                        keystrokeIntervals.reduce((a: number, b: number) => a + b, 0) / keystrokeIntervals.length;
+                    const avgInterval = keystrokeIntervals.reduce((a, b) => a + b, 0) / keystrokeIntervals.length;
                     const variance = maxInterval - minInterval;
 
-                    const fastTyping = avgInterval < 50;
-                    const lowVariance = variance < 5;
-                    const unrealisticTotalTime = keystrokeIntervals.reduce((a: number, b: number) => a + b, 0) < 300;
-
-                    if (fastTyping || lowVariance || unrealisticTotalTime) {
-                        flaggedAsBot = true;
+                    if (avgInterval < 50) {
+                        flaggedAsBot.push({ reason: 'Typing too fast' });
+                    }
+                    if (variance < 5) {
+                        flaggedAsBot.push({ reason: 'Too consistent typing' });
+                    }
+                    if (keystrokeIntervals.reduce((a, b) => a + b, 0) < 300) {
+                        flaggedAsBot.push({ reason: 'Unrealistic total typing time' });
                     }
                 }
 
-                results.push({ guessedName: userGuess, correctName, isCorrect });
+                results.push({ guessedName: userGuess, correctName, isCorrect, colorSprite: pokemon.sprite.color });
             }
         }
 
@@ -210,7 +225,8 @@ export const checkPokemonResults = async (req: Request, res: Response) => {
         const responseData = { ...session.validatedResults };
 
         if (flaggedAsBot) {
-            await applyStrike(id);
+            const strikeMessage = await applyStrike(id);
+            session.validatedResults.strikeMessage = strikeMessage;
         }
 
         return sendSuccess(res, 200, {

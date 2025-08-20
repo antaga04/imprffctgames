@@ -19,10 +19,10 @@ export async function seedScores() {
 
         for (const user of users) {
             for (const game of games) {
-                let variant: number | undefined = undefined;
+                let variant: string | undefined = undefined;
                 if (game.variants && game.variants.length > 0) {
                     const randomIndex = getRandomInt(0, game.variants.length - 1);
-                    variant = game.variants[randomIndex].key;
+                    variant = game.variants[randomIndex].label;
                 }
 
                 let scoreData: Record<string, any> = {};
@@ -31,7 +31,7 @@ export async function seedScores() {
                         scoreData = {
                             correct: getRandomInt(0, 20),
                             total: 20,
-                            flaggedAsBot: false,
+                            flaggedAsBot: {},
                         };
                         break;
                     case 'moves_time':
@@ -43,8 +43,18 @@ export async function seedScores() {
                     case 'wpm_time':
                         scoreData = {
                             wpm: getRandomInt(20, 100),
-                            time: variant,
+                            variant: variant,
                             consistency: getRandomInt(60, 100),
+                        };
+                        break;
+                    case 'win':
+                        scoreData = {
+                            win: 'master',
+                        };
+                        break;
+                    case 'points':
+                        scoreData = {
+                            points: getRandomInt(10, 5000),
                         };
                         break;
                     default:
