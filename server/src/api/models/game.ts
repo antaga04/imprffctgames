@@ -17,6 +17,8 @@ const gameSchema = new mongoose.Schema<GameSchema>({
             label: { type: String, required: true }, // e.g., '15 seconds'
         },
     ],
+    slug: { type: String, required: true, unique: true },
+    info: { type: Object },
 });
 
 const Game = mongoose.model<GameSchema>('Game', gameSchema, 'Game');
