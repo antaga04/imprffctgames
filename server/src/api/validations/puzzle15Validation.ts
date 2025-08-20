@@ -75,6 +75,8 @@ export async function validatePuzzle15ScoreData(
         return { isValid: false, newScore: null }; // Session doesn't exist
     }
 
+    gameSession.gameplay = { moves: moves, time: time };
+
     // Check if the session hash matches the one in the game session
     if (gameSession.hash !== scoreData.hash) {
         console.log('Hashes do not match');
