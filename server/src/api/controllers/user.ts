@@ -6,7 +6,7 @@ import { signToken } from '@/utils/jwt';
 import deleteCloudinaryImage from '@/utils/cloudinary';
 import { validateEmail, validateNickname, validatePassword } from '@/utils/validation';
 import { sendConfirmationEmail } from '@/utils/email';
-import { AuthenticatedRequest, TokenPayload } from '@/types';
+import { AuthenticatedRequest, TokenPayload } from '@/types/types';
 import { handleMongooseError } from '@/utils/error';
 import { sendError, sendSuccess } from '@/utils/response';
 
@@ -386,7 +386,7 @@ export const registerUser = async (req: Request, res: Response) => {
         const newUser = new User({ email, nickname, password });
         const user = await newUser.save();
 
-        const token = jwt.sign({ id: user._id }, process.env.EMAIL_CONFIRMATION_SECRET!, {
+        /*  const token = jwt.sign({ id: user._id }, process.env.EMAIL_CONFIRMATION_SECRET!, {
             expiresIn: '15m',
         });
 
@@ -400,7 +400,7 @@ export const registerUser = async (req: Request, res: Response) => {
                     payload: data,
                 },
             });
-        }
+        } */
 
         return sendSuccess(res, 200, {
             i18n: 'user.confirmation_email_sent',

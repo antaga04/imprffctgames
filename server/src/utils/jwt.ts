@@ -1,4 +1,4 @@
-import { TokenPayload } from '@/types';
+import { TokenPayload } from '@/types/types';
 import jwt from 'jsonwebtoken';
 
 export const signToken = (payload: TokenPayload): string => {

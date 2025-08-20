@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ApiError, ApiSuccess } from '@/types';
+import { ApiError, ApiSuccess } from '@/types/types';
 
 export function sendSuccess<T>(res: Response, status: number, partial: Omit<ApiSuccess<T>, 'success'>): Response {
     return res.status(status).json({

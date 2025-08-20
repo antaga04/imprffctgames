@@ -20,6 +20,7 @@ interface ApiError<T> {
     i18n: string;
     message: string;
     errors?: Record<string, T>;
+    payload?: T;
 }
 
 type ApiResponse<T = any> = ApiSuccess<T> | ApiError<T>;
@@ -39,5 +40,7 @@ declare module 'express' {
         user?: {
             id: string;
         };
+        uploadFolder?: string;
+        uploadPrefix?: string;
     }
 }

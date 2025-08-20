@@ -29,7 +29,7 @@ export interface UserSchema extends Document {
     strikes: number;
 }
 
-export const SCORING_TYPES = ['guesses_correct_total', 'moves_time', 'wpm_time'] as const;
+export const SCORING_TYPES = ['guesses_correct_total', 'moves_time', 'wpm_time', 'win', 'points'] as const;
 export const GAME_TYPES = ['quiz', 'puzzle', 'word_game', 'memory_game', 'typing'] as const;
 
 export type ScoringLogic = (typeof SCORING_TYPES)[number];
@@ -42,16 +42,21 @@ export interface GameSchema extends Document {
     cover?: string;
     scoringLogic: ScoringLogic;
     variants?: GameVariant[];
+    slug: string;
+    info?: {
+        [key: string]: string;
+    };
 }
 
 export interface GameSessionSchema extends Document {
-    game_id: Types.ObjectId;
-    user_id: Types.ObjectId;
+    game_slug: string;
+    user_id: string;
     hash?: string;
     state: Types.Array<any>;
     validatedResults?: Record<string, any> | null;
     session_expiry: Date;
     variant?: string;
+    gameplay?: Record<string, any> | null;
     createdAt: Date;
     updatedAt: Date;
 }
