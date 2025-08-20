@@ -3,8 +3,8 @@ import { generateBoardHash } from '@/utils/crypto';
 import { generateSolvableBoard } from '@/utils/puzzle15';
 import GameSession from '@/models/gameSession';
 import { sendError, sendSuccess } from '@/utils/response';
-
-const GAME_ID = process.env.PUZZLE15_ID;
+import { PUZZLE15_SLUG } from '@/utils/constants';
+import { verifytoken } from '@/utils/jwt';
 
 // API Endpoint: Generate a board and create a game session
 export const generateBoard = async (req: Request, res: Response) => {
@@ -12,11 +12,18 @@ export const generateBoard = async (req: Request, res: Response) => {
         const board = generateSolvableBoard();
         const hash = generateBoardHash(board);
 
+        // TODO: use the token to get the guest user
+        const token = req.cookies.token;
+        let payload = { id: 'guestUser' };
+        if (token) {
+            payload = verifytoken(token);
+        }
+
         const newSession = new GameSession({
-            game_id: GAME_ID,
+            user_id: payload.id,
+            game_slug: PUZZLE15_SLUG,
             state: board,
             hash,
-            session_expiry: new Date(Date.now() + 20 * 60 * 1000),
         });
 
         await newSession.save();
