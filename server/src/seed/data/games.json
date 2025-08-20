@@ -1,28 +1,55 @@
 [
     {
+        "slug": "tictactoe",
+        "name": "Tic Tac Toe",
+        "difficulty": 1,
+        "type": "puzzle",
+        "cover": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299859/imprffctgames/games/tictactoe.webp",
+        "scoringLogic": "win",
+        "info": {
+            "ranking": "Ranking is based on order of winninig the imposible level.",
+            "instructions": "Check 3 tiles in a row to win (any diraction is valid)."
+        }
+    },
+    {
+        "slug": "pokemon",
         "name": "Pokémon",
         "difficulty": 4,
         "type": "quiz",
         "cover": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299858/imprffctgames/games/pokemon.webp",
-        "scoringLogic": "guesses_correct_total"
+        "scoringLogic": "guesses_correct_total",
+        "info": {
+            "ranking": "Ranking is based on faster times. Fewer moves are the tiebreaker.",
+            "instructions": "Guess as many Pokémon as you can in {{INITIAL_TIME}} seconds."
+        }
     },
     {
+        "slug": "puzzle15",
         "name": "15 puzzle",
         "difficulty": 3,
         "type": "puzzle",
         "cover": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299856/imprffctgames/games/15puzzle.webp",
-        "scoringLogic": "moves_time"
+        "scoringLogic": "moves_time",
+        "info": {
+            "ranking": "Ranking is based on a combination of total correct guesses and accuracy.",
+            "instructions": "Move tiles in grid to order them from 1 to 15."
+        }
     },
     {
-        "name": "Lyzardtype",
+        "slug": "lizardtype",
+        "name": "Lizardtype",
         "difficulty": 3,
         "type": "typing",
         "cover": "https://res.cloudinary.com/drsfru9lj/image/upload/v1755299857/imprffctgames/games/lizardtype.webp",
         "scoringLogic": "wpm_time",
         "variants": [
-            { "key": 15, "label": "15 seconds" },
-            { "key": 30, "label": "30 seconds" },
-            { "key": 60, "label": "60 seconds" }
-        ]
+            { "key": 15, "label": "15s" },
+            { "key": 30, "label": "30s" },
+            { "key": 60, "label": "60s" }
+        ],
+        "info": {
+            "ranking": "Ranking is based on greater words per minute. Accuracy is the tiebreaker.",
+            "instructions": "Type as many words as you can in the given time. Try to have the least amount of mistakes."
+        }
     }
 ]
