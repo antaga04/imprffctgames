@@ -7,9 +7,12 @@ import { useGameCompletion } from '@/hooks/useCompletion';
 import { useTempScore } from '@/hooks/useTempScore';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { POKEMON_SLUG } from '@/lib/constants';
+import DecrementTimer from '@/components/ui/Timers/DecrementTimer';
+import { useFetch } from '@/hooks/useFetch';
 
+const API_GAMES_URL = `${import.meta.env.VITE_API_URL}/games/${POKEMON_SLUG}`;
 const INITIAL_TIME = 60;
-const GAME_ID = import.meta.env.VITE_POKEMON_ID;
 
 const Feedback: React.FC<Feedback> = ({ correct, guess }) => {
     const correctArray = correct.split('');
@@ -44,38 +47,6 @@ const Feedback: React.FC<Feedback> = ({ correct, guess }) => {
             <span className="text-base text-green-500">{correct}</span>
             <span className="text-base">{feedback}</span>
         </div>
-    );
-};
-
-const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal, gameSessionId }) => {
-    const [timeLeft, setTimeLeft] = useState<number>(INITIAL_TIME);
-
-    useEffect(() => {
-        setTimeLeft(INITIAL_TIME);
-
-        if (!gameSessionId) {
-            return;
-        }
-
-        const interval = setInterval(() => {
-            setTimeLeft((prevTime) => Math.max(prevTime - 1, 0));
-        }, 1000);
-
-        return () => clearInterval(interval);
-    }, [resetSignal, gameSessionId]);
-
-    useEffect(() => {
-        if (timeLeft === 0) {
-            onGameFinished();
-        }
-    }, [timeLeft, onGameFinished]);
-
-    const timeColorClass = timeLeft < 11 ? 'text-red-600' : 'text-white';
-
-    return (
-        <p className="font-mono min-w-[6ch] text-right">
-            Time: <span className={`font-mono ${timeColorClass}`}>{String(timeLeft).padStart(2, '0')}s</span>
-        </p>
     );
 };
 
@@ -144,7 +115,7 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
     );
 };
 
-const Game: React.FC = () => {
+const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
     const [gameSessionId, setGameSessionId] = useState(null);
     const [pokemonData, setPokemonData] = useState<PokemonData[]>([]);
     const [guesses, setGuesses] = useState<Guess[]>([]);
@@ -157,13 +128,19 @@ const Game: React.FC = () => {
     const [checkingResults, setCheckingResults] = useState(false);
 
     const { setTempScore } = useTempScore();
-    const handleCompletion = useGameCompletion(GAME_ID);
+    const handleCompletion = useGameCompletion(game?._id, POKEMON_SLUG);
     const hasHandledCompletion = useRef(false);
 
     const fetchInitialPokemons = async () => {
         setLoading(true);
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/pokemon`);
+            const response = await axios.post(
+                `${import.meta.env.VITE_API_URL}/pokemon`,
+                {},
+                {
+                    withCredentials: true,
+                },
+            );
             const { gameSessionId, pokemons } = response.data.payload;
 
             setPokemonData(pokemons);
@@ -226,7 +203,10 @@ const Game: React.FC = () => {
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/pokemon/results`, scoreData);
 
             setResults(response.data.payload);
-            setTempScore({ scoreData, gameId: GAME_ID });
+            if (!game) {
+                return toast.error('Game was not found in the database.');
+            }
+            setTempScore({ scoreData, gameId: game._id, slug: game.slug });
             handleCompletion(scoreData);
         } catch (error) {
             console.error('Error fetching results:', error);
@@ -272,39 +252,24 @@ const Game: React.FC = () => {
                             </h2>
                             <div className="my-6 max-w-3xl mx-auto">
                                 <div className="flex flex-wrap gap-4 mt-4 items-center justify-center">
-                                    {results?.results.map((g, idx) =>
-                                        g.isCorrect ? (
-                                            <div
-                                                key={idx}
-                                                className="flex flex-col items-center border border-green-500 p-2 rounded relative"
-                                            >
-                                                <span className="absolute top-0 right-1 text-white text-sm">
-                                                    {idx + 1}
-                                                </span>
-                                                <img
-                                                    src={pokemonData[idx].sprite}
-                                                    alt={g.guessedName}
-                                                    className="w-20 h-20 object-contain"
-                                                />
+                                    {results?.results.map((g, idx) => (
+                                        <div
+                                            key={idx}
+                                            className={`flex flex-col items-center p-2 rounded relative border ${g.isCorrect ? 'border-green-500' : 'border-red-500'}`}
+                                        >
+                                            <span className="absolute top-0 right-1 text-white text-sm">{idx + 1}</span>
+                                            <img
+                                                src={g.colorSprite}
+                                                alt={g.guessedName}
+                                                className="w-28 h-28 object-contain"
+                                            />
+                                            {g.isCorrect ? (
                                                 <span className="text-green-500 text-base mt-2">{g.guessedName}</span>
-                                            </div>
-                                        ) : (
-                                            <div
-                                                key={idx}
-                                                className="flex flex-col items-center border border-red-500 p-2 rounded relative"
-                                            >
-                                                <span className="absolute top-0 right-1 text-white text-sm">
-                                                    {idx + 1}
-                                                </span>
-                                                <img
-                                                    src={pokemonData[idx].sprite}
-                                                    alt={g.correctName}
-                                                    className="w-20 h-20 object-contain"
-                                                />
+                                            ) : (
                                                 <Feedback correct={g.correctName} guess={g.guessedName} />
-                                            </div>
-                                        ),
-                                    )}
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </>
@@ -316,6 +281,7 @@ const Game: React.FC = () => {
                         <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
                         <div className="flex flex-col text-white">
                             <DecrementTimer
+                                initialTime={INITIAL_TIME}
                                 onGameFinished={handleGameOver}
                                 resetSignal={playAgainKey}
                                 gameSessionId={gameSessionId}
@@ -334,7 +300,7 @@ const Game: React.FC = () => {
                             </div>
                         ) : (
                             <img
-                                src={pokemonData[currentPokemonIndex]?.sprite || ''}
+                                src={pokemonData[currentPokemonIndex]?.sprite.gray || ''}
                                 alt="Who's that Pokémon?"
                                 className="w-full h-full object-cover filter grayscale select-none"
                                 draggable="false"
@@ -353,6 +319,8 @@ const Game: React.FC = () => {
 
 // Main Pokemon Game Component
 const PokemonGame: React.FC = () => {
+    const { data: game } = useFetch<GameSchema>(API_GAMES_URL);
+
     console.log(
         '%cHey, you! %cI see you peeking around the DevTools... %cNo cheating allowed! ☝️🤓',
         'color: darkorange; font-size: 16px; font-weight: bold;',
@@ -361,12 +329,8 @@ const PokemonGame: React.FC = () => {
     );
 
     return (
-        <GameWrapper
-            title="Who's that Pokémon?"
-            height="479px"
-            instructions={`Guess as many Pokémon as you can in ${INITIAL_TIME} seconds.`}
-        >
-            <Game />
+        <GameWrapper title="Who's that Pokémon?" height="479px" instructions={game?.info?.instructions}>
+            <Game game={game} />
         </GameWrapper>
     );
 };
