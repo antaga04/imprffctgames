@@ -8,47 +8,18 @@ import { useGameCompletion } from '@/hooks/useCompletion';
 import { useTempScore } from '@/hooks/useTempScore';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { PUZZLE15_SLUG } from '@/lib/constants';
+import Timer from '@/components/ui/Timers/Timer';
+import { useFetch } from '@/hooks/useFetch';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const EMPTY_INDEX = CELL_COUNT - 1;
-const GAME_ID = import.meta.env.VITE_PUZZLE15_ID;
 
-const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSignal, onGameFinish }) => {
-    const [localTime, setLocalTime] = useState(0);
+const API_GAMES_URL = `${import.meta.env.VITE_API_URL}/games/${PUZZLE15_SLUG}`;
+const API_URL = import.meta.env.VITE_API_URL;
 
-    useEffect(() => {
-        let interval: ReturnType<typeof setInterval>;
-
-        if (isRunning && gameStarted) {
-            interval = setInterval(() => {
-                setLocalTime((prevTime) => prevTime + 1);
-            }, 1000);
-        }
-
-        return () => clearInterval(interval);
-    }, [isRunning, gameStarted]);
-
-    useEffect(() => {
-        setLocalTime(0);
-    }, [resetSignal]);
-
-    useEffect(() => {
-        if (!isRunning && gameStarted) {
-            onGameFinish(localTime);
-        }
-    }, [isRunning, gameStarted, localTime, onGameFinish]);
-
-    const formatTime = (seconds: number): string => {
-        const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
-        return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
-    };
-
-    return <span className="font-mono min-w-[6ch] text-right">Time: {formatTime(localTime)}</span>;
-};
-
-const Game: React.FC = () => {
+const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
     const [board, setBoard] = useState(Array.from({ length: CELL_COUNT }, (_, i) => i));
     const [moves, setMoves] = useState<Move[]>([]);
     const [isRunning, setIsRunning] = useState(false);
@@ -59,7 +30,7 @@ const Game: React.FC = () => {
     const [gameSessionId, setGameSessionId] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const handleCompletion = useGameCompletion(GAME_ID);
+    const handleCompletion = useGameCompletion(game?._id, PUZZLE15_SLUG);
     const { setTempScore } = useTempScore();
     const hasHandledCompletion = useRef(false);
 
@@ -71,7 +42,7 @@ const Game: React.FC = () => {
     const shuffleBoard = useCallback(async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/puzzle15`);
+            const response = await axios.get(`${API_URL}/puzzle15`, { withCredentials: true });
             const { board, hash, gameSessionId } = response.data.payload;
 
             if (board && hash) {
@@ -114,7 +85,10 @@ const Game: React.FC = () => {
         hasHandledCompletion.current = true;
 
         const scoreData = { moves, time, hash: boardHash, gameSessionId };
-        setTempScore({ scoreData, gameId: GAME_ID });
+        if (!game) {
+            return toast.error('Game was not found in the database.');
+        }
+        setTempScore({ scoreData, gameId: game._id, slug: game.slug });
         handleCompletion(scoreData);
     };
 
@@ -249,9 +223,11 @@ const Game: React.FC = () => {
 };
 
 const Puzzle15: React.FC = () => {
+    const { data: game } = useFetch<GameSchema>(API_GAMES_URL);
+
     return (
-        <GameWrapper title="15 Puzzle" instructions="Move tiles in grid to order them from 1 to 15.">
-            <Game />
+        <GameWrapper title="15 Puzzle" instructions={game?.info?.instructions}>
+            <Game game={game} />
         </GameWrapper>
     );
 };
