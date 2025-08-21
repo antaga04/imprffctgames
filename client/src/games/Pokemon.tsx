@@ -11,7 +11,7 @@ import { POKEMON_SLUG } from '@/lib/constants';
 import DecrementTimer from '@/components/ui/Timers/DecrementTimer';
 import { useFetch } from '@/hooks/useFetch';
 
-const API_GAMES_URL = `${import.meta.env.VITE_API_URL}/games/${POKEMON_SLUG}`;
+const API_POKEMON_GAME_URL = `${import.meta.env.VITE_API_URL}/games/${POKEMON_SLUG}`;
 const INITIAL_TIME = 60;
 
 const Feedback: React.FC<Feedback> = ({ correct, guess }) => {
@@ -319,7 +319,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
 // Main Pokemon Game Component
 const PokemonGame: React.FC = () => {
-    const { data: game } = useFetch<GameSchema>(API_GAMES_URL);
+    const { data: game } = useFetch<GameSchema>(API_POKEMON_GAME_URL);
 
     console.log(
         '%cHey, you! %cI see you peeking around the DevTools... %cNo cheating allowed! ☝️🤓',

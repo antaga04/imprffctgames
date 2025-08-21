@@ -16,7 +16,7 @@ const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
 const EMPTY_INDEX = CELL_COUNT - 1;
 
-const API_GAMES_URL = `${import.meta.env.VITE_API_URL}/games/${PUZZLE15_SLUG}`;
+const API_PUZZLE15_GAME_URL = `${import.meta.env.VITE_API_URL}/games/${PUZZLE15_SLUG}`;
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
@@ -223,7 +223,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 };
 
 const Puzzle15: React.FC = () => {
-    const { data: game } = useFetch<GameSchema>(API_GAMES_URL);
+    const { data: game } = useFetch<GameSchema>(API_PUZZLE15_GAME_URL);
 
     return (
         <GameWrapper title="15 Puzzle" instructions={game?.info?.instructions}>
