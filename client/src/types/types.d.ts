@@ -52,6 +52,8 @@ type AuthInputProps = {
     isPassword?: boolean;
     disabled?: boolean;
     focusOnMount?: React.RefObject<HTMLInputElement>;
+    originalPassword?: string;
+    activeValidation?: boolean;
 };
 
 type AuthLinkSwitcherTypes = {
@@ -133,6 +135,13 @@ type AccountFields = {
     nickname: string;
     email: string;
 };
+
+type ValidationContainerProps = {
+    heading: string;
+    rules: ValidationRule[];
+    renderIcon: (error: string) => React.ReactNode;
+};
+
 /* --------------- Pokemon --------------- */
 interface TimerDecrementProps {
     duration: number;
@@ -147,7 +156,9 @@ interface PokemonInputProps {
 interface PokemonData {
     _id: number;
     nameLength: number;
-    sprite: string;
+    sprite: {
+        gray: string;
+    };
 }
 
 interface GameStats {
@@ -188,6 +199,25 @@ interface PaginationInfo {
 }
 
 /* --------------- Games --------------- */
+interface GameSchema extends Document {
+    _id: string;
+    name: string;
+    difficulty: number;
+    type: GameType;
+    cover?: string;
+    scoringLogic: ScoringLogic;
+    variants?: GameVariant[];
+    slug: string;
+    info?: {
+        [key: string]: string;
+    };
+}
+
+type GameVariant = {
+    key: number; // e.g., 15
+    label: string; // e.g., "15 seconds"
+};
+
 type GameWrapperProps = {
     children: React.ReactNode;
     title: string;
@@ -203,6 +233,7 @@ type TimerIncrementProps = {
 };
 
 type DecrementTimerProps = {
+    initialTime: number;
     onGameFinished: () => void;
     resetSignal: number;
     gameSessionId: string | null; // Used to start the decrement timer
@@ -229,6 +260,7 @@ type Feedback = {
 type TempScoreData = {
     scoreData: ScoreData;
     gameId: string;
+    slug: string;
 };
 
 type TempScoreContextType = {
@@ -272,6 +304,7 @@ interface Result {
     guessedName: string;
     correctName: string;
     isCorrect: boolean;
+    colorSprite: string;
 }
 
 /* --------------- Error --------------- */
@@ -281,6 +314,7 @@ interface MyError {
             error?: string;
             i18n?: string;
             message?: string;
+            payload?: T;
         };
         status?: number;
     };
@@ -292,4 +326,21 @@ interface ApiError {
     i18n: string;
     message: string;
     error?: Record<string, T>;
+    payload?: T;
+}
+
+/* --------------- Validation --------------- */
+interface ValidationRule {
+    test: (value: string) => boolean;
+    message: string;
+}
+
+interface ValidationSchema {
+    heading: string;
+    rules: ValidationRule[];
+}
+
+interface ValidationResult {
+    isValid: boolean;
+    errors: string[];
 }
