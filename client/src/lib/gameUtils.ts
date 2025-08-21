@@ -1,13 +1,18 @@
-export const scoreFormatter = (data: ScoreData, game: Game) => {
-    switch (game.gameName) {
-        case 'Pokemon':
-            return `${data.correct}/${data.total}`;
-        case '15 Puzzle':
-            return `Moves: ${data.moves}, Time: ${data.time}`;
-        default:
-            return JSON.stringify(data); // Fallback
-    }
+import { UNIT_MAP } from './constants';
+
+export const scoreFormatter = (score: Record<string, unknown>) => {
+    return Object.keys(score)
+        .filter((key) => typeof score[key] === 'number' || typeof score[key] === 'string')
+        .map((key) => {
+            const value = score[key];
+            const unit = UNIT_MAP[key] ?? '';
+            return `${capitalize(key)}: ${value}${unit}`;
+        })
+        .join(', ');
 };
+
+// Capitalize keys for display
+const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 
 // Helper function to determine movement direction based on the pressed key
 export const getTargetIndex = (key: string, emptyIndex: number, emptyRow: number, emptyCol: number, gridSize = 4) => {
