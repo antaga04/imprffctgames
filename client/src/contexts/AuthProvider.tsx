@@ -84,11 +84,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             navigate('/');
 
             if (tempScore) {
-                const { scoreData, gameId } = tempScore;
+                const { scoreData, gameId, slug } = tempScore;
 
                 await handleScoreUpload({
                     scoreData,
                     gameId,
+                    slug,
                 });
 
                 clearTempScore();
@@ -119,11 +120,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             await axios.post(REGISTER_URL, { nickname, email, password });
             if (tempScore) {
-                const { scoreData, gameId } = tempScore;
+                const { scoreData, gameId, slug } = tempScore;
 
                 await handleScoreUpload({
                     scoreData,
                     gameId,
+                    slug,
                 });
 
                 clearTempScore();

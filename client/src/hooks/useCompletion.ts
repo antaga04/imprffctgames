@@ -4,17 +4,20 @@ import { toast } from 'sonner';
 import { handleScoreUpload } from '@/lib/scoreHandler';
 import { useTempScore } from './useTempScore';
 
-export const useGameCompletion = (gameId: string) => {
+export const useGameCompletion = (gameId: string | undefined, slug: string) => {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
     const { clearTempScore } = useTempScore();
 
     const handleCompletion = async (scoreData: ScoreData) => {
+        if (!gameId || gameId.length === 0) return toast.error('Game ID is empty');
+
         if (isAuthenticated) {
             try {
                 await handleScoreUpload({
                     scoreData,
                     gameId,
+                    slug,
                 });
                 clearTempScore();
             } catch (error) {
