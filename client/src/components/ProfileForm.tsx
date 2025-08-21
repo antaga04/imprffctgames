@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { updateAccount, updatePassword } from '@/services/userServices';
 import { ACCOUNT_INPUTS, PASSWORD_INPUTS } from '@/lib/constants';
 import { useAuth } from '@/hooks/useAuth';
+import { focusFirstInvalidField, runValidations } from '@/lib/validate';
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData }) => {
     return (
@@ -29,6 +30,7 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
     const [fields, setFields] = useState<AccountFields>({ nickname: '', email: '' });
     const [loading, setLoading] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
+    const [disable, setDisable] = useState(false);
 
     useEffect(() => {
         setFields({ nickname: profileData.nickname, email: profileData.email });
@@ -36,6 +38,18 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
+
+        if (disable) return;
+
+        setDisable(true);
+        setTimeout(() => setDisable(false), 2000);
+
+        const { errors, allErrors } = runValidations(fields);
+        if (allErrors.length > 0) {
+            focusFirstInvalidField(errors);
+            toast.error('Please fix validation errors.');
+            return;
+        }
 
         setLoading(true);
 
@@ -74,11 +88,16 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
                     placeholder={placeholder}
                     Icon={Icon}
                     value={fields[name as keyof typeof fields]}
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={handleInputChange}
                     disabled={loading || type === 'email'}
+                    activeValidation={isEdited && !(loading || type === 'email')}
                 />
             ))}
-            <EditButtons handleCancel={handleCancel} loading={loading} isEdited={isEdited} />
+            <EditButtons
+                handleCancel={handleCancel}
+                loading={loading}
+                isEdited={isEdited ? isEdited && !disable : isEdited}
+            />
         </form>
     );
 };
@@ -87,13 +106,21 @@ const PasswordTab: React.FC = () => {
     const [fields, setFields] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
     const [loading, setLoading] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
+    const [disable, setDisable] = useState(false);
     const { logout } = useAuth();
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
-        if (fields.newPassword !== fields.confirmPassword) {
-            toast.error('Passwords do not match.');
+        if (disable) return;
+
+        setDisable(true);
+        setTimeout(() => setDisable(false), 2000);
+
+        const { errors, allErrors } = runValidations(fields);
+        if (allErrors.length > 0) {
+            focusFirstInvalidField(errors);
+            toast.error('Please fix validation errors.');
             return;
         }
 
@@ -143,11 +170,17 @@ const PasswordTab: React.FC = () => {
                     placeholder={placeholder}
                     Icon={Icon}
                     value={fields[name as keyof typeof fields]}
-                    onChange={(e) => handleInputChange(e)}
+                    onChange={handleInputChange}
                     disabled={loading}
+                    activeValidation={name !== 'currentPassword'}
+                    originalPassword={type === 'password' ? fields.newPassword : undefined}
                 />
             ))}
-            <EditButtons handleCancel={handleCancel} loading={loading} isEdited={isEdited} />
+            <EditButtons
+                handleCancel={handleCancel}
+                loading={loading}
+                isEdited={isEdited ? isEdited && !disable : isEdited}
+            />
         </form>
     );
 };

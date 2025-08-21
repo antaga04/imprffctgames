@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { REGISTER_INPUTS } from '@/lib/constants';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { focusFirstInvalidField, runValidations } from '@/lib/validate';
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState<RegisterFormData>({
@@ -19,6 +20,7 @@ const RegisterForm = () => {
     const { register } = useAuth();
     const navigate = useNavigate();
     const focusRef = useRef<HTMLInputElement>(null);
+    const [disable, setDisable] = useState(false);
 
     useEffect(() => {
         if (focusRef.current) {
@@ -37,24 +39,26 @@ const RegisterForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const { email, nickname, password, confirmPassword } = formData;
+        if (disable) return;
 
-        if (!email || !nickname || !password || !confirmPassword) {
-            toast.error('All fields are required.');
-            return;
-        }
+        setDisable(true);
+        setTimeout(() => setDisable(false), 2000);
 
-        if (password !== confirmPassword) {
-            toast.error('Passwords do not match.');
+        const { email, nickname, password } = formData;
+
+        const { errors, allErrors } = runValidations(formData);
+        if (allErrors.length > 0) {
+            focusFirstInvalidField(errors);
+            toast.error('Please fix validation errors.');
             return;
         }
 
         toast.promise(
-            register(nickname, email, password).then(() => navigate('/login')),
+            register(nickname.trim(), email.trim(), password.trim()).then(() => navigate('/login')),
             {
                 loading: 'Registering...',
                 success: 'Confirmation email has been resent. Please check your inbox.',
-                error: (error) => error.response?.data?.error || 'An error occurred during registration.',
+                error: (error) => error.response?.data?.message || 'An error occurred during registration.',
             },
         );
     };
@@ -72,10 +76,12 @@ const RegisterForm = () => {
                     value={formData[name as keyof typeof formData]}
                     onChange={handleInputChange}
                     focusOnMount={idx === 0 ? focusRef : undefined}
+                    originalPassword={type === 'password' ? formData.password : undefined}
+                    activeValidation={true}
                 />
             ))}
 
-            <ButtonForm text="Register" />
+            <ButtonForm text="Register" disabled={disable} />
         </form>
     );
 };

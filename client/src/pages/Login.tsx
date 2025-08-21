@@ -15,6 +15,7 @@ const LoginFrom = () => {
         password: '',
     });
     const focusRef = useRef<HTMLInputElement>(null);
+    const [disable, setDisable] = useState(false);
 
     useEffect(() => {
         if (focusRef.current) {
@@ -32,8 +33,13 @@ const LoginFrom = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { email, password } = formData;
 
+        if (disable) return;
+
+        setDisable(true);
+        setTimeout(() => setDisable(false), 2000);
+
+        const { email, password } = formData;
         if (!email || !password) {
             toast.error('All fields are required.');
             return;
@@ -62,7 +68,7 @@ const LoginFrom = () => {
                 />
             ))}
 
-            <ButtonFrom text="Log in" />
+            <ButtonFrom text="Log in" disabled={disable} />
         </form>
     );
 };
