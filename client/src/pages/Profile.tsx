@@ -4,6 +4,7 @@ import AvatarUploader from '@/components/AvatarUploader';
 import ProfileForm from '@/components/ProfileForm';
 import { fetchUserData } from '@/services/userServices';
 import { toast } from 'sonner';
+import { scoreFormatter } from '@/lib/gameUtils';
 
 const Profile = () => {
     const [profileData, setProfileData] = useState<ProfileData>({
@@ -73,20 +74,7 @@ const ScoreSection: React.FC<{ scores: Score[] }> = ({ scores }) => {
                         <h2 className="text-lg font-semibold whitespace-nowrap">{score.game_id.name}</h2>
                     </div>
 
-                    <div className="text-sm text-center">
-                        {score.scoreData.moves !== undefined && score.scoreData.time !== undefined && (
-                            <p>
-                                Moves: <span className="font-medium">{score.scoreData.moves}</span> | Time:{' '}
-                                <span className="font-medium">{score.scoreData.time}s</span>
-                            </p>
-                        )}
-                        {score.scoreData.correct !== undefined && score.scoreData.total !== undefined && (
-                            <p>
-                                Correct: <span className="font-medium">{score.scoreData.correct}</span>/
-                                <span className="font-medium">{score.scoreData.total}</span>
-                            </p>
-                        )}
-                    </div>
+                    <p className="text-sm text-center">{scoreFormatter(score.scoreData)}</p>
 
                     <p className="text-sm col-span-2 sm:col-span-1 text-center">
                         {new Date(score.createdAt).toLocaleDateString()}
