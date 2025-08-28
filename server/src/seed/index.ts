@@ -1,6 +1,7 @@
 import inquirer from 'inquirer';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import { connectToDatabase as connectDB } from '@/config/db';
 
 // Seed modules
 import { seedGames } from './modules/games.seed';
@@ -10,19 +11,6 @@ import { seedScores } from './modules/scores.seed';
 import { updateUsersWithScores } from './modules/updateUsersScores.seed';
 
 dotenv.config();
-
-// -------------------------
-// Connect to MongoDB
-// -------------------------
-async function connectDB() {
-    try {
-        await mongoose.connect(process.env.MONGO_URL!);
-        console.log('\n$ Connected to MongoDB\n');
-    } catch (err) {
-        console.error('$ Error connecting to DB:', err);
-        process.exit(1);
-    }
-}
 
 // -------------------------
 // Step 1: Select collection
