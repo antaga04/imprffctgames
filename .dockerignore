@@ -1,0 +1,35 @@
+# dependencies
+node_modules
+**/node_modules
+
+# logs
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+*.log
+
+# environment
+.env
+.env.*.local
+
+# git
+.git
+.gitignore
+
+# build output
+dist
+build
+**/dist
+**/build
+.cache
+
+# editor / system
+.DS_Store
+.vscode
+.idea
+
+# docs
+*.md
+
+# folders
+trash
