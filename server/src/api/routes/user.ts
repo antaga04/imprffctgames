@@ -11,10 +11,18 @@ import {
     logoutUser,
     resendConfirmationEmail,
     deleteUserAvatar,
+    requestPasswordReset,
+    resetPassword,
 } from '@/controllers/user';
 import { hasValidAuthJwt } from '@/middlewares/authenticated';
 import uploadFile from '@/middlewares/uploadFile';
-import { resendConfirmationLimiter, avatarLimiter, registerLimiter } from '@/middlewares/rateLimiters';
+import {
+    resendConfirmationLimiter,
+    avatarLimiter,
+    registerLimiter,
+    requestPasswordResetLimiter,
+    resetPasswordLimiter,
+} from '@/middlewares/rateLimiters';
 import { emailValidationMiddleware } from '@/middlewares/emailValidationAPI';
 import { mxRecordLookup } from '@/middlewares/mxRecordLookup';
 
@@ -24,7 +32,7 @@ router.post('/register', registerLimiter, mxRecordLookup, emailValidationMiddlew
 router.post('/login', loginUser);
 router.put('/', hasValidAuthJwt, updateUserAccount);
 
-router.post('/confirm-email', mxRecordLookup, emailValidationMiddleware, confirmEmail);
+router.post('/confirm-email', confirmEmail);
 router.post(
     '/resend-email',
     resendConfirmationLimiter,
@@ -32,6 +40,9 @@ router.post(
     emailValidationMiddleware,
     resendConfirmationEmail,
 );
+
+router.post('/request-password-reset', requestPasswordResetLimiter, requestPasswordReset);
+router.post('/reset-password', resetPasswordLimiter, resetPassword);
 
 router.put('/newpassword', hasValidAuthJwt, updateUserPassword);
 router.get('/', hasValidAuthJwt, getUser);
