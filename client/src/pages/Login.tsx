@@ -7,6 +7,7 @@ import BackButton from '@/components/ui/BackButton';
 import SigninLogo from '@/components/ui/SigninLogo';
 import AuthLinkSwitcher from '@/components/ui/AuthLinkSwitcher';
 import { LOGIN_INPUTS } from '@/lib/constants';
+import { Link } from 'react-router-dom';
 
 const LoginFrom = () => {
     const { login } = useAuth();
@@ -67,6 +68,15 @@ const LoginFrom = () => {
                     focusOnMount={idx === 0 ? focusRef : undefined}
                 />
             ))}
+
+            <div className="">
+                <Link
+                    to="/restore-password"
+                    className="text-[#4b6a9d] hover:text-[#35517c] hover:underline transition-colors ease-in-out duration-200"
+                >
+                    Forgot password?
+                </Link>
+            </div>
 
             <ButtonFrom text="Log in" disabled={disable} />
         </form>
