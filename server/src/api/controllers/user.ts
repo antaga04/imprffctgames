@@ -5,7 +5,7 @@ import { hashPassword, verifyPassword } from '@/utils/password';
 import { signToken } from '@/utils/jwt';
 import deleteCloudinaryImage from '@/utils/cloudinary';
 import { validateEmail, validateNickname, validatePassword } from '@/utils/validation';
-import { sendConfirmationEmail } from '@/utils/email';
+import { sendConfirmationEmail, sendResetPasswordEmail } from '@/utils/email';
 import { AuthenticatedRequest, TokenPayload } from '@/types/types';
 import { handleMongooseError } from '@/utils/error';
 import { sendError, sendSuccess } from '@/utils/response';
@@ -424,7 +424,15 @@ export const confirmEmail = async (req: Request, res: Response) => {
             });
         }
 
-        const decoded = jwt.verify(token, process.env.EMAIL_CONFIRMATION_SECRET!) as TokenPayload;
+        let decoded: TokenPayload;
+        try {
+            decoded = jwt.verify(token, process.env.PASSWORD_RESET_SECRET!) as TokenPayload;
+        } catch (err) {
+            return sendError(res, 400, {
+                i18n: 'user.invalid_token',
+                message: 'Token is invalid or expired',
+            });
+        }
 
         const user = await User.findById(decoded.id);
         if (!user || user.status !== 'pending') {
@@ -496,6 +504,118 @@ export const resendConfirmationEmail = async (req: Request, res: Response) => {
         return sendError(res, 500, {
             i18n: 'user.email_confirmation_error',
             message: 'Error resending confirmation email.',
+        });
+    }
+};
+
+// Request Password Reset
+export const requestPasswordReset = async (req: Request, res: Response) => {
+    try {
+        const { email } = req.body;
+
+        const emailValidation = validateEmail(email);
+        if (!emailValidation.valid) {
+            return sendError(res, 400, {
+                i18n: 'user.invalid_email',
+                message: emailValidation.message,
+            });
+        }
+
+        const user = await User.findOne({ email });
+
+        // Always return success to prevent email enumeration
+        if (!user) {
+            return sendSuccess(res, 200, {
+                i18n: 'user.reset_email_sent',
+                message: 'If this email is registered, you will receive password reset instructions.',
+            });
+        }
+
+        const token = jwt.sign({ id: user._id }, process.env.PASSWORD_RESET_SECRET!, { expiresIn: '15m' });
+
+        const { data, error } = await sendResetPasswordEmail(email, token);
+
+        if (error) {
+            return sendError(res, 400, {
+                i18n: 'user.email_error',
+                message: error.message,
+                errors: {
+                    payload: data,
+                },
+            });
+        }
+
+        return sendSuccess(res, 200, {
+            i18n: 'user.reset_email_sent',
+            message: 'If this email is registered, you will receive password reset instructions.',
+        });
+    } catch (err: any) {
+        console.error('[requestPasswordReset] Error:', err);
+        return sendError(res, 500, {
+            i18n: 'user.password_reset_error',
+            message: 'Something went wrong while requesting the password reset.',
+        });
+    }
+};
+
+// Reset Password Endpoint
+export const resetPassword = async (req: Request, res: Response) => {
+    try {
+        const { token, password } = req.body;
+
+        if (!token) {
+            return sendError(res, 400, {
+                i18n: 'user.missing_token',
+                message: 'Missing token',
+            });
+        }
+
+        if (!password) {
+            return sendError(res, 400, {
+                i18n: 'user.missing_password',
+                message: 'Missing new password',
+            });
+        }
+
+        const passwordValidation = validatePassword(password);
+        if (!passwordValidation.valid) {
+            return sendError(res, 400, {
+                i18n: 'user.invalid_password',
+                message: 'Password is invalid',
+                errors: passwordValidation.errors,
+            });
+        }
+
+        let decoded: TokenPayload;
+        try {
+            decoded = jwt.verify(token, process.env.PASSWORD_RESET_SECRET!) as TokenPayload;
+        } catch (err) {
+            return sendError(res, 400, {
+                i18n: 'user.invalid_token',
+                message: 'Token is invalid or expired',
+            });
+        }
+
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return sendError(res, 400, {
+                i18n: 'user.user_not_found',
+                message: 'User not found',
+            });
+        }
+
+        user.password = password;
+        await user.save();
+
+        return sendSuccess(res, 200, {
+            i18n: 'user.password_reset_success',
+            message: 'Password has been reset successfully. You can now log in.',
+        });
+    } catch (err: any) {
+        console.error('[resetPassword] Error:', err);
+        return sendError(res, 500, {
+            i18n: 'user.password_reset_error',
+            message: 'Something went wrong while resetting the password.',
         });
     }
 };
