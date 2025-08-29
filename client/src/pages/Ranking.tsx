@@ -38,7 +38,7 @@ const Ranking: React.FC = () => {
         totalPages: 1,
         totalItems: 0,
     });
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     const slugToGame = (slug?: string) => {
         if (!slug) return undefined;
