@@ -12,17 +12,42 @@ export const sendConfirmationEmail = async (
     token: string,
 ): Promise<{ data: CreateEmailResponseSuccess | null; error: ErrorResponse | null }> => {
     const resend = new Resend(process.env.RESEND_API_KEY);
-    // Send confirmation email
+    // Load and customize email template
     const emailTemplatePath = path.join(__dirname, '../../public/email.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
     const customizedEmail = emailTemplate.replace('{{confirmationLink}}', confirmationLink);
 
+    // Send confirmation email
     const { data, error } = await resend.emails.send({
         from: 'Imprffct Games <noreply@auth.imprffctgames.com>',
         to: [email],
         subject: 'Email Confirmation',
+        html: customizedEmail,
+    });
+
+    return { data, error };
+};
+
+export const sendResetPasswordEmail = async (
+    email: string,
+    token: string,
+): Promise<{ data: CreateEmailResponseSuccess | null; error: ErrorResponse | null }> => {
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
+    // Load and customize email template
+    const emailTemplatePath = path.join(__dirname, '../../public/resetPassword.html');
+    const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
+
+    const resetPasswordLink = `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(token)}`;
+    const customizedEmail = emailTemplate.replace('{{resetPasswordLink}}', resetPasswordLink);
+
+    // Send reset password email
+    const { data, error } = await resend.emails.send({
+        from: 'Imprffct Games <noreply@auth.imprffctgames.com>',
+        to: [email],
+        subject: 'Password Reset',
         html: customizedEmail,
     });
 
