@@ -23,3 +23,15 @@ export const avatarLimiter = createRateLimiter({
     limit: 5,
     message: 'Too many avatar changes, please slow down.',
 });
+
+export const requestPasswordResetLimiter = createRateLimiter({
+    windowMs: 15 * 60 * 1000,
+    limit: 2,
+    message: 'Too many password reset requests. Please wait before trying again.',
+});
+
+export const resetPasswordLimiter = createRateLimiter({
+    windowMs: 15 * 60 * 1000,
+    limit: 2,
+    message: 'Too many password reset attempts. Please wait before trying again.',
+});
