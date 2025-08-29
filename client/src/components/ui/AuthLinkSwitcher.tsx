@@ -6,7 +6,7 @@ const AuthLinkSwitcher: React.FC<AuthLinkSwitcherTypes> = ({ text, url, anchor }
             <span>{text}</span>
             <Link
                 to={url}
-                className="text-[#4b6a9d] hover:text-[#35517c] ml-2 transition-colors ease-in-out duration-200"
+                className="text-[#4b6a9d] hover:text-[#35517c] hover:underline ml-2 transition-colors ease-in-out duration-200"
             >
                 {anchor}
             </Link>
