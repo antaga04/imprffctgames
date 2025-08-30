@@ -97,6 +97,7 @@
         "singout": "Cerrar sesión",
         "start": "iniciar",
         "submit": "Enviar",
+        "terms": "Términos",
         "time": "Tiempo",
         "total": "total",
         "wpm": "ppm"
@@ -381,5 +382,56 @@
         "too_many_password_reset_requests": "Demasiadas solicitudes de restablecimiento de contraseña. Espera antes de intentarlo de nuevo.",
         "too_many_password_reset_attempts": "Demasiados intentos de restablecimiento de contraseña. Espera antes de intentarlo de nuevo.",
         "too_many_hello_world_requests": "Demasiadas solicitudes de hello world. Espera antes de intentarlo de nuevo."
+    },
+    "terms": {
+        "title": "Términos, Condiciones y Política de Privacidad",
+        "useOfApp": {
+            "title": "1. Uso de la Aplicación",
+            "playGames": "La aplicación te permite jugar a juegos individuales con fines de entretenimiento.",
+            "optionalAccount": "Puedes usar la aplicación sin crear una cuenta.",
+            "rankings": "Crear una cuenta es opcional, pero se requiere si deseas aparecer en las clasificaciones de los juegos."
+        },
+        "accounts": {
+            "title": "2. Cuentas",
+            "provideInfo": "Para crear una cuenta, debes proporcionar un apodo, una dirección de correo electrónico y una contraseña.",
+            "passwordHash": "Las contraseñas se almacenan de forma segura en formato cifrado.",
+            "userResponsibility": "Eres responsable de mantener seguros los datos de inicio de sesión."
+        },
+        "dataStored": {
+            "title": "3. Datos que Almacenamos",
+            "accountData": "Apodo, correo electrónico y contraseña (cifrada) de las cuentas registradas.",
+            "scores": "Puntuaciones de los jugadores autenticados, para mostrar en las clasificaciones.",
+            "preferences": "Preferencias (como las opciones de visualización de juegos) almacenadas en el almacenamiento local de tu navegador.",
+            "avatar": "Avatar (opcional): Si subes una foto de perfil, se almacena de manera segura en nuestro proveedor de imágenes. Se eliminan los metadatos y solo puedes tener un avatar a la vez; cada nueva subida reemplaza la anterior."
+        },
+        "dataDeletion": {
+            "title": "4. Eliminación de Datos",
+            "softDelete": "La eliminación suave desactiva temporalmente tu cuenta.",
+            "hardDelete": "La eliminación definitiva elimina permanentemente todos tus datos, incluidas las puntuaciones y el avatar, de nuestros sistemas."
+        },
+        "emails": {
+            "title": "5. Correos Electrónicos",
+            "accountConfirmation": "Solo enviamos correos electrónicos para la confirmación de la cuenta y la recuperación de contraseña.",
+            "noSpam": "No enviamos boletines, correos promocionales ni spam."
+        },
+        "privacy": {
+            "title": "6. Privacidad",
+            "dataUsage": "Tus datos solo se utilizarán para proporcionar las funciones principales de la aplicación (cuentas, clasificaciones, puntuaciones, preferencias y avatares opcionales).",
+            "noSharing": "No compartimos tu información personal con terceros.",
+            "noTracking": "No te rastreamos fuera de la aplicación."
+        },
+        "limitation": {
+            "title": "7. Limitación de Responsabilidad",
+            "providedAsIs": "La aplicación se proporciona con fines de entretenimiento 'tal cual'.",
+            "notResponsible": "No somos responsables de problemas técnicos, interrupciones o pérdida de datos."
+        },
+        "changes": {
+            "title": "8. Cambios en Estos Términos",
+            "text": "Podemos actualizar estos términos y políticas de vez en cuando. Si se realizan cambios, notificaremos a los usuarios de manera clara dentro de la aplicación."
+        },
+        "contact": {
+            "title": "9. Contacto",
+            "text": "Si tienes alguna pregunta sobre estos términos o sobre cómo manejamos tus datos, por favor contáctanos en [tu correo de contacto]."
+        }
     }
 }

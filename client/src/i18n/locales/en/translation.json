@@ -97,6 +97,7 @@
         "singout": "Sign out",
         "start": "start",
         "submit": "Submit",
+        "terms": "Terms",
         "time": "Time",
         "total": "total",
         "wpm": "wpm"
@@ -381,5 +382,56 @@
         "too_many_password_reset_requests": "Too many password reset requests. Please wait before trying again.",
         "too_many_password_reset_attempts": "Too many password reset attempts. Please wait before trying again.",
         "too_many_hello_world_requests": "Too many hello world requests. Please wait before trying again."
+    },
+    "terms": {
+        "title": "Terms, Conditions, and Privacy Policy",
+        "useOfApp": {
+            "title": "1. Use of the App",
+            "playGames": "The App allows you to play solitary games for entertainment.",
+            "optionalAccount": "You may use the App without creating an account.",
+            "rankings": "Creating an account is optional but required if you wish to appear in game rankings."
+        },
+        "accounts": {
+            "title": "2. Accounts",
+            "provideInfo": "To create an account, you must provide a nickname, an email address, and a password.",
+            "passwordHash": "Passwords are stored securely in hashed form.",
+            "userResponsibility": "You are responsible for keeping your login details safe."
+        },
+        "dataStored": {
+            "title": "3. Data We Store",
+            "accountData": "Nickname, email, and password (hashed) for registered accounts.",
+            "scores": "Game scores for authenticated players, to display rankings.",
+            "preferences": "Preferences (such as game display options) in your browser’s local storage.",
+            "avatar": "Avatar (optional): If you upload a profile picture, it is stored securely in our image provider. Metadata is stripped, and you can only have one avatar at a time; each new upload replaces the old one."
+        },
+        "dataDeletion": {
+            "title": "4. Data Deletion",
+            "softDelete": "Soft delete temporarily disables your account.",
+            "hardDelete": "Hard delete permanently removes all your data, including scores and avatar, from our systems."
+        },
+        "emails": {
+            "title": "5. Emails",
+            "accountConfirmation": "We only send emails for account confirmation and password recovery.",
+            "noSpam": "We do not send newsletters, promotional emails, or spam."
+        },
+        "privacy": {
+            "title": "6. Privacy",
+            "dataUsage": "Your data will only be used to provide core features of the App (accounts, rankings, scores, preferences, and optional avatars).",
+            "noSharing": "We do not share your personal information with third parties.",
+            "noTracking": "We do not track you outside of the App."
+        },
+        "limitation": {
+            "title": "7. Limitation of Liability",
+            "providedAsIs": "The App is provided for entertainment purposes 'as is.'",
+            "notResponsible": "We are not responsible for technical issues, interruptions, or data loss."
+        },
+        "changes": {
+            "title": "8. Changes to These Terms",
+            "text": "We may update these terms and policies from time to time. If changes are made, we will notify users clearly within the App."
+        },
+        "contact": {
+            "title": "9. Contact",
+            "text": "If you have any questions about these terms or how we handle your data, please contact us at [your contact email]."
+        }
     }
 }
