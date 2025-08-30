@@ -6,11 +6,15 @@ import BackButton from '@/components/ui/BackButton';
 import SigninLogo from '@/components/ui/SigninLogo';
 import { Mail } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { EMAIL_INPUT } from '@/lib/constants';
+import { useTranslation } from 'react-i18next';
+import { requestPasswordReset } from '@/services/userServices';
+import { focusFirstInvalidField, runValidations } from '@/lib/validate';
 
 const RestorePasswordForm = () => {
+    const { t } = useTranslation();
     const [email, setEmail] = useState('');
-    const [disable, setDisable] = useState(false);
+    const [disable, setDisable] = useState(true);
     const focusRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
@@ -27,67 +31,73 @@ const RestorePasswordForm = () => {
         setTimeout(() => setDisable(false), 2000);
 
         if (!email) {
-            toast.error('Please enter your email address.');
+            toast.error(t('restore_password.email_required'));
             return;
         }
 
-        try {
-            setDisable(true);
-
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/request-password-reset`, {
-                email,
-            });
-
-            toast.success(
-                response.data?.message ||
-                    'If an account with this email exists, you will receive a password reset link shortly.',
-            );
-        } catch (error) {
-            console.error('[RestorePassword] Error:', error);
-            const err = error as MyError;
-            toast.error(err.response?.data?.message || 'Something went wrong. Please try again later.');
-        } finally {
-            setDisable(false);
+        const { errors, allErrors } = runValidations({ email });
+        if (allErrors.length > 0) {
+            focusFirstInvalidField(errors);
+            toast.error(t('validations.fix_errors'));
+            return;
         }
+
+        setDisable(true);
+
+        toast.promise(requestPasswordReset({ email }), {
+            loading: t('restore_password.loading'),
+            success: (res) => res.data.i18n || t('restore_password.success'),
+            error: (err) => err.response.data.i18n || t('restore_password.error'),
+            finally: () => setDisable(false),
+        });
+    };
+
+    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { value } = e.target;
+        setEmail(value);
+
+        setDisable(value.trim() === '');
     };
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <AuthInput
-                label="Email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                Icon={Mail}
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                focusOnMount={focusRef}
-                activeValidation
-            />
+            {[EMAIL_INPUT].map(({ label, name, type, placeholder }) => (
+                <AuthInput
+                    key={name}
+                    label={label}
+                    name={name}
+                    type={type}
+                    placeholder={placeholder}
+                    Icon={Mail}
+                    value={email}
+                    onChange={handleEmailChange}
+                    activeValidation={true}
+                    focusOnMount={focusRef}
+                />
+            ))}
 
-            <ButtonForm text="Send reset link" disabled={disable} />
+            <ButtonForm text={t('restore_password.btn')} disabled={disable} />
         </form>
     );
 };
 
 const RestorePassword = () => {
+    const { t } = useTranslation();
     return (
         <div className="w-full flex-1 flex items-center justify-center">
             <BackButton url="/login" />
             <div className="flex flex-col w-full md:p-4 mx-auto md:-mt-3 max-w-[425px] md:max-w-[500px]">
                 <SigninLogo />
                 <section className="mt-5 flex flex-col gap-4 bg-[#f9fafb] text-[#111827] rounded-md px-8 py-4">
-                    <h1 className="lusiana-font text-2xl">Restore Password</h1>
-                    <p className="text-sm text-gray-600">
-                        Enter your email address and we’ll send you instructions to reset your password.
-                    </p>
+                    <h1 className="lusiana-font text-2xl">{t('restore_password.title')}</h1>
+                    <p className="text-sm text-gray-600">{t('restore_password.description')}</p>
                     <RestorePasswordForm />
                     <div className="text-center">
                         <Link
                             to="/login"
                             className="text-[#4b6a9d] hover:text-[#35517c] hover:underline transition-colors ease-in-out duration-200"
                         >
-                            Back to login
+                            {t('globals.back_login')}
                         </Link>
                     </div>
                 </section>
