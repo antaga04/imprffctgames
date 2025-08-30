@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { POKEMON_SLUG } from '@/lib/constants';
 import DecrementTimer from '@/components/ui/Timers/DecrementTimer';
 import { useFetch } from '@/hooks/useFetch';
+import { useTranslation } from 'react-i18next';
 
 const API_POKEMON_GAME_URL = `${import.meta.env.VITE_API_URL}/games/${POKEMON_SLUG}`;
 const INITIAL_TIME = 60;
@@ -52,6 +53,7 @@ const Feedback: React.FC<Feedback> = ({ correct, guess }) => {
 
 // Input Component for Pokémon Name
 const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => {
+    const { t } = useTranslation();
     const [input, setInput] = useState<string>('');
     const [keystrokeTimes, setKeystrokeTimes] = useState<number[]>([]);
 
@@ -101,11 +103,14 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
                 inputMode="text"
                 onChange={(val: string) => setInput(val)}
                 onKeyDown={handleKeyPress}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
             >
                 {renderInputGroups()}
             </InputOTP>
             <CoolDownButton
-                text="Submit"
+                text={t('globals.submit')}
                 onSubmit={handleOnSubmit}
                 bgColor="bg-green-600"
                 hoverBgColor="hover:bg-green-700"
@@ -116,6 +121,7 @@ const PokemonInput: React.FC<PokemonInputProps> = ({ nameLength, onSubmit }) => 
 };
 
 const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
+    const { t } = useTranslation();
     const [gameSessionId, setGameSessionId] = useState(null);
     const [pokemonData, setPokemonData] = useState<PokemonData[]>([]);
     const [guesses, setGuesses] = useState<Guess[]>([]);
@@ -148,7 +154,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         } catch (error) {
             console.error('Error fetching Pokémon data: ', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || 'Error fetching Pokémon data.');
+            toast.error(err.response?.data?.message || t('games.pokemon.error'));
         }
         setLoading(false);
     };
@@ -162,12 +168,13 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         } catch (error) {
             console.error('Error fetching Pokémon batch: ', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || 'Error fetching Pokémon data.');
+            toast.error(err.response?.data?.message || t('games.pokemon.error'));
         }
     };
 
     useEffect(() => {
         fetchInitialPokemons();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [playAgainKey]);
 
     const handleGuess = (guess: string, keystrokeTimes: number[]) => {
@@ -204,14 +211,14 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
             setResults(response.data.payload);
             if (!game) {
-                return toast.error('Game was not found in the database.');
+                return toast.error(t('games.not_found_db'));
             }
             setTempScore({ scoreData, gameId: game._id, slug: game.slug });
             handleCompletion(scoreData);
         } catch (error) {
             console.error('Error fetching results:', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || 'Error fetching Pokémon results.');
+            toast.error(err.response?.data?.message || t('games.pokemon.results_error'));
         }
 
         setCheckingResults(false);
@@ -237,18 +244,18 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                     <Confetti recycle={false} numberOfPieces={200} />
                     <div className="inline-flex items-center justify-between min-w-[300px] h-12 gap-4 mb-3">
                         <CoolDownButton text="Play Again" onSubmit={handlePlayAgain} />
-                        <h3 className="text-amber-400 text-2xl">Time's up!</h3>
+                        <h3 className="text-amber-400 text-2xl">{t('games.time_up')}</h3>
                     </div>
                     {checkingResults ? (
-                        <p className="text-white">Checking results...</p>
+                        <p className="text-white">{t('games.check_results')}</p>
                     ) : (
                         <>
                             <h2 className="text-white text-2xl">
-                                You guessed{' '}
+                                {t('games.you_guessed')}{' '}
                                 <span className="devil-detail">
                                     {results?.correct}/{results?.total}
                                 </span>{' '}
-                                Pokémon!
+                                {t('games.pokemon.pokemon')}!
                             </h2>
                             <div className="my-6 max-w-3xl mx-auto">
                                 <div className="flex flex-wrap gap-4 mt-4 items-center justify-center">
@@ -296,12 +303,12 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                     <div className="relative md:w-64 md:h-64 w-52 h-52">
                         {loading ? (
                             <div className="absolute inset-0 flex items-center justify-center">
-                                <p className="text-white">Loading...</p>
+                                <p className="text-white">{t('globals.loading')}...</p>
                             </div>
                         ) : (
                             <img
                                 src={pokemonData[currentPokemonIndex]?.sprite.gray || ''}
-                                alt="Who's that Pokémon?"
+                                alt={t('games.pokemon.name')}
                                 className="w-full h-full object-cover filter grayscale select-none"
                                 draggable="false"
                             />
@@ -319,6 +326,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
 // Main Pokemon Game Component
 const PokemonGame: React.FC = () => {
+    const { t } = useTranslation();
     const { data: game } = useFetch<GameSchema>(API_POKEMON_GAME_URL);
 
     console.log(
@@ -329,7 +337,7 @@ const PokemonGame: React.FC = () => {
     );
 
     return (
-        <GameWrapper title="Who's that Pokémon?" height="479px" instructions={game?.info?.instructions}>
+        <GameWrapper title={t('games.pokemon.name')} height="479px" instructions={game?.info?.instructions}>
             <Game game={game} />
         </GameWrapper>
     );
