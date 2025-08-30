@@ -1,9 +1,11 @@
 import BackButton from '@/components/ui/BackButton';
 import axios from 'axios';
 import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 const ResendEmail = () => {
+    const { t } = useTranslation();
     const formRef = useRef<HTMLFormElement | null>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -14,25 +16,19 @@ const ResendEmail = () => {
         const email = emailInput?.value;
 
         if (!email) {
-            toast.error('Please provide a valid email address.');
+            toast.error(t('resend_email.valid_email'));
             return;
         }
 
-        const loadingToastId = toast.loading('Verifying email...');
+        const loadingToastId = toast.loading(t('resend_email.loading'));
 
         try {
             await axios.post(`${import.meta.env.VITE_API_URL}/users/resend-email`, { email });
-            toast.success('Email sent successfully.');
+            toast.success(t('resend_email.success'));
         } catch (error) {
-            const errorMessage =
-                typeof error === 'string'
-                    ? error
-                    : error && typeof error === 'object' && 'message' in error
-                      ? (error as { message: string }).message
-                      : 'An unknown error occurred sending email';
-
-            toast.error(errorMessage);
             console.error('Sending email error:', error);
+            const err = error as MyError;
+            toast.error(err.response?.data?.message || t('resend_email.error'));
         } finally {
             toast.dismiss(loadingToastId);
         }
@@ -46,7 +42,7 @@ const ResendEmail = () => {
                 className="bg-black/50 mt-6 flex h-10 items-center  justify-between gap-2 overflow-hidden rounded-md shadow-border focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-0 dark:bg-[#0B0B09] dark:focus-within:ring-white/20 border-gray-200 focus-within:border-gray-400 focus-within:ring-white/20"
             >
                 <label htmlFor="email" className="sr-only">
-                    Email
+                    {t('constants.email_label')}
                 </label>
                 <input
                     id="email"
@@ -59,7 +55,7 @@ const ResendEmail = () => {
                     type="submit"
                     className="text-black mr-1 h-[30px] rounded-[4px] bg-white hover:bg-white/90  transition-colors duration-150 px-1.5 text-sm font-medium md:px-3.5"
                 >
-                    Resend email
+                    {t('resend_email.resend')}
                 </button>
             </form>
         </section>
