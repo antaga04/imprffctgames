@@ -243,5 +243,143 @@
         "new_score": "Nueva puntuación",
         "previous_score": "Puntuación anterior",
         "not_uploaded": "Puntuación no subida"
+    },
+    "server": {
+        "not_found": "Ruta no encontrada",
+        "internal_server_error": "Error interno del servidor",
+
+        "games": {
+            "fetched": "Juegos recuperados con éxito",
+            "fetch_failed": "Error al recuperar los juegos",
+            "not_found": "Juego no encontrado",
+            "missing_fields": "Faltan campos obligatorios",
+            "invalid_scoring_logic": "Lógica de puntuación inválida.",
+            "invalid_type": "Tipo inválido.",
+            "already_exists": "Ya existe un juego con este nombre",
+            "created": "Juego creado con éxito",
+            "create_failed": "Error al crear el juego",
+            "invalid_id": "ID de juego inválido",
+            "updated": "Juego actualizado con éxito",
+            "update_failed": "Error al actualizar el juego",
+            "deleted": "Juego eliminado con éxito",
+            "delete_failed": "Error al eliminar el juego"
+        },
+
+        "pokemon": {
+            "session_created": "Sesión de juego creada con éxito.",
+            "session_creation_failed": "Error al crear la sesión de Pokémon.",
+            "invalid_batch_number": "Número de lote inválido.",
+            "session_not_found": "Sesión de juego no encontrada.",
+            "batch_fetched": "Lote de Pokémon recuperado con éxito.",
+            "batch_fetch_failed": "Error al recuperar el lote de Pokémon.",
+            "game_duration_too_short": "La duración del juego es demasiado corta.",
+            "game_duration_exceeded": "La duración del juego ha excedido el tiempo permitido.",
+            "results_checked": "Resultados de Pokémon verificados con éxito.",
+            "results_check_failed": "Error al verificar los resultados de Pokémon."
+        },
+
+        "puzzle15": {
+            "generateBoard": {
+                "success": "Tablero de rompecabezas generado con éxito.",
+                "error": "Error al generar el tablero de rompecabezas."
+            }
+        },
+
+        "score": {
+            "invalid_game_id": "ID de juego inválido",
+            "scores_retrieved": "Puntuaciones recuperadas con éxito",
+            "error_retrieving": "Error al recuperar las puntuaciones",
+            "invalid_id": "Formato de ID de puntuación inválido",
+            "deleted": "Puntuación eliminada con éxito",
+            "error_deleting": "Error al eliminar la puntuación",
+            "missing_fields": "Faltan campos obligatorios",
+            "invalid_score_data": "Datos de puntuación inválidos. Posible trampa detectada 👺.",
+            "lower_score": "La nueva puntuación no es mejor que la existente",
+            "uploaded": "Puntuación subida con éxito",
+            "error_uploading": "Error al subir la puntuación"
+        },
+
+        "user": {
+            "verified": "Usuario verificado",
+            "not_authenticated": "No autenticado",
+            "logout_success": "Cierre de sesión exitoso",
+            "logout_error": "Ocurrió un error inesperado al cerrar sesión.",
+            "incorrect_credentials": "Correo o contraseña incorrectos",
+            "email_not_confirmed": "Tu correo no está confirmado. Revisa tu bandeja de entrada para el correo de confirmación.",
+            "login_success": "Inicio de sesión exitoso",
+            "login_error": "Error al iniciar sesión",
+            "no_file_uploaded": "No se subió ningún archivo",
+            "not_found": "Usuario no encontrado",
+            "avatar_updated": "Avatar actualizado con éxito",
+            "avatar_uploaded": "Avatar subido con éxito",
+            "avatar_update_error": "Error al actualizar el avatar",
+            "avatar_deleted": "Avatar eliminado con éxito",
+            "avatar_delete_error": "Error al eliminar el avatar",
+            "invalid_nickname": "El apodo no puede estar vacío.",
+            "no_valid_fields": "No se proporcionaron campos válidos para la actualización.",
+            "updated": "Usuario actualizado con éxito",
+            "fetched": "Detalles del usuario recuperados con éxito",
+            "fetch_error": "Error al recuperar los detalles del usuario",
+            "no_current_password": "No se proporcionó contraseña actual",
+            "no_new_password": "No se proporcionó nueva contraseña",
+            "incorrect_password": "Contraseña incorrecta",
+            "invalid_new_password": "La nueva contraseña es inválida",
+            "password_updated": "Contraseña actualizada con éxito",
+            "update_password_error": "Ocurrió un error inesperado al actualizar la contraseña.",
+            "duplicate_email": "El usuario ya existe",
+            "invalid_password": "La contraseña es inválida",
+            "confirmation_email_sent": "Correo de confirmación enviado. Revisa tu bandeja de entrada.",
+            "missing_token": "Token faltante",
+            "invalid_token": "El token es inválido o ha expirado",
+            "email_confirmed": "Correo confirmado. Tu cuenta ahora está activa.",
+            "email_confirmation_error": "Algo salió mal al confirmar el correo.",
+            "already_confirmed": "El usuario ya fue confirmado o no existe.",
+            "confirmation_email_resent": "El correo de confirmación ha sido reenviado. Revisa tu bandeja de entrada.",
+            "reset_email_sent": "Si este correo está registrado, recibirás instrucciones para restablecer la contraseña.",
+            "password_reset_error": "Algo salió mal al solicitar el restablecimiento de la contraseña.",
+            "missing_password": "Falta nueva contraseña",
+            "password_reset_success": "La contraseña se ha restablecido con éxito. Ya puedes iniciar sesión.",
+            "file_too_large": "Archivo demasiado grande",
+            "invalid_file_type": "Tipo de archivo inválido",
+            "file_upload_failed": "Error al subir el archivo. Inténtalo de nuevo."
+        },
+
+        "error": {
+            "not_authenticated": "No autenticado",
+            "unauthorized": "No autorizado",
+            "internal_server": "Error interno del servidor"
+        },
+
+        "email": {
+            "validation": {
+                "required": "La dirección de correo es obligatoria.",
+                "limit_reached": "Se alcanzó el máximo de registros este mes. Inténtalo de nuevo más tarde.",
+                "service_error": "Error en el servicio de validación de correo. Inténtalo de nuevo más tarde.",
+                "invalid": "Dirección de correo inválida o temporal. Usa un correo válido.",
+                "failed": "Error en la validación de correo. Inténtalo de nuevo más tarde."
+            },
+            "invalid": "El correo no es válido o no puede estar vacío.",
+            "no_mx_records": "No se encontraron registros MX para el dominio del correo."
+        },
+
+        "mongo": {
+            "error": {
+                "validation": "Error de validación",
+                "duplicate": "Entrada duplicada",
+                "unexpected": "Ocurrió un error inesperado"
+            }
+        },
+
+        "rate_limit_exceeded": "Demasiadas solicitudes, espera antes de intentarlo de nuevo.",
+        "nickname_min_length": "El apodo debe tener al menos 3 caracteres.",
+        "nickname_max_length": "El apodo debe tener como máximo 15 caracteres.",
+        "nickname_invalid_chars": "El apodo solo debe contener letras minúsculas, números y guiones bajos (sin espacios ni guiones).",
+        "email_in_use": "${field} ya está en uso.",
+        "too_many_registrations": "Demasiados intentos de registro. Espera 15 minutos antes de intentarlo de nuevo.",
+        "too_many_resend_attempts": "Demasiados intentos de reenvío. Espera antes de intentarlo de nuevo.",
+        "too_many_avatar_changes": "Demasiados cambios de avatar, por favor reduce la frecuencia.",
+        "too_many_password_reset_requests": "Demasiadas solicitudes de restablecimiento de contraseña. Espera antes de intentarlo de nuevo.",
+        "too_many_password_reset_attempts": "Demasiados intentos de restablecimiento de contraseña. Espera antes de intentarlo de nuevo.",
+        "too_many_hello_world_requests": "Demasiadas solicitudes de hello world. Espera antes de intentarlo de nuevo."
     }
 }

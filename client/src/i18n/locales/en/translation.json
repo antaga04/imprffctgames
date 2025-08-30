@@ -243,5 +243,143 @@
         "new_score": "New score",
         "previous_score": "Previous score",
         "not_uploaded": "Score not uploaded"
+    },
+    "server": {
+        "not_found": "Route not found",
+        "internal_server_error": "Internal Server Error",
+
+        "games": {
+            "fetched": "Games retrieved successfully",
+            "fetch_failed": "Failed to retrieve games",
+            "not_found": "Game not found",
+            "missing_fields": "Missing required fields",
+            "invalid_scoring_logic": "Invalid scoringLogic.",
+            "invalid_type": "Invalid type.",
+            "already_exists": "Game with this name already exists",
+            "created": "Game created successfully!",
+            "create_failed": "Failed to create game",
+            "invalid_id": "Invalid game ID",
+            "updated": "Game updated successfully!",
+            "update_failed": "Error updating game",
+            "deleted": "Game deleted successfully",
+            "delete_failed": "Error deleting game"
+        },
+
+        "pokemon": {
+            "session_created": "Game session created successfully.",
+            "session_creation_failed": "Failed to create Pokémon session.",
+            "invalid_batch_number": "Invalid batch number provided.",
+            "session_not_found": "Game session not found.",
+            "batch_fetched": "Batch of Pokémon fetched successfully.",
+            "batch_fetch_failed": "Failed to fetch Pokémon batch.",
+            "game_duration_too_short": "Game duration is too short.",
+            "game_duration_exceeded": "Game duration has exceeded the allowed time.",
+            "results_checked": "Pokémon results checked successfully.",
+            "results_check_failed": "Failed to check Pokémon results."
+        },
+
+        "puzzle15": {
+            "generateBoard": {
+                "success": "Puzzle board generated successfully.",
+                "error": "Failed to generate puzzle board."
+            }
+        },
+
+        "score": {
+            "invalid_game_id": "Invalid game ID",
+            "scores_retrieved": "Scores retrieved successfully!",
+            "error_retrieving": "Error retrieving scores",
+            "invalid_id": "Invalid score ID format",
+            "deleted": "Score successfully Deleted!",
+            "error_deleting": "Error deleting Score",
+            "missing_fields": "Missing required fields",
+            "invalid_score_data": "Score data invalid. Potential cheating detected 👺.",
+            "lower_score": "New score is not better than the existing score",
+            "uploaded": "Score uploaded successfully!",
+            "error_uploading": "Error uploading score"
+        },
+
+        "user": {
+            "verified": "User is verified",
+            "not_authenticated": "Not authenticated",
+            "logout_success": "User logged out successfully",
+            "logout_error": "An unexpected error occurred while logging out.",
+            "incorrect_credentials": "Incorrect email or password",
+            "email_not_confirmed": "Your email is not confirmed. Please check your inbox for the confirmation email.",
+            "login_success": "User logged in successfully",
+            "login_error": "Error logging in",
+            "no_file_uploaded": "No file uploaded",
+            "not_found": "User not found",
+            "avatar_updated": "Avatar updated successfully",
+            "avatar_uploaded": "Avatar uploaded successfully",
+            "avatar_update_error": "Error updating avatar",
+            "avatar_deleted": "Avatar deleted successfully",
+            "avatar_delete_error": "Error deleting avatar",
+            "invalid_nickname": "Nickname cannot be empty.",
+            "no_valid_fields": "No valid fields provided for update.",
+            "updated": "User updated successfully",
+            "fetched": "User details fetched successfully",
+            "fetch_error": "Error fetching user details",
+            "no_current_password": "No current password provided",
+            "no_new_password": "No new password provided",
+            "incorrect_password": "Incorrect password",
+            "invalid_new_password": "New password is invalid",
+            "password_updated": "Password updated successfully",
+            "update_password_error": "An unexpected error occurred while updating the password.",
+            "duplicate_email": "User already exists",
+            "invalid_password": "Password is invalid",
+            "confirmation_email_sent": "Confirmation email sent. Please check your inbox.",
+            "missing_token": "Missing token",
+            "invalid_token": "Token is invalid or expired",
+            "email_confirmed": "Email confirmed. Your account is now active.",
+            "email_confirmation_error": "Something went wrong while confirming the email.",
+            "already_confirmed": "User already confirmed or does not exist.",
+            "confirmation_email_resent": "Confirmation email has been resent. Please check your inbox.",
+            "reset_email_sent": "If this email is registered, you will receive password reset instructions.",
+            "password_reset_error": "Something went wrong while requesting the password reset.",
+            "missing_password": "Missing new password",
+            "password_reset_success": "Password has been reset successfully. You can now log in.",
+            "file_too_large": "File too large",
+            "invalid_file_type": "Invalid file type",
+            "file_upload_failed": "File upload failed. Please try again."
+        },
+
+        "error": {
+            "not_authenticated": "Not authenticated",
+            "unauthorized": "Unauthorized",
+            "internal_server": "Internal Server Error"
+        },
+
+        "email": {
+            "validation": {
+                "required": "Email address is required.",
+                "limit_reached": "Maximum registrations reached for this month. Please try again later.",
+                "service_error": "Email validation service error. Please try again later.",
+                "invalid": "Invalid or temporary email address. Please use a valid email.",
+                "failed": "Email validation failed. Please try again later."
+            },
+            "invalid": "Email is not valid or cannot be empty.",
+            "no_mx_records": "No MX records found for the email domain."
+        },
+
+        "mongo": {
+            "error": {
+                "validation": "Validation error",
+                "duplicate": "Duplicate entry",
+                "unexpected": "Unexpected error occurred"
+            }
+        },
+
+        "rate_limit_exceeded": "Too many requests, please wait before trying again.",
+        "nickname_min_length": "Nickname must be at least 3 characters long.",
+        "nickname_max_length": "Nickname must be at most 15 characters long.",
+        "nickname_invalid_chars": "Nickname must only contain lowercase letters, numbers, and underscores (no spaces or dashes).",
+        "email_in_use": "${field} is already in use.",
+        "too_many_registrations": "Too many registration attempts. Please wait 15 minutes before trying again.",
+        "too_many_resend_attempts": "Too many resend attempts. Please wait before trying again.",
+        "too_many_avatar_changes": "Too many avatar changes, please slow down.",
+        "too_many_password_reset_requests": "Too many password reset requests. Please wait before trying again.",
+        "too_many_password_reset_attempts": "Too many password reset attempts. Please wait before trying again.",
+        "too_many_hello_world_requests": "Too many hello world requests. Please wait before trying again."
     }
 }
