@@ -4,6 +4,7 @@ import GameWrapper from '@/components/layouts/GameWrapper';
 import CoolDownButton from '@/components/ui/CoolDownButton';
 import { User, Users } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 const PLAYER = {
     X: 'X',
@@ -22,10 +23,11 @@ const GAME_STATUS = {
 } as const;
 
 const Game = () => {
+    const { t } = useTranslation();
     const [board, setBoard] = useState<Board>(Array(9).fill(null));
     const [currentPlayer, setCurrentPlayer] = useState<Player>(PLAYER.X);
     const [gameStatus, setGameStatus] = useState<GameStatus>(GAME_STATUS.PLAYING);
-    const [statusMessage, setStatusMessage] = useState<string>(`Player ${PLAYER.X}'s turn`);
+    const [statusMessage, setStatusMessage] = useState<string>(t('games.tictactoe.turn', { nextPlayer: PLAYER.X }));
     const [showConfetti, setShowConfetti] = useState<boolean>(false);
     const [highlightSquares, setHighlightSquares] = useState<number[]>([]);
     const [stats, setStats] = useState<{ playerX: number; playerO: number; playernull: number }>({
@@ -60,7 +62,7 @@ const Game = () => {
             setGameStatus(GAME_STATUS.WON);
             setHighlightSquares(winnerResult.combination);
             setShowConfetti(true);
-            setStatusMessage(`${winnerResult.player} wins! Congratulations!`);
+            setStatusMessage(`${winnerResult.player} ${t('games.wins')}`);
 
             setStats((prevStats) => {
                 const updatedStats = { ...prevStats };
@@ -72,7 +74,7 @@ const Game = () => {
 
         if (checkForDraw(newBoard)) {
             setGameStatus(GAME_STATUS.DRAW);
-            setStatusMessage("It's a draw! Well played.");
+            setStatusMessage(t('games.draw_wp'));
             setStats((prevStats) => {
                 const updatedStats = { ...prevStats };
                 updatedStats.playernull++;
@@ -83,7 +85,7 @@ const Game = () => {
 
         const nextPlayer = player === PLAYER.X ? PLAYER.O : PLAYER.X;
         setCurrentPlayer(nextPlayer);
-        setStatusMessage(`Player ${nextPlayer}'s turn`);
+        setStatusMessage(t('games.tictactoe.turn', { nextPlayer }));
     };
 
     const handleSquareClick = (index: number): void => {
@@ -132,14 +134,16 @@ const Game = () => {
         setBoard(Array(9).fill(null));
         setCurrentPlayer(PLAYER.X);
         setGameStatus(GAME_STATUS.PLAYING);
-        setStatusMessage(`Player ${PLAYER.X}'s turn`);
+        setStatusMessage(t('games.tictactoe.turn', { nextPlayer: PLAYER.X }));
         setShowConfetti(false);
         setHighlightSquares([]);
     };
 
     const changeGamemode = (): void => {
         setGameMode((prev) => (prev === GAME_MODE.SINGLE ? GAME_MODE.MULTI : GAME_MODE.SINGLE));
-        toast.info(`${gameMode === GAME_MODE.SINGLE ? 'Multiplayer' : 'Single Player'} mode activated!`);
+        toast.info(
+            `${gameMode === GAME_MODE.SINGLE ? t('games.single_player') : t('games.multi_player')} ${t('games.active_mode')}`,
+        );
     };
 
     return (
@@ -149,14 +153,14 @@ const Game = () => {
             <p className="text-lg mb-4 text-slate-300">{statusMessage}</p>
             <div
                 role="grid"
-                aria-label="Tic Tac Toe game board"
+                aria-label={t('games.tictactoe.board_label')}
                 className="grid grid-cols-3 gap-2 w-fit p-4 bg-gray-300 rounded-lg shadow-lg text-black"
             >
                 {board.map((value, index) => (
                     <div
                         key={index}
                         role="button"
-                        aria-label={`Square ${index + 1}`}
+                        aria-label={`${t('games.square_label')} ${index + 1}`}
                         aria-pressed={value !== null}
                         style={{
                             backgroundColor: highlightSquares.includes(index) ? '#5ec269' : '',
@@ -175,7 +179,7 @@ const Game = () => {
 
             <section className="flex items-center gap-3 mt-6 text-lg text-slate-300">
                 <p id="player1" className="flex flex-col items-center justify-center ">
-                    <span>Player (X)</span>
+                    <span>{t('globals.player')} (X)</span>
                     <span className="text-2xl">{stats.playerX}</span>
                 </p>
                 <p id="tie" className="flex flex-col items-center justify-center ">
@@ -183,20 +187,20 @@ const Game = () => {
                     <span className="text-2xl">{stats.playernull}</span>
                 </p>
                 <p id="player2" className="flex flex-col items-center justify-center ">
-                    <span>Player (O)</span>
+                    <span>{t('globals.player')} (O)</span>
                     <span className="text-2xl">{stats.playerO}</span>
                 </p>
             </section>
 
             <section className="flex items-center mt-6 gap-3">
                 <CoolDownButton
-                    text="New Game"
+                    text={t('games.new_game')}
                     onSubmit={resetGame}
                     bgColor="bg-red-600"
                     hoverBgColor="hover:bg-red-700"
                 />
                 <CoolDownButton
-                    title="Switch Game Mode"
+                    title={t('games.switch_mode')}
                     text={gameMode === GAME_MODE.SINGLE ? <User /> : <Users />}
                     onSubmit={changeGamemode}
                     bgColor="bg-gray-600"
@@ -208,11 +212,9 @@ const Game = () => {
 };
 
 const TicTacToe = () => {
+    const { t } = useTranslation();
     return (
-        <GameWrapper
-            title="Tic Tac Toe"
-            instructions="Click on a square to place your mark. The first player to get three in a row wins!"
-        >
+        <GameWrapper title={t('games.tictactoe.name')} instructions={t('games.tictactoe.instructions')}>
             <Game />
         </GameWrapper>
     );

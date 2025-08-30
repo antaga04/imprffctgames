@@ -2,8 +2,10 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { games } from '@/lib/games';
 import GameNotFound from '@/pages/GameNotFound';
+import { useTranslation } from 'react-i18next';
 
 const Game = () => {
+    const { t } = useTranslation();
     const { id } = useParams();
     const [GameComponent, setGameComponent] = useState<React.ComponentType | null>(null);
     const [loading, setLoading] = useState(true);
@@ -27,7 +29,11 @@ const Game = () => {
     }, [id]);
 
     if (loading)
-        return <div className="flex flex-col items-center justify-center min-h-screen p-6">Loading game...</div>;
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen p-6 capitalize">
+                {t('games.loading')}...
+            </div>
+        );
     if (!valid || !GameComponent) return <GameNotFound />;
 
     return <GameComponent />;

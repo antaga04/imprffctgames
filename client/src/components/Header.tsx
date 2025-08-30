@@ -2,8 +2,10 @@ import { NavLink } from 'react-router-dom';
 import SingOut from '@/components/ui/SingOut';
 import { useAuth } from '@/hooks/useAuth';
 import { Medal, User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
+    const { t } = useTranslation();
     const { isAuthenticated, logout } = useAuth();
 
     return (
@@ -21,9 +23,9 @@ const Header = () => {
                             href="https://adrian-anta.netlify.app/"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs flex opacity-60 hover:opacity-75 transition-opacity ease-in-out duration-250"
+                            className="text-xs flex opacity-60 hover:opacity-75 hover:underline transition-opacity ease-in-out duration-250"
                         >
-                            by Adrián Anta
+                            {t('gloabls.by')} Adrián Anta
                         </a>
                     </div>
                 </div>
@@ -34,7 +36,7 @@ const Header = () => {
                     className="w-full md:w-fit px-2 py-1 md:px-4 md:py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
                 >
                     <Medal />
-                    <span className="">Ranking</span>
+                    <span>{t('globals.ranking')}</span>
                 </NavLink>
                 {isAuthenticated ? (
                     <>
@@ -43,7 +45,7 @@ const Header = () => {
                             className="w-full md:w-fit px-4 py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
                         >
                             <User />
-                            <span className="">Profile</span>
+                            <span>{t('globals.profile')}</span>
                         </NavLink>
                         <SingOut handleLogout={logout} />
                     </>
@@ -53,7 +55,7 @@ const Header = () => {
                         className="w-full md:w-fit px-4 py-2 fill-white flex gap-2 items-center rounded-lg bg-[#f2f2f20f] hover:bg-[#f2f2f233] border border-[#f2f2f20a] hover:border-[#f2f2f21a] backdrop-blur-md transition-all duration-400 ease-custom-ease-1 text-lg"
                     >
                         <User />
-                        <span className="">Login</span>
+                        <span>{t('globals.login')}</span>
                     </NavLink>
                 )}
             </nav>

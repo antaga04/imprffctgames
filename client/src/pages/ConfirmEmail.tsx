@@ -4,8 +4,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import BackButton from '@/components/ui/BackButton';
 import { verifyEmail } from '@/services/requests';
+import { useTranslation } from 'react-i18next';
 
 const ConfirmEmail = () => {
+    const { t } = useTranslation();
     const location = useLocation();
     const query = new URLSearchParams(location.search);
     const token = query.get('token');
@@ -15,13 +17,13 @@ const ConfirmEmail = () => {
     useEffect(() => {
         if (token) {
             toast.promise(verifyEmail(token), {
-                loading: 'Verifying email...',
-                success: (res) => res || 'Email verified successfully!',
-                error: (err) => err.response?.data?.message || 'Error verifying email.',
+                loading: `${t('confirm_email.verifying')}...`,
+                success: (res) => res || t('confirm_email.success'),
+                error: (err) => err.response?.data?.message || t('confirm_email.error'),
                 finally: () => navigate('/login'),
             });
         } else {
-            toast.error('No token provided.');
+            toast.error(t('confirm_email.no_token'));
         }
     }, [token]);
 
@@ -32,13 +34,11 @@ const ConfirmEmail = () => {
             <div className="text-center mb-6">
                 <div className="text-6xl mb-4">📩</div>
 
-                <h1 className="text-4xl font-bold neon-text text-white mb-2">Email Confirmation</h1>
-                <p className="text-lg text-slate-300 mb-4">
-                    Thank you for registering! This should only take a moment...
-                </p>
+                <h1 className="text-4xl font-bold neon-text text-white mb-2">{t('confirm_email.title')}</h1>
+                <p className="text-lg text-slate-300 mb-4">{t('confirm_email.description')}</p>
                 <Link to="/resend-email">
                     <span className="bg-white hover:bg-white/90 transition-colors duration-150 px-1.5 text-sm font-medium md:px-3.5 rounded-[4px] py-1 text-black">
-                        Resend email
+                        {t('confirm_email.resend')}
                     </span>
                 </Link>
             </div>

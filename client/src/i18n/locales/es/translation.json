@@ -115,7 +115,7 @@
             "instructions": "Escribe tantas palabras como puedas en el tiempo dado. Intenta cometer la menor cantidad de errores."
         },
         "puzzle15": {
-            "name": "Rompecabezas 15",
+            "name": "Juego del 15",
             "ranking": "El ranking se basa en una combinación de aciertos totales y precisión.",
             "instructions": "Mueve las fichas en la cuadrícula para ordenarlas del 1 al 15.",
             "board_error": "Error al obtener el tablero.",

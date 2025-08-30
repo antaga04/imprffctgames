@@ -1,77 +1,100 @@
+import i18next from 'i18next';
 import { EMAIL_REGEX } from './constants';
 
 // Reusable validation rules
 const validationRules = {
     minLength: (min: number): ValidationRule => ({
         test: (value: string) => value.length >= min,
-        message: `Be at least ${min} characters.`,
+        get message() {
+            return i18next.t('validations.min_length', { min });
+        },
     }),
 
     maxLength: (max: number): ValidationRule => ({
         test: (value: string) => value.length <= max,
-        message: `Be at most ${max} characters.`,
+        get message() {
+            return i18next.t('validations.max_length', { max });
+        },
     }),
 
-    pattern: (regex: RegExp, message: string): ValidationRule => ({
+    pattern: (regex: RegExp, key: string, options?: Record<string, unknown>): ValidationRule => ({
         test: (value: string) => regex.test(value),
-        message,
+        get message() {
+            return i18next.t(key, options);
+        },
     }),
 
     required: (): ValidationRule => ({
         test: (value: string) => Boolean(value?.trim()),
-        message: 'Is required.',
+        get message() {
+            return i18next.t('validations.required');
+        },
     }),
 
     noSpaces: (): ValidationRule => ({
         test: (value: string) => !/\s/.test(value),
-        message: 'Cannot contain spaces.',
+        get message() {
+            return i18next.t('validations.no_spaces');
+        },
     }),
 
     matches: (otherValue: string): ValidationRule => ({
         test: (value: string) => value === otherValue,
-        message: 'Passwords must match.',
+        get message() {
+            return i18next.t('validations.matches');
+        },
     }),
 
     mustHaveOriginal: (originalValue: string): ValidationRule => ({
         test: () => Boolean(originalValue?.trim()),
-        message: 'Set a password before confirming.',
+        get message() {
+            return i18next.t('validations.must_have_original');
+        },
     }),
 
     originalIsValid: (originalValue: string): ValidationRule => ({
         // Uses the current password value to check ALL password rules
         test: () => baseSchemas.password.rules.every((rule) => rule.test(originalValue)),
-        message: 'Password does not meet requirements.',
+        get message() {
+            return i18next.t('validations.original_is_valid');
+        },
     }),
 };
 
 // Validation schemas
 export const baseSchemas: Record<string, ValidationSchema> = {
     nickname: {
-        heading: 'Nickname must:',
+        get heading() {
+            return i18next.t('validations.schema.nickname');
+        },
         rules: [
             validationRules.minLength(3),
             validationRules.maxLength(15),
-            validationRules.pattern(/^[a-zA-Z0-9_]+$/, 'Only contain letters, numbers, and underscores.'),
+            validationRules.pattern(/^[a-zA-Z0-9_]+$/, 'validations.schema.only_contains'),
         ],
     },
 
     password: {
-        heading: 'Password must:',
+        get heading() {
+            return i18next.t('validations.schema.password');
+        },
         rules: [
             validationRules.minLength(8),
-            validationRules.pattern(/[A-Z]/, 'Contain at least one uppercase letter.'),
-            validationRules.pattern(/[a-z]/, 'Contain at least one lowercase letter.'),
-            validationRules.pattern(/[0-9]/, 'Contain at least one number.'),
-            validationRules.pattern(/[!@#$%^&*]/, 'Contain at least one special character (!@#$%^&*).'),
+            validationRules.pattern(/[A-Z]/, 'validations.schema.uppercase'),
+            validationRules.pattern(/[a-z]/, 'validations.schema.lowercase'),
+            validationRules.pattern(/[0-9]/, 'validations.schema.number'),
+            validationRules.pattern(/[^A-Za-z0-9\s]/, 'validations.schema.special_character'),
         ],
     },
 
     email: {
-        heading: 'Email:',
+        get heading() {
+            return i18next.t('validations.schema.email');
+        },
         rules: [
             validationRules.required(),
             validationRules.noSpaces(),
-            validationRules.pattern(EMAIL_REGEX, 'Must be in the format name@example.com.'),
+            validationRules.pattern(EMAIL_REGEX, 'validations.schema.email_format'),
         ],
     },
 };
@@ -80,14 +103,25 @@ export const validationSchemas: Record<string, ValidationSchema> = {
     ...baseSchemas,
 
     newPassword: {
-        heading: 'New password must:',
+        get heading() {
+            return i18next.t('validations.schema.new_password');
+        },
         rules: baseSchemas.password.rules,
     },
 
     // Confirm password - will be dynamically updated
     confirmPassword: {
-        heading: 'Confirm password must:',
+        get heading() {
+            return i18next.t('validations.schema.confirm_password');
+        },
         rules: [],
+    },
+
+    currentPassword: {
+        get heading() {
+            return i18next.t('validations.schema.current_password');
+        },
+        rules: [validationRules.required()],
     },
 };
 
@@ -95,7 +129,7 @@ export const validationSchemas: Record<string, ValidationSchema> = {
 export const validate = (value: string, schemaKey: string): ValidationResult => {
     const schema = validationSchemas[schemaKey];
     if (!schema) {
-        throw new Error(`Unknown validation schema: ${schemaKey}`);
+        throw new Error(`${i18next.t('validations.schema.unknown')}: ${schemaKey}`);
     }
 
     const errors = schema.rules.filter((rule) => !rule.test(value)).map((rule) => rule.message);
@@ -117,7 +151,9 @@ export const getValidationSchema = (name: string, originalPassword?: string): Va
     if (name === 'confirmPassword') {
         const pwd = originalPassword ?? '';
         return {
-            heading: 'Confirm password must:',
+            get heading() {
+                return i18next.t('validations.schema.confirm_password');
+            },
             rules: [
                 validationRules.required(),
                 validationRules.mustHaveOriginal(pwd),
@@ -132,7 +168,9 @@ export const getValidationSchema = (name: string, originalPassword?: string): Va
 
 export const validateConfirmPassword = (password: string, confirmPassword: string): string[] => {
     const schema: ValidationSchema = {
-        heading: 'Confirm password must:',
+        get heading() {
+            return i18next.t('validations.schema.confirm_password');
+        },
         rules: [
             validationRules.required(),
             validationRules.mustHaveOriginal(password),
@@ -162,7 +200,7 @@ export const fieldValidators: Record<string, ValidatorFn> = {
     newPassword: (value) => validatePassword(value),
     confirmPassword: (value, formData) =>
         validateConfirmPassword(formData?.newPassword ?? formData?.password ?? '', value),
-    currentPassword: (value) => [value.trim() ? '' : 'Is required.'].filter(Boolean),
+    currentPassword: (value) => [value.trim() ? '' : 'validations.required'].filter(Boolean),
 };
 
 export const runValidations = <T extends Record<string, string>>(formData: T) => {

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSignal, onGameFinish }) => {
+    const { t } = useTranslation();
     const [localTime, setLocalTime] = useState(0);
 
     useEffect(() => {
@@ -31,7 +33,11 @@ const Timer: React.FC<TimerIncrementProps> = ({ isRunning, gameStarted, resetSig
         return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
 
-    return <span className="font-mono min-w-[6ch] text-right">Time: {formatTime(localTime)}</span>;
+    return (
+        <span className="font-mono min-w-[6ch] text-right">
+            {t('globals.time')}: {formatTime(localTime)}
+        </span>
+    );
 };
 
 export default Timer;

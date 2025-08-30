@@ -1,8 +1,10 @@
 import React from 'react';
 import BackButton from '@/components/ui/BackButton';
 import { Info } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const GameWrapper: React.FC<GameWrapperProps> = ({ children, title, height, instructions }) => {
+    const { t } = useTranslation();
     return (
         <>
             <BackButton />
@@ -10,7 +12,7 @@ const GameWrapper: React.FC<GameWrapperProps> = ({ children, title, height, inst
                 <h1 className="text-4xl font-bold text-center neon-text text-white mb-4">{title}</h1>
                 {children}
                 <p className="flex gap-2 mt-4 mb-8 text-center">
-                    <Info /> {instructions ?? 'Loading instructions...'}
+                    <Info /> {instructions ?? t('games.loading_instructions') + '...'}
                 </p>
             </div>
         </>

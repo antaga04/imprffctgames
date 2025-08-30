@@ -8,8 +8,10 @@ import SigninLogo from '@/components/ui/SigninLogo';
 import AuthLinkSwitcher from '@/components/ui/AuthLinkSwitcher';
 import { LOGIN_INPUTS } from '@/lib/constants';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const LoginFrom = () => {
+    const { t } = useTranslation();
     const { login } = useAuth();
     const [formData, setFormData] = useState<LoginFromData>({
         email: '',
@@ -42,14 +44,14 @@ const LoginFrom = () => {
 
         const { email, password } = formData;
         if (!email || !password) {
-            toast.error('All fields are required.');
+            toast.error(t('globals.all_fields_required'));
             return;
         }
 
         toast.promise(login(email, password), {
-            loading: 'Logging in...',
-            success: 'Logged in successfully!',
-            error: (err) => err.response?.data?.message || 'Login failed. Please try again.',
+            loading: t('login.loading'),
+            success: t('login.success'),
+            error: (err) => err.response?.data?.message || t('login.error'),
         });
     };
 
@@ -74,24 +76,25 @@ const LoginFrom = () => {
                     to="/restore-password"
                     className="text-[#4b6a9d] hover:text-[#35517c] hover:underline transition-colors ease-in-out duration-200"
                 >
-                    Forgot password?
+                    {t('login.forgot_password')}
                 </Link>
             </div>
 
-            <ButtonFrom text="Log in" disabled={disable} />
+            <ButtonFrom text={t('login.title')} disabled={disable} />
         </form>
     );
 };
 const Login = () => {
+    const { t } = useTranslation();
     return (
         <div className="w-full flex-1 flex items-center justify-center">
             <BackButton url="/" />
             <div className="flex flex-col w-full md:p-4 mx-auto md:-mt-3 max-w-[425px] md:max-w-[500px]">
                 <SigninLogo />
                 <section className="mt-5 flex flex-col gap-4 bg-[#f9fafb] text-[#111827] rounded-md px-8 py-4">
-                    <h1 className="lusiana-font text-2xl">Login</h1>
+                    <h1 className="lusiana-font text-2xl">{t('login.title')}</h1>
                     <LoginFrom />
-                    <AuthLinkSwitcher text="Don't have an account?" url="/register" anchor="Register here" />
+                    <AuthLinkSwitcher text={t('login.register')} url="/register" anchor={t('login.no_account')} />
                 </section>
             </div>
         </div>

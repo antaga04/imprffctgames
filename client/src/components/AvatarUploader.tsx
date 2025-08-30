@@ -4,10 +4,12 @@ import { toast } from 'sonner';
 import { Camera, Eraser } from 'lucide-react';
 import MyAvatar from './ui/MyAvatar';
 import CoolDownButton from './ui/CoolDownButton';
+import { useTranslation } from 'react-i18next';
 
 const UPLOAD_URL = import.meta.env.VITE_API_URL + '/users/avatar/';
 
 const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileData, setProfileData }) => {
+    const { t } = useTranslation();
     const [avatarPreview, setAvatarPreview] = useState(currentAvatar || null);
     const [newAvatar, setNewAvatar] = useState<File | null>(null);
     const [pendingDelete, setPendingDelete] = useState(false);
@@ -73,15 +75,23 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
         };
 
         toast.promise(saveAction, {
-            loading: pendingDelete ? 'Deleting avatar...' : 'Saving avatar...',
-            success: (res) => (res || pendingDelete ? 'Avatar deleted successfully!' : 'Avatar updated successfully!'),
-            error: (err) => err.response?.data?.message || 'Operation failed. Please try again.',
+            loading: pendingDelete
+                ? t('profile.avatar_uploader.delete_loading')
+                : t('profile.avatar_uploader.save_loading'),
+            success: (res) =>
+                res || pendingDelete
+                    ? t('profile.avatar_uploader.delete_success')
+                    : t('profile.avatar_uploader.save_success'),
+            error: (err) =>
+                err.response?.data?.message || pendingDelete
+                    ? t('profile.avatar_uploader.delete_error')
+                    : t('profile.avatar_uploader.save_error'),
         });
     };
 
     const handleDeleteAvatar = () => {
         if (!currentAvatar) {
-            toast.warning('No avatar to delete.');
+            toast.warning(t('profile.avatar_uploader.empty_avatar'));
             return;
         }
         setNewAvatar(null);
@@ -109,6 +119,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
                     <label
                         htmlFor="avatar-upload"
                         className="cursor-pointer p-1 bg-blue-500 hover:bg-blue-600 text-blue-500 hover:text-blue-600"
+                        title={t('profile.avatar_uploader.upload')}
                     >
                         <Camera className="fill-black h-7 w-7" />
                     </label>
@@ -128,6 +139,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
                         text={<Eraser className="text-black/80 h-6 w-6" />}
                         coolTime={2000}
                         blank={true}
+                        title={t('profile.avatar_uploader.delete')}
                     />
                 </div>
             </div>
@@ -138,13 +150,13 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
                             onClick={handleSaveAvatar}
                             className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
                         >
-                            Save Changes
+                            {t('globals.save')}
                         </button>
                         <button
                             onClick={handleCancelAvatar}
                             className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
                         >
-                            Cancel
+                            {t('globals.cancel')}
                         </button>
                     </>
                 ) : (

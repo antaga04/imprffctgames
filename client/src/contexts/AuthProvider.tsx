@@ -4,6 +4,7 @@ import axios from 'axios';
 import { toast } from 'sonner';
 import { useTempScore } from '@/hooks/useTempScore';
 import { handleScoreUpload } from '@/lib/scoreHandler';
+import { useTranslation } from 'react-i18next';
 
 const LOGIN_URL = import.meta.env.VITE_API_URL + '/users/login';
 const REGISTER_URL = import.meta.env.VITE_API_URL + '/users/register';
@@ -13,6 +14,7 @@ const VERIFY_URL = import.meta.env.VITE_API_URL + '/users/verify';
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { t } = useTranslation();
     const [authState, setAuthState] = useState<AuthState>({
         isAuthenticated: false,
         loading: true,
@@ -41,12 +43,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     const err = error as MyError;
 
                     if (err?.response?.status === 401) {
-                        toast.warning('Your session has expired. Please log in again.');
+                        toast.warning(t('auth.session_expired'));
                         localStorage.removeItem('hasSession');
                         sessionStorage.setItem('hasShownRegisterToast', 'true');
                     } else {
                         console.error('An unexpected error occurred:', error);
-                        toast.error(err.response?.data?.message || 'An unexpected error occurred.');
+                        toast.error(err.response?.data?.message || t('auth.general_error'));
                     }
 
                     setAuthState({
@@ -71,6 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return () => {
             document.removeEventListener('visibilitychange', handleVisibilityChange);
         };
+        // eslint-disable-next-line
     }, []);
 
     const login = async (email: string, password: string) => {

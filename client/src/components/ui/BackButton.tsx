@@ -1,7 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const BackButton: React.FC<{ url?: string }> = ({ url }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -24,7 +26,7 @@ const BackButton: React.FC<{ url?: string }> = ({ url }) => {
             <span className="inline-block mr-2 transform transition-transform duration-300 ease-custom-ease-2 group-hover:-translate-x-1 fill-[#f2f2f2]">
                 <ChevronLeft className="h-5 w-5" />
             </span>
-            Back
+            {t('globals.back')}
         </button>
     );
 };

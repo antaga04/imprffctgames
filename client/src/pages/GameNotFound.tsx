@@ -1,6 +1,8 @@
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 const GameNotFound = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     return (
@@ -8,17 +10,15 @@ const GameNotFound = () => {
             <div className="text-center mb-6">
                 <div className="text-6xl mb-4">🤷‍♂️</div>
 
-                <h1 className="text-4xl font-bold neon-text text-white mb-2">Oops! Game Not Found</h1>
-                <p className="text-lg text-slate-300">
-                    It seems like the game you’re looking for doesn’t exist... yet!
-                </p>
+                <h1 className="text-4xl font-bold neon-text text-white mb-2">{t('games.not_found.title')}</h1>
+                <p className="text-lg text-slate-300">{t('games.not_found.p1')}</p>
             </div>
 
             <button
                 onClick={() => navigate('/')}
                 className="px-6 py-2 bg-red-600 text-white rounded-full hover:bg-red-700"
             >
-                Back to Home
+                {t('globals.back_home')}
             </button>
         </div>
     );

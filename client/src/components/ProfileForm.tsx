@@ -6,14 +6,16 @@ import { updateAccount, updatePassword } from '@/services/userServices';
 import { ACCOUNT_INPUTS, PASSWORD_INPUTS } from '@/lib/constants';
 import { useAuth } from '@/hooks/useAuth';
 import { focusFirstInvalidField, runValidations } from '@/lib/validate';
+import { useTranslation } from 'react-i18next';
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData }) => {
+    const { t } = useTranslation();
     return (
         <div className="w-full flex flex-col items-center">
             <Tabs defaultValue="account" className="md:w-[400px]">
                 <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="account">Account</TabsTrigger>
-                    <TabsTrigger value="password">Password</TabsTrigger>
+                    <TabsTrigger value="account">{t('profile.account')}</TabsTrigger>
+                    <TabsTrigger value="password">{t('profile.password')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="account" className="rounded-xl border shadow space-y-4 p-6">
                     <AccountTab profileData={profileData} setProfileData={setProfileData} />
@@ -27,6 +29,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ profileData, setProfileData }
 };
 
 const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData }) => {
+    const { t } = useTranslation();
     const [fields, setFields] = useState<AccountFields>({ nickname: '', email: '' });
     const [loading, setLoading] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
@@ -47,19 +50,19 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
         const { errors, allErrors } = runValidations(fields);
         if (allErrors.length > 0) {
             focusFirstInvalidField(errors);
-            toast.error('Please fix validation errors.');
+            toast.error(t('validations.fix_errors'));
             return;
         }
 
         setLoading(true);
 
         toast.promise(updateAccount({ nickname: fields.nickname }), {
-            loading: 'Updating profile...',
+            loading: t('profile.account_tab.loading'),
             success: () => {
                 setProfileData({ ...profileData, ...fields });
-                return 'Profile updated successfully!';
+                return t('profile.account_tab.success');
             },
-            error: (err) => err.response?.data?.message || 'Update failed. Please try again.',
+            error: (err) => err.response?.data?.message || t('profile.account_tab.error'),
             finally: () => {
                 setLoading(false);
                 setIsEdited(false);
@@ -103,6 +106,7 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
 };
 
 const PasswordTab: React.FC = () => {
+    const { t } = useTranslation();
     const [fields, setFields] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
     const [loading, setLoading] = useState(false);
     const [isEdited, setIsEdited] = useState(false);
@@ -120,21 +124,21 @@ const PasswordTab: React.FC = () => {
         const { errors, allErrors } = runValidations(fields);
         if (allErrors.length > 0) {
             focusFirstInvalidField(errors);
-            toast.error('Please fix validation errors.');
+            toast.error(t('validations.fix_errors'));
             return;
         }
 
         setLoading(true);
 
         toast.promise(updatePassword({ password: fields.currentPassword, newPassword: fields.newPassword }), {
-            loading: 'Updating password...',
+            loading: t('profile.password_tab.loading'),
             success: () => {
                 setFields({ currentPassword: '', newPassword: '', confirmPassword: '' });
                 logout();
-                return 'Password updated successfully!';
+                return t('profile.password_tab.success');
             },
             error: (err) => {
-                return err.response?.data?.message || 'Update failed. Please try again.';
+                return err.response?.data?.message || t('profile.password_tab.error');
             },
             finally: () => {
                 setLoading(false);
@@ -172,7 +176,7 @@ const PasswordTab: React.FC = () => {
                     value={fields[name as keyof typeof fields]}
                     onChange={handleInputChange}
                     disabled={loading}
-                    activeValidation={name !== 'currentPassword'}
+                    activeValidation={true}
                     originalPassword={type === 'password' ? fields.newPassword : undefined}
                 />
             ))}
@@ -186,6 +190,7 @@ const PasswordTab: React.FC = () => {
 };
 
 const EditButtons: React.FC<EditButtonsProps> = ({ handleCancel, loading, isEdited }) => {
+    const { t } = useTranslation();
     return (
         <div>
             <button
@@ -197,14 +202,14 @@ const EditButtons: React.FC<EditButtonsProps> = ({ handleCancel, loading, isEdit
                 }`}
                 disabled={!isEdited || loading}
             >
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? t('globals.saving') : t('globals.save')}
             </button>
             <button
                 type="button"
                 onClick={handleCancel}
                 className="ml-4 px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-colors"
             >
-                Cancel
+                {t('globals.cancel')}
             </button>
         </div>
     );

@@ -3,14 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { handleScoreUpload } from '@/lib/scoreHandler';
 import { useTempScore } from './useTempScore';
+import { useTranslation } from 'react-i18next';
+import { scoreFormatter } from '@/lib/gameUtils';
 
 export const useGameCompletion = (gameId: string | undefined, slug: string) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
     const { clearTempScore } = useTempScore();
 
     const handleCompletion = async (scoreData: ScoreData) => {
-        if (!gameId || gameId.length === 0) return toast.error('Game ID is empty');
+        if (!gameId || gameId.length === 0) return toast.error(t('scores.empty_game'));
 
         if (isAuthenticated) {
             try {
@@ -24,19 +27,23 @@ export const useGameCompletion = (gameId: string | undefined, slug: string) => {
                 const err = error as MyError;
 
                 if (err?.response?.status === 401) {
-                    toast.warning('Session expired. Please log in to upload your score.', {
+                    toast.warning(t('scores.session_expired'), {
                         action: {
-                            label: 'Login',
+                            label: t('globals.login'),
                             onClick: () => navigate('/login'),
                         },
                     });
+                } else if (err.response?.status === 409) {
+                    const message = err.response.data?.message ?? t('scores.not_uploaded');
+                    const payload = err.response.data?.payload;
+                    toast.warning(`${message}. ${t('scores.previous_score')}: ${scoreFormatter(payload.scoreData)}`);
                 } else {
                     console.error('Error uploading score: ', error);
-                    toast.error(err?.response?.data?.message || 'Error uploading score.');
+                    toast.error(err?.response?.data?.message || t('scores.error'));
                 }
             }
         } else {
-            toast.info('Login to upload score', {
+            toast.info(t('scores.login_to_upload'), {
                 action: {
                     label: 'Login',
                     onClick: () => navigate('/login'),

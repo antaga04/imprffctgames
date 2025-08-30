@@ -5,8 +5,10 @@ import ProfileForm from '@/components/ProfileForm';
 import { fetchUserData } from '@/services/userServices';
 import { toast } from 'sonner';
 import { scoreFormatter } from '@/lib/gameUtils';
+import { useTranslation } from 'react-i18next';
 
 const Profile = () => {
+    const { t } = useTranslation();
     const [profileData, setProfileData] = useState<ProfileData>({
         nickname: '',
         email: '',
@@ -25,19 +27,20 @@ const Profile = () => {
         } catch (error) {
             console.error('Error fetching user data:', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || 'Error fetching user data.');
+            toast.error(err.response?.data?.message || t('profile.error'));
         }
     };
 
     useEffect(() => {
         fetchUser();
+        // eslint-disable-next-line
     }, []);
 
     return (
         <div>
             <BackButton />
             <section className="flex flex-col w-full md:p-4 md:mt-40 mx-auto max-w-[425px] md:max-w-[500px] mt-24 gap-4 bg-[#f9fafb] text-[#111827] rounded-md px-8 py-4">
-                <h1 className="text-3xl font-bold mb-6 text-center">Profile</h1>
+                <h1 className="text-3xl font-bold mb-6 text-center">{t('profile.title')}</h1>
                 <div className="flex flex-col items-center gap-4">
                     <AvatarUploader
                         currentAvatar={profileData.avatar}

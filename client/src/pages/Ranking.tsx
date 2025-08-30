@@ -25,11 +25,13 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useFetch } from '@/hooks/useFetch';
+import { useTranslation } from 'react-i18next';
 
 const PAGINATED_ITEMS = 5;
 const API_GAMES_URL = `${import.meta.env.VITE_API_URL}/games`;
 
 const Ranking: React.FC = () => {
+    const { t } = useTranslation();
     const { data: games } = useFetch<GameSchema[]>(API_GAMES_URL);
     const [searchParams, setSearchParams] = useSearchParams();
     const [scores, setScores] = useState<Score[]>([]);
@@ -153,16 +155,16 @@ const Ranking: React.FC = () => {
     return (
         <div className="flex flex-col text-black mt-32 mb-16">
             <BackButton url="/" />
-            <h1 className="text-4xl font-bold text-center text-white neon-text mb-8">Leaderboard</h1>
+            <h1 className="text-4xl font-bold text-center text-white neon-text mb-8 capitalize"></h1>
             <div className="w-full max-w-4xl mx-auto bg-card rounded-lg shadow-lg p-6">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-semibold text-primary">
                         {selectedGame ? (
                             <>
-                                <span className="error-underline">{selectedGame.name}</span> Ranking
+                                <span className="error-underline">{selectedGame.name}</span> {t('globals.ranking')}
                             </>
                         ) : (
-                            'Select a Game'
+                            t('ranking.select_game')
                         )}
                     </h2>
                     <DropdownMenu>
@@ -172,7 +174,7 @@ const Ranking: React.FC = () => {
                                     ? selectedGame.variants && selectedGame.variants.length > 0 && selectedVariant
                                         ? `${selectedGame.name} – ${selectedVariant.label}`
                                         : selectedGame.name
-                                    : 'Select a game'}
+                                    : t('ranking.select_game')}
                                 <ChevronDown className="ml-2 h-4 w-4" />
                             </button>
                         </DropdownMenuTrigger>
@@ -224,18 +226,20 @@ const Ranking: React.FC = () => {
                 </div>
                 {isLoading ? (
                     <div className="py-8 h-[305px] font-mono flex">
-                        <p className="text-lg m-auto text-gray-700">Loading...</p>
+                        <p className="text-lg m-auto text-gray-700">{t('globals.loading')}...</p>
                     </div>
                 ) : (
                     <Table>
                         <TableHeader className="bg-gray-100">
                             <TableRow>
                                 <TableHead>#</TableHead>
-                                <TableHead>Player</TableHead>
+                                <TableHead>{t('globals.player')}</TableHead>
                                 {scoreKeys.map((key) => (
-                                    <TableHead key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</TableHead>
+                                    <TableHead key={key} className="capitalize">
+                                        {t(`globals.${key}`)}
+                                    </TableHead>
                                 ))}
-                                <TableHead>Date</TableHead>
+                                <TableHead>{t('globals.date')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody className="h-[265px] overflow-y-auto">
@@ -245,7 +249,7 @@ const Ranking: React.FC = () => {
                                         colSpan={scoreKeys.length + 1 + 3}
                                         className="text-center font-mono text-md"
                                     >
-                                        No scores available
+                                        {t('ranking.no_scores_available')}
                                     </TableCell>
                                 </TableRow>
                             ) : (

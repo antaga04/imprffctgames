@@ -9,8 +9,10 @@ import { REGISTER_INPUTS } from '@/lib/constants';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
 import { focusFirstInvalidField, runValidations } from '@/lib/validate';
+import { useTranslation } from 'react-i18next';
 
 const RegisterForm = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState<RegisterFormData>({
         nickname: '',
         email: '',
@@ -49,16 +51,16 @@ const RegisterForm = () => {
         const { errors, allErrors } = runValidations(formData);
         if (allErrors.length > 0) {
             focusFirstInvalidField(errors);
-            toast.error('Please fix validation errors.');
+            toast.error(t('validations.fix_errors'));
             return;
         }
 
         toast.promise(
             register(nickname.trim(), email.trim(), password.trim()).then(() => navigate('/login')),
             {
-                loading: 'Registering...',
-                success: 'Confirmation email has been resent. Please check your inbox.',
-                error: (error) => error.response?.data?.message || 'An error occurred during registration.',
+                loading: t('register.loading'),
+                success: t('register.success'),
+                error: (error) => error.response?.data?.message || t('register.error'),
             },
         );
     };
@@ -81,21 +83,26 @@ const RegisterForm = () => {
                 />
             ))}
 
-            <ButtonForm text="Register" disabled={disable} />
+            <ButtonForm text={t('register.title')} disabled={disable} />
         </form>
     );
 };
 
 const Register = () => {
+    const { t } = useTranslation();
     return (
         <div className="w-full flex-1 flex justify-center mt-24 mb-14">
             <BackButton />
             <div className="flex flex-col w-full md:p-4 mx-auto md:-mt-3 max-w-[425px] md:max-w-[500px]">
                 <SigninLogo />
                 <section className="mt-5 flex flex-col gap-4 bg-[#f9fafb] text-[#111827] rounded-md px-8 py-4">
-                    <h1 className="lusiana-font text-2xl">Register</h1>
+                    <h1 className="lusiana-font text-2xl">{t('register.title')}</h1>
                     <RegisterForm />
-                    <AuthLinkSwitcher text="Already have an account?" url="/login" anchor="Login here" />
+                    <AuthLinkSwitcher
+                        text={t('register.login')}
+                        url="/login"
+                        anchor={t('register.already_have_account')}
+                    />
                 </section>
             </div>
         </div>

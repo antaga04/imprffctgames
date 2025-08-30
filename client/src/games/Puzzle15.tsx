@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { PUZZLE15_SLUG } from '@/lib/constants';
 import Timer from '@/components/ui/Timers/Timer';
 import { useFetch } from '@/hooks/useFetch';
+import { useTranslation } from 'react-i18next';
 
 const GRID_SIZE = 4;
 const CELL_COUNT = GRID_SIZE * GRID_SIZE;
@@ -20,6 +21,7 @@ const API_PUZZLE15_GAME_URL = `${import.meta.env.VITE_API_URL}/games/${PUZZLE15_
 const API_URL = import.meta.env.VITE_API_URL;
 
 const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
+    const { t } = useTranslation();
     const [board, setBoard] = useState(Array.from({ length: CELL_COUNT }, (_, i) => i));
     const [moves, setMoves] = useState<Move[]>([]);
     const [isRunning, setIsRunning] = useState(false);
@@ -54,7 +56,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         } catch (error) {
             console.error('Error fetching board:', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || 'Error fetching board.');
+            toast.error(err.response?.data?.message || t('games.puzzle15.board_error'));
         } finally {
             setLoading(false);
         }
@@ -86,7 +88,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
         const scoreData = { moves, time, hash: boardHash, gameSessionId };
         if (!game) {
-            return toast.error('Game was not found in the database.');
+            return toast.error(t('games.not_found_db'));
         }
         setTempScore({ scoreData, gameId: game._id, slug: game.slug });
         handleCompletion(scoreData);
@@ -177,12 +179,14 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                     resetSignal={resetSignal}
                     onGameFinish={handleGameCompletion} // callback to capture final time
                 />
-                <span className="font-mono min-w-[6ch] text-right">Moves: {String(moves.length).padStart(3, '0')}</span>
+                <span className="font-mono min-w-[6ch] text-right">
+                    {t('globals.moves')}: {String(moves.length).padStart(3, '0')}
+                </span>
             </p>
             <div className="grid grid-cols-4 gap-2 p-4 bg-gray-300 rounded-lg shadow-lg text-black relative">
                 {loading && (
                     <span className="w-full h-full absolute backdrop-blur-sm flex justify-center items-center font-bold">
-                        Loading...
+                        {t('globals.loading')}...
                     </span>
                 )}
                 {board.map((tile, index) => (
@@ -203,16 +207,16 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                 ))}
             </div>
             <div className="mt-4 space-x-4">
-                <CoolDownButton text="New Game" onSubmit={shuffleBoard} />
+                <CoolDownButton text={t('games.new_game')} onSubmit={shuffleBoard} />
             </div>
             {isSolved() && gameStarted && (
                 <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white rounded-lg shadow-lg p-6 mx-4">
                         <div className="text-center text-gray-800 space-y-4">
-                            <h2 className="text-3xl font-bold text-[var(--blueish)]">Congratulations!</h2>
-                            <p className="text-lg">You solved the puzzle 🚀</p>
+                            <h2 className="text-3xl font-bold text-[var(--blueish)]">{t('globals.congratulations')}</h2>
+                            <p className="text-lg">{t('games.puzzle15.win')}</p>
                             <div className="mt-4 space-x-4">
-                                <CoolDownButton text="Play again" onSubmit={shuffleBoard} />
+                                <CoolDownButton text={t('games.play_again')} onSubmit={shuffleBoard} />
                             </div>
                         </div>
                     </div>
@@ -224,9 +228,10 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
 const Puzzle15: React.FC = () => {
     const { data: game } = useFetch<GameSchema>(API_PUZZLE15_GAME_URL);
+    const { t } = useTranslation();
 
     return (
-        <GameWrapper title="15 Puzzle" instructions={game?.info?.instructions}>
+        <GameWrapper title={t('games.puzzle15.name')} instructions={game?.info?.instructions}>
             <Game game={game} />
         </GameWrapper>
     );
