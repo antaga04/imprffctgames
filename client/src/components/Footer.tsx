@@ -14,7 +14,7 @@ const Footer = () => {
                 <div className="flex gap-4 flex-wrap w-full md:justify-end">
                     <div className="">
                         <p className="text-xs opacity-50 tracking-wider mb-2 uppercase">{t('footer.main')}</p>
-                        <div className="flex gap-2">
+                        <div className="flex gap-4 md:gap-2">
                             <Link
                                 to="/ranking"
                                 className="capitalize w-full flex items-center justify-between gap-2 group md:px-3 md:py-1 rounded-lg md:bg-[#f2f2f20f] md:hover:bg-[#f2f2f233] md:border md:border-[#f2f2f20a] md:hover:border-[#f2f2f21a] md:backdrop-blur-md md:transition-all md:duration-400 ease-custom-ease-1"
@@ -46,7 +46,7 @@ const Footer = () => {
                     </div>
                     <div className="">
                         <p className="text-xs opacity-50 tracking-wider mb-2 uppercase">{t('footer.contact')}</p>
-                        <div className="flex gap-2">
+                        <div className="flex gap-4 md:gap-2">
                             <SocialLink name="LinkedIn" link="https://www.linkedin.com/in/adrian-anta-gil/" />
                             <SocialLink name="GitHub" link="https://github.com/antaga04" />
                             <SocialLink name="Email" link="mailto:antaga04@gmail.com" />
