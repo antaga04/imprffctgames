@@ -138,6 +138,7 @@
         "check_results": "Checking results...",
         "draw_wp": "It's a draw! Well played.",
         "loading": "loading game...",
+        "loading_instructions": "Loading instructions",
         "multi_player": "Multiplayer",
         "new_game": "New Game",
         "not_found_db": "Game was not found in the database.",

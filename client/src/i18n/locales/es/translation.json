@@ -138,6 +138,7 @@
         "check_results": "Comprobando resultados...",
         "draw_wp": "¡Es un empate! Bien jugado.",
         "loading": "cargando juego...",
+        "loading_instructions": "Cargando instrucciones",
         "multi_player": "Multijugador",
         "new_game": "Nuevo Juego",
         "not_found_db": "El juego no se encontró en la base de datos.",
