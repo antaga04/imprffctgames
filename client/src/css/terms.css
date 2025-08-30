@@ -1,6 +1,5 @@
 .terms-container {
 	max-width: 800px;
-	margin: 0 auto;
 	padding: 2rem;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	line-height: 1.6;
@@ -9,6 +8,7 @@
 .terms-container h1 {
 	font-size: 2.2rem;
 	margin-bottom: 1.5rem;
+	line-height: 1.33;
 }
 
 .terms-container h2 {

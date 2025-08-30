@@ -8,7 +8,7 @@ const Terms = () => {
     return (
         <div className="w-full flex-1 flex items-center justify-center">
             <BackButton url="/" />
-            <article className="terms-container">
+            <article className="terms-container mt-14 mx-auto md:mt-0">
                 <h1>{t('terms.title')}</h1>
 
                 <section>
