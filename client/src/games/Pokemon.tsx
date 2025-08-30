@@ -154,7 +154,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         } catch (error) {
             console.error('Error fetching Pokémon data: ', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || t('games.pokemon.error'));
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('games.pokemon.error'));
         }
         setLoading(false);
     };
@@ -168,7 +168,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         } catch (error) {
             console.error('Error fetching Pokémon batch: ', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || t('games.pokemon.error'));
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('games.pokemon.error'));
         }
     };
 
@@ -218,7 +218,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         } catch (error) {
             console.error('Error fetching results:', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || t('games.pokemon.results_error'));
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('games.pokemon.results_error'));
         }
 
         setCheckingResults(false);

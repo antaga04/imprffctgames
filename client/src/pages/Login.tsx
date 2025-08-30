@@ -51,7 +51,7 @@ const LoginFrom = () => {
         toast.promise(login(email, password), {
             loading: t('login.loading'),
             success: t('login.success'),
-            error: (err) => err.response?.data?.message || t('login.error'),
+            error: (err) => t(`server.${t(`server.${err.response?.data?.i18n}`)}`) || t('login.error'),
         });
     };
 

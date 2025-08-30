@@ -19,7 +19,7 @@ const ConfirmEmail = () => {
             toast.promise(verifyEmail(token), {
                 loading: `${t('confirm_email.verifying')}...`,
                 success: (res) => res || t('confirm_email.success'),
-                error: (err) => err.response?.data?.message || t('confirm_email.error'),
+                error: (err) => t(`server.${err.response?.data?.i18n}`) || t('confirm_email.error'),
                 finally: () => navigate('/login'),
             });
         } else {

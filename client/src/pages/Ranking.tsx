@@ -102,7 +102,7 @@ const Ranking: React.FC = () => {
             } catch (error) {
                 console.error('Error fetching scores:', error);
                 const err = error as MyError;
-                toast.error(err.response?.data?.message || 'An error occurred fetching scores.');
+                toast.error(t(`server.${err.response?.data?.i18n}`) || 'An error occurred fetching scores.');
             } finally {
                 setIsLoading(false);
             }

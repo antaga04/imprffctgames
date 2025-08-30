@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                         sessionStorage.setItem('hasShownRegisterToast', 'true');
                     } else {
                         console.error('An unexpected error occurred:', error);
-                        toast.error(err.response?.data?.message || t('auth.general_error'));
+                        toast.error(t(`server.${err.response?.data?.i18n}`) || t('auth.general_error'));
                     }
 
                     setAuthState({

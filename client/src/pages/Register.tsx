@@ -60,7 +60,7 @@ const RegisterForm = () => {
             {
                 loading: t('register.loading'),
                 success: t('register.success'),
-                error: (error) => error.response?.data?.message || t('register.error'),
+                error: (err) => t(`server.${err.response?.data?.i18n}`) || t('register.error'),
             },
         );
     };

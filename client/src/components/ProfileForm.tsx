@@ -62,7 +62,7 @@ const AccountTab: React.FC<ProfileFormProps> = ({ profileData, setProfileData })
                 setProfileData({ ...profileData, ...fields });
                 return t('profile.account_tab.success');
             },
-            error: (err) => err.response?.data?.message || t('profile.account_tab.error'),
+            error: (err) => t(`server.${err.response?.data?.i18n}`) || t('profile.account_tab.error'),
             finally: () => {
                 setLoading(false);
                 setIsEdited(false);
@@ -138,7 +138,7 @@ const PasswordTab: React.FC = () => {
                 return t('profile.password_tab.success');
             },
             error: (err) => {
-                return err.response?.data?.message || t('profile.password_tab.error');
+                return t(`server.${err.response?.data?.i18n}`) || t('profile.password_tab.error');
             },
             finally: () => {
                 setLoading(false);

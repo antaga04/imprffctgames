@@ -56,7 +56,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         } catch (error) {
             console.error('Error fetching board:', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || t('games.puzzle15.board_error'));
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('games.puzzle15.board_error'));
         } finally {
             setLoading(false);
         }

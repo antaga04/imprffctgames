@@ -46,8 +46,8 @@ const RestorePasswordForm = () => {
 
         toast.promise(requestPasswordReset({ email }), {
             loading: t('restore_password.loading'),
-            success: (res) => res.data.i18n || t('restore_password.success'),
-            error: (err) => err.response.data.i18n || t('restore_password.error'),
+            success: (res) => t(`server.${res.data.i18n}`) || t('restore_password.success'),
+            error: (err) => t(`server.${err.response.data.i18n}`) || t('restore_password.error'),
             finally: () => setDisable(false),
         });
     };

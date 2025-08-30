@@ -27,7 +27,7 @@ const Profile = () => {
         } catch (error) {
             console.error('Error fetching user data:', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || t('profile.error'));
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('profile.error'));
         }
     };
 

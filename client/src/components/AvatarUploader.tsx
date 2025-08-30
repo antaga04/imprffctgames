@@ -50,7 +50,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
                 }));
                 setPendingDelete(false);
 
-                return response.data.message;
+                return t(`server.${response.data.i18n}`);
             } else {
                 const formData = new FormData();
                 formData.append('avatar', newAvatar!);
@@ -83,7 +83,7 @@ const AvatarUploader: React.FC<AvatarUploaderProps> = ({ currentAvatar, profileD
                     ? t('profile.avatar_uploader.delete_success')
                     : t('profile.avatar_uploader.save_success'),
             error: (err) =>
-                err.response?.data?.message || pendingDelete
+                t(`server.${t(`server.${err.response?.data?.i18n}`)}`) || pendingDelete
                     ? t('profile.avatar_uploader.delete_error')
                     : t('profile.avatar_uploader.save_error'),
         });

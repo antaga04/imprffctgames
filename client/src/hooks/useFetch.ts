@@ -16,7 +16,7 @@ export const useFetch = <T>(url: string, autoFetch = true) => {
         } catch (error) {
             console.error(`Error fetching ${url}:`, error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || t('globals.data_fetch_error'));
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('globals.data_fetch_error'));
         } finally {
             setLoading(false);
         }

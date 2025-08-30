@@ -53,7 +53,7 @@ const ResetPasswordFrom = () => {
                 return t('reset_password.success');
             },
             error: (err) => {
-                return err.response?.data?.message || t('reset_password.error');
+                return t(`server.${err.response?.data?.i18n}`) || t('reset_password.error');
             },
             finally: () => {
                 setDisable(false);

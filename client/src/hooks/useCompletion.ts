@@ -34,12 +34,12 @@ export const useGameCompletion = (gameId: string | undefined, slug: string) => {
                         },
                     });
                 } else if (err.response?.status === 409) {
-                    const message = err.response.data?.message ?? t('scores.not_uploaded');
+                    const message = t(`server.${err.response.data?.i18n}`) ?? t('scores.not_uploaded');
                     const payload = err.response.data?.payload;
                     toast.warning(`${message}. ${t('scores.previous_score')}: ${scoreFormatter(payload.scoreData)}`);
                 } else {
                     console.error('Error uploading score: ', error);
-                    toast.error(err?.response?.data?.message || t('scores.error'));
+                    toast.error(t(`server.${err?.response?.data?.i18n}`) || t('scores.error'));
                 }
             }
         } else {

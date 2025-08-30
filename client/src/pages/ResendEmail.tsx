@@ -28,7 +28,7 @@ const ResendEmail = () => {
         } catch (error) {
             console.error('Sending email error:', error);
             const err = error as MyError;
-            toast.error(err.response?.data?.message || t('resend_email.error'));
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('resend_email.error'));
         } finally {
             toast.dismiss(loadingToastId);
         }
