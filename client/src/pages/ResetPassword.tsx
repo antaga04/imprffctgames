@@ -5,13 +5,16 @@ import AuthInput from '@/components/ui/AuthInput';
 import ButtonForm from '@/components/ui/ButtonForm';
 import BackButton from '@/components/ui/BackButton';
 import SigninLogo from '@/components/ui/SigninLogo';
-import { Lock } from 'lucide-react';
-import axios from 'axios';
+import { useTranslation } from 'react-i18next';
+import { RESET_PASSWORD_INPUTS } from '@/lib/constants';
+import { focusFirstInvalidField, runValidations } from '@/lib/validate';
+import { resetPassword } from '@/services/userServices';
 
-const ResetPassword = () => {
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [disable, setDisable] = useState(false);
+const ResetPasswordFrom = () => {
+    const { t } = useTranslation();
+    const [fields, setFields] = useState({ newPassword: '', confirmPassword: '' });
+
+    const [disable, setDisable] = useState(true);
     const focusRef = useRef<HTMLInputElement>(null);
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
@@ -23,8 +26,9 @@ const ResetPassword = () => {
             focusRef.current.focus();
         }
         if (!token) {
-            toast.error('Missing or invalid token.');
+            toast.error(t('reset_password.missing_token'));
         }
+        // eslint-disable-next-line
     }, [token]);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -34,73 +38,79 @@ const ResetPassword = () => {
         setDisable(true);
         setTimeout(() => setDisable(false), 2000);
 
-        if (!newPassword || !confirmPassword) {
-            toast.error('All fields are required.');
+        const { errors, allErrors } = runValidations(fields);
+        if (allErrors.length > 0) {
+            focusFirstInvalidField(errors);
+            toast.error(t('validations.fix_errors'));
             return;
         }
 
-        if (newPassword !== confirmPassword) {
-            toast.error('Passwords do not match.');
-            return;
-        }
-
-        try {
-            setDisable(true);
-
-            const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/reset-password`, {
-                token,
-                password: newPassword,
-            });
-
-            toast.success(response.data?.message || 'Password reset successful!');
-            navigate('/login');
-        } catch (error) {
-            console.error('[ResetPassword] Error:', error);
-            const err = error as MyError;
-            toast.error(err.response?.data?.message || 'Something went wrong. Please try again later.');
-        } finally {
-            setDisable(false);
-        }
+        toast.promise(resetPassword({ token, password: fields.newPassword }), {
+            loading: t('reset_password.loading'),
+            success: () => {
+                setFields({ newPassword: '', confirmPassword: '' });
+                navigate('/login');
+                return t('reset_password.success');
+            },
+            error: (err) => {
+                return err.response?.data?.message || t('reset_password.error');
+            },
+            finally: () => {
+                setDisable(false);
+            },
+        });
     };
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        const updatedFields = { ...fields, [name]: value };
+
+        // Check if all fields are filled
+        const allFieldsFilled = Object.values(updatedFields).every((field) => field.trim() !== '');
+
+        setFields(updatedFields);
+        setDisable(!allFieldsFilled);
+    };
+
+    return (
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {RESET_PASSWORD_INPUTS.map(({ label, name, type, placeholder, Icon }) => (
+                <AuthInput
+                    key={name}
+                    label={label}
+                    name={name}
+                    type={type}
+                    placeholder={placeholder}
+                    Icon={Icon}
+                    value={fields[name as keyof typeof fields]}
+                    onChange={handleInputChange}
+                    activeValidation={true}
+                    originalPassword={type === 'password' ? fields.newPassword : undefined}
+                />
+            ))}
+
+            <ButtonForm text={t('reset_password.title')} disabled={disable || !token} />
+        </form>
+    );
+};
+
+const ResetPassword = () => {
+    const { t } = useTranslation();
     return (
         <div className="w-full flex-1 flex items-center justify-center">
             <BackButton url="/login" />
             <div className="flex flex-col w-full md:p-4 mx-auto md:-mt-3 max-w-[425px] md:max-w-[500px]">
                 <SigninLogo />
                 <section className="mt-5 flex flex-col gap-4 bg-[#f9fafb] text-[#111827] rounded-md px-8 py-4">
-                    <h1 className="lusiana-font text-2xl">Reset Password</h1>
-                    <p className="text-sm text-gray-600">Enter your new password below.</p>
-                    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                        <AuthInput
-                            label="New Password"
-                            name="newPassword"
-                            type="password"
-                            placeholder="Enter new password"
-                            Icon={Lock}
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            focusOnMount={focusRef}
-                            activeValidation
-                        />
-                        <AuthInput
-                            label="Confirm Password"
-                            name="confirmPassword"
-                            type="password"
-                            placeholder="Confirm new password"
-                            Icon={Lock}
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            activeValidation
-                        />
-                        <ButtonForm text="Reset Password" disabled={disable || !token} />
-                    </form>
+                    <h1 className="lusiana-font text-2xl">{t('reset_password.title')}</h1>
+                    <p className="text-sm text-gray-600">{t('reset_password.description')}</p>
+                    <ResetPasswordFrom />
                     <div className="text-center">
                         <Link
                             to="/login"
                             className="text-[#4b6a9d] hover:text-[#35517c] hover:underline transition-colors ease-in-out duration-200"
                         >
-                            Back to login
+                            {t('globals.back_login')}
                         </Link>
                     </div>
                 </section>
