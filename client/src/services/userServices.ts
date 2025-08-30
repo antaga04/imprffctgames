@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const USERS_URL = import.meta.env.VITE_API_URL + '/users/';
+const USERS_URL = import.meta.env.VITE_API_URL + '/users';
 
 export const updateAccount = async (data: { nickname: string }) => {
     return axios.put(USERS_URL, data, {
@@ -9,13 +9,25 @@ export const updateAccount = async (data: { nickname: string }) => {
 };
 
 export const updatePassword = async (data: { password: string; newPassword: string }) => {
-    return axios.put(USERS_URL + 'newpassword', data, {
+    return axios.put(USERS_URL + '/newpassword', data, {
         withCredentials: true,
     });
 };
 
 export const fetchUserData = async () => {
     return axios.get(USERS_URL, {
+        withCredentials: true,
+    });
+};
+
+export const resetPassword = async (data: { token: string | null; password: string }) => {
+    return axios.post(USERS_URL + '/reset-password', data, {
+        withCredentials: true,
+    });
+};
+
+export const requestPasswordReset = async (data: { email: string }) => {
+    return axios.post(USERS_URL + '/request-password-reset', data, {
         withCredentials: true,
     });
 };
