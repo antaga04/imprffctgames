@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Eye, EyeOff, CircleCheck, CircleX, CircleMinus } from 'lucide-react';
 import { getValidationSchema, validate, validateConfirmPassword } from '@/lib/validate';
+import { useTranslation } from 'react-i18next';
 
 const ValidationContainer: React.FC<ValidationContainerProps> = ({ heading, rules, renderIcon }) => (
     <div className="absolute z-10 mt-1 w-full max-w-md bg-white border border-gray-300 rounded-md shadow-lg p-3 text-sm text-gray-700 bottom-full left-0">
@@ -29,6 +30,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
     originalPassword,
     activeValidation = false,
 }) => {
+    const { t } = useTranslation();
     const [showPassword, setShowPassword] = useState(false);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
     const [showValidation, setShowValidation] = useState(false);
@@ -86,7 +88,7 @@ const AuthInput: React.FC<AuthInputProps> = ({
     return (
         <div className="form-field relative">
             <label htmlFor={name} className="block font-medium text-gray-700">
-                {label}
+                {t(label)}
             </label>
             <div className="relative flex items-center">
                 <input
@@ -96,11 +98,12 @@ const AuthInput: React.FC<AuthInputProps> = ({
                     value={value}
                     disabled={disabled}
                     onChange={onChange}
-                    placeholder={placeholder}
+                    placeholder={t(placeholder)}
                     className={`${disabled ? 'cursor-not-allowed' : ''} p-2 pl-10 pr-12 rounded-md border text-sm w-full ${borderColorClass}`}
                     ref={focusOnMount}
                     onFocus={handleFocus}
                     onBlur={handleBlur}
+                    autoComplete="on"
                 />
                 <Icon className="absolute left-3 top-2.5 h-4 w-4 text-gray-500" />
                 {type === 'password' && (
