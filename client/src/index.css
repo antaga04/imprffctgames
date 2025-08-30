@@ -99,6 +99,7 @@ main {
 		0 5px 15px #0057ff40,
 		0 -5px 15px #ff5a0033,
 		0 0 30px #fff6;
+	transition: transform 0.3s ease;
 }
 
 header>* {
@@ -333,6 +334,7 @@ header {
 	transform: rotate(-5deg);
 	transform-origin: bottom left;
 	font-size: 1.5rem;
+	transition: transform 0.4s ease;
 }
 
 .error-underline::after {
@@ -342,8 +344,57 @@ header {
 	right: 0;
 	bottom: 0;
 	height: 4px;
-	background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="4" viewBox="0 0 100 4"><path d="M0,2 Q2,0 4,2 T8,2 T12,2 T16,2 T20,2 T24,2 T28,2 T32,2 T36,2 T40,2 T44,2 T48,2 T52,2 T56,2 T60,2 T64,2 T68,2 T72,2 T76,2 T80,2 T84,2 T88,2 T92,2 T96,2 T100,2" fill="none" stroke="red" stroke-width="1"/></svg>');
+	background-image: url('/underline.svg');
 	background-repeat: repeat-x;
 	background-size: auto;
 	background-position: bottom;
+}
+
+/* --- animate the title --- */
+#logo h1:hover .neon-text {
+	animation: fallIn 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards,
+		neonBlink 1s;
+}
+
+/* Fall in place effect */
+@keyframes fallIn {
+	0% {
+		transform: translateY(-30px) rotate(-5deg);
+		opacity: 0.6;
+	}
+
+	70% {
+		transform: translateY(5px) rotate(2deg);
+		opacity: 1;
+	}
+
+	100% {
+		transform: translateY(0) rotate(0);
+	}
+}
+
+/* Neon flicker effect */
+@keyframes neonBlink {
+
+	0%,
+	18%,
+	22%,
+	25%,
+	53%,
+	57%,
+	100% {
+		text-shadow:
+			0 0 5px #fff,
+			0 0 15px var(--blueish),
+			0 0 30px var(--blueish),
+			0 0 60px #ff5a00;
+		opacity: 1;
+	}
+
+	20%,
+	24%,
+	55% {
+		text-shadow: none;
+		opacity: 0.7;
+	}
 }
