@@ -15,7 +15,7 @@ const SigninLogo: React.FC = () => {
                     rel="noopener noreferrer"
                     className="text-xs flex opacity-60 hover:opacity-75 transition-opacity ease-in-out duration-250"
                 >
-                    {t('gloabls.by')} Adrián Anta
+                    {t('globals.by')} Adrián Anta
                 </a>
             </div>
         </div>
