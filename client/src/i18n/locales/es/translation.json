@@ -1,0 +1,247 @@
+{
+    "auth": {
+        "general_error": "Ocurrió un error inesperado con la autenticación.",
+        "login_cta": "¡Puedes iniciar sesión para aparecer en el ranking!",
+        "login_required": "Inicia sesión para acceder a esta página.",
+        "session_expired": "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+    },
+    "footer": {
+        "author": "Diseñado y construido por",
+        "contact": "contacto",
+        "madewith": "Hecho con 🌶️ en macOS.",
+        "main": "principal"
+    },
+    "constants": {
+        "confirm_password_label": "Confirmar contraseña",
+        "confirm_password_placeholder": "Confirma tu contraseña",
+        "current_password_label": "Contraseña actual",
+        "current_password_placeholder": "Introduce tu contraseña actual",
+        "email_label": "Correo electrónico",
+        "email_placeholder": "Introduce tu correo electrónico",
+        "new_password_label": "Nueva contraseña",
+        "new_password_placeholder": "Introduce tu nueva contraseña",
+        "nickname_label": "Apodo",
+        "nickname_placeholder": "Introduce un apodo",
+        "password_label": "Contraseña",
+        "password_placeholder": "Introduce tu contraseña"
+    },
+    "validations": {
+        "fix_errors": "Por favor corrige los errores de validación.",
+        "matches": "Las contraseñas deben coincidir.",
+        "max_length": "Debe tener como máximo {{max}} caracteres.",
+        "min_length": "Debe tener al menos {{min}} caracteres.",
+        "must_have_original": "Configura una contraseña antes de confirmar.",
+        "no_spaces": "No puede contener espacios.",
+        "original_is_valid": "La contraseña no cumple los requisitos.",
+        "required": "Es obligatorio.",
+        "schema": {
+            "confirm_password": "La confirmación de la contraseña debe:",
+            "current_password": "La contraseña actual debe:",
+            "email_format": "Debe tener el formato nombre@ejemplo.com.",
+            "email": "El correo electrónico debe:",
+            "lowercase": "Contener al menos una letra minúscula.",
+            "new_password": "La nueva contraseña debe:",
+            "nickname": "El apodo debe:",
+            "number": "Contener al menos un número.",
+            "only_contains": "Contener solo letras, números y guiones bajos.",
+            "password": "La contraseña debe:",
+            "special_character": "Contener al menos un carácter especial.",
+            "unknown": "Esquema de validación desconocido.",
+            "uppercase": "Contener al menos una letra mayúscula."
+        }
+    },
+    "globals": {
+        "all_fields_required": "Todos los campos son obligatorios",
+        "available_soon": "Disponible pronto",
+        "back_home": "Volver al inicio",
+        "back_login": "Volver a iniciar sesión",
+        "back": "Atrás",
+        "by": "por",
+        "cancel": "Cancelar",
+        "confirmEmail": "confirmar correo",
+        "confirmPassword": "confirmar contraseña",
+        "congratulations": "¡Felicidades!",
+        "consistency": "consistencia",
+        "correct": "correcto",
+        "currentPassword": "contraseña actual",
+        "data_fetch_error": "Error al obtener los datos.",
+        "date": "Fecha",
+        "email": "correo",
+        "game": "juego",
+        "instructions": "instrucciones",
+        "languages": "Idiomas",
+        "leaderboard": "clasificación",
+        "loading": "Cargando",
+        "login": "Iniciar sesión",
+        "logout": "cerrar sesión",
+        "moves": "Movimientos",
+        "newPassword": "nueva contraseña",
+        "next": "siguiente",
+        "nickname": "apodo",
+        "password": "contraseña",
+        "pause": "pausa",
+        "play": "jugar",
+        "player": "Jugador",
+        "previous": "anterior",
+        "profile": "Perfil",
+        "ranking": "Ranking",
+        "register": "Registrarse",
+        "resendEmail": "reenviar correo",
+        "reset": "restablecer",
+        "resetPassword": "restablecer contraseña",
+        "restorePassword": "recuperar contraseña",
+        "resume": "reanudar",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "score": "puntuación",
+        "singout": "Cerrar sesión",
+        "start": "iniciar",
+        "submit": "Enviar",
+        "time": "Tiempo",
+        "total": "total",
+        "wpm": "ppm"
+    },
+    "games": {
+        "tictactoe": {
+            "name": "Tres en Raya",
+            "ranking": "El ranking se basa en el orden de ganar en el nivel imposible.",
+            "instructions": "Marca 3 casillas en una fila para ganar (cualquier dirección es válida).",
+            "board_label": "Tablero del juego Tres en Raya",
+            "turn": "Turno del jugador {{nextPlayer}}"
+        },
+        "lizardtype": {
+            "name": "LizardType",
+            "ranking": "El ranking se basa en mayor cantidad de palabras por minuto. La precisión es el desempate.",
+            "instructions": "Escribe tantas palabras como puedas en el tiempo dado. Intenta cometer la menor cantidad de errores."
+        },
+        "puzzle15": {
+            "name": "Rompecabezas 15",
+            "ranking": "El ranking se basa en una combinación de aciertos totales y precisión.",
+            "instructions": "Mueve las fichas en la cuadrícula para ordenarlas del 1 al 15.",
+            "board_error": "Error al obtener el tablero.",
+            "win": "Has resuelto el rompecabezas 🚀"
+        },
+        "pokemon": {
+            "name": "¿Quién es ese Pokémon?",
+            "ranking": "El ranking se basa en los tiempos más rápidos. Menos movimientos son el desempate.",
+            "instructions": "Adivina tantos Pokémon como puedas en {{INITIAL_TIME}} segundos.",
+            "error": "Error al obtener datos de Pokémon.",
+            "results_error": "Error al obtener resultados de Pokémon.",
+            "pokemon": "¡Pokémon!"
+        },
+        "not_found": {
+            "title": "¡Ups! Juego no encontrado",
+            "p1": "Parece que el juego que buscas no existe... ¡aún!"
+        },
+        "active_mode": "¡modo activado!",
+        "check_results": "Comprobando resultados...",
+        "draw_wp": "¡Es un empate! Bien jugado.",
+        "loading": "cargando juego...",
+        "multi_player": "Multijugador",
+        "new_game": "Nuevo Juego",
+        "not_found_db": "El juego no se encontró en la base de datos.",
+        "play_again": "Jugar de nuevo",
+        "single_player": "Un jugador",
+        "square_label": "Cuadro",
+        "switch_mode": "Cambiar modo de juego",
+        "time_up": "¡Tiempo agotado!",
+        "wins": "gana. ¡Felicidades!",
+        "you_guessed": "Adivinaste"
+    },
+    "ranking": {
+        "no_scores_available": "No hay puntuaciones disponibles",
+        "select_game": "Selecciona un juego"
+    },
+    "confirm_email": {
+        "title": "Confirmar correo",
+        "description": "Por favor confirma tu dirección de correo haciendo clic en el enlace que te enviamos.",
+        "resend": "Reenviar correo",
+        "success": "¡Correo confirmado con éxito!",
+        "verifying": "Verificando correo...",
+        "error": "Error al confirmar correo.",
+        "no_token": "No se proporcionó token."
+    },
+    "not_found": {
+        "title": "¡Ups! Página no encontrada",
+        "p1": "Algo salió mal.",
+        "p2": "¡Parece que la página que buscas no existe!"
+    },
+    "login": {
+        "loading": "Iniciando sesión...",
+        "success": "¡Sesión iniciada con éxito!",
+        "error": "Error al iniciar sesión. Inténtalo de nuevo.",
+        "forgot_password": "¿Olvidaste tu contraseña?",
+        "title": "Iniciar sesión",
+        "register": "Regístrate aquí",
+        "no_account": "¿No tienes cuenta?"
+    },
+    "register": {
+        "loading": "Registrando...",
+        "success": "El correo de confirmación ha sido reenviado. Por favor revisa tu bandeja.",
+        "error": "Ocurrió un error durante el registro.",
+        "title": "Registrarse",
+        "login": "Inicia sesión aquí",
+        "already_have_account": "¿Ya tienes cuenta?"
+    },
+    "profile": {
+        "title": "Perfil",
+        "error": "Ocurrió un error al obtener tu perfil.",
+        "avatar_uploader": {
+            "save_loading": "Guardando avatar...",
+            "save_success": "¡Avatar actualizado con éxito!",
+            "save_error": "Ocurrió un error al actualizar tu avatar.",
+            "delete_loading": "Eliminando avatar...",
+            "delete_success": "¡Avatar eliminado con éxito!",
+            "delete_error": "Ocurrió un error al eliminar tu avatar.",
+            "empty_avatar": "No hay avatar para eliminar.",
+            "delete": "Eliminar Avatar",
+            "upload": "Subir Avatar"
+        },
+        "account": "Cuenta",
+        "password": "Contraseña",
+        "account_tab": {
+            "loading": "Actualizando perfil...",
+            "success": "¡Perfil actualizado con éxito!",
+            "error": "Ocurrió un error al actualizar tu perfil."
+        },
+        "password_tab": {
+            "loading": "Actualizando contraseña...",
+            "success": "¡Contraseña actualizada con éxito!",
+            "error": "Ocurrió un error al actualizar tu contraseña."
+        }
+    },
+    "resend_email": {
+        "valid_email": "Por favor, proporciona una dirección de correo válida.",
+        "loading": "Verificando correo...",
+        "success": "Correo enviado con éxito.",
+        "error": "Ocurrió un error al enviar tu correo.",
+        "resend": "Reenviar correo"
+    },
+    "restore_password": {
+        "email_required": "Por favor, introduce tu dirección de correo.",
+        "title": "Recuperar Contraseña",
+        "description": "Introduce tu correo y te enviaremos instrucciones para restablecer tu contraseña.",
+        "loading": "Solicitando enlace de restablecimiento...",
+        "success": "Si existe una cuenta con este correo, recibirás un enlace de restablecimiento en breve.",
+        "error": "Ocurrió un error al solicitar el enlace de restablecimiento.",
+        "btn": "Enviar enlace"
+    },
+    "reset_password": {
+        "title": "Restablecer Contraseña",
+        "description": "Introduce tu nueva contraseña a continuación.",
+        "missing_token": "Token faltante o inválido.",
+        "loading": "Restableciendo contraseña...",
+        "success": "¡Contraseña restablecida con éxito!",
+        "error": "Ocurrió un error al restablecer tu contraseña."
+    },
+    "scores": {
+        "empty_game": "El ID del juego está vacío",
+        "session_expired": "Sesión expirada. Por favor inicia sesión para subir tu puntuación.",
+        "error": "Error al subir la puntuación.",
+        "login_to_upload": "Inicia sesión para subir la puntuación",
+        "loading": "Subiendo puntuaciones...",
+        "new_score": "Nueva puntuación",
+        "previous_score": "Puntuación anterior",
+        "not_uploaded": "Puntuación no subida"
+    }
+}

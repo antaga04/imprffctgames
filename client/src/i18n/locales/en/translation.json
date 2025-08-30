@@ -1,0 +1,247 @@
+{
+    "auth": {
+        "general_error": "An unexpected error occurred with authentication.",
+        "login_cta": "You can login to appear in the rankings!",
+        "login_required": "Login to access this page.",
+        "session_expired": "Your session has expired. Please log in again."
+    },
+    "footer": {
+        "author": "Designed and built by",
+        "contact": "contact",
+        "madewith": "Made with 🌶️ on macOS.",
+        "main": "main"
+    },
+    "constants": {
+        "confirm_password_label": "Confirm password",
+        "confirm_password_placeholder": "Confirm your password",
+        "current_password_label": "Current password",
+        "current_password_placeholder": "Enter your current password",
+        "email_label": "Email",
+        "email_placeholder": "Enter your email",
+        "new_password_label": "New password",
+        "new_password_placeholder": "Enter your new password",
+        "nickname_label": "Nickname",
+        "nickname_placeholder": "Enter a nickname",
+        "password_label": "Password",
+        "password_placeholder": "Enter your password"
+    },
+    "validations": {
+        "fix_errors": "Please fix validation errors.",
+        "matches": "Passwords must match.",
+        "max_length": "Be at most {{max}} characters.",
+        "min_length": "Be at least {{min}} characters.",
+        "must_have_original": "Set a password before confirming.",
+        "no_spaces": "Cannot contain spaces.",
+        "original_is_valid": "Password does not meet requirements.",
+        "required": "Is required.",
+        "schema": {
+            "confirm_password": "Confirm password must:",
+            "current_password": "Current password must:",
+            "email_format": "Must be in the format name@example.com.",
+            "email": "Email must:",
+            "lowercase": "Contain at least one lowercase letter.",
+            "new_password": "New password must:",
+            "nickname": "Nickname must:",
+            "number": "Contain at least one number.",
+            "only_contains": "Only contain letters, numbers, and underscores.",
+            "password": "Password must:",
+            "special_character": "Contain at least one special character.",
+            "unknown": "Unknown validation schema.",
+            "uppercase": "Contain at least one uppercase letter."
+        }
+    },
+    "globals": {
+        "all_fields_required": "All fields are required",
+        "available_soon": "Available soon",
+        "back_home": "Back to Home",
+        "back_login": "Back to Login",
+        "back": "Back",
+        "by": "by",
+        "cancel": "Cancel",
+        "confirmEmail": "confirm email",
+        "confirmPassword": "confirm password",
+        "congratulations": "Congratulations!",
+        "consistency": "consistency",
+        "correct": "correct",
+        "currentPassword": "current password",
+        "data_fetch_error": "Error fetching data.",
+        "date": "Date",
+        "email": "email",
+        "game": "game",
+        "instructions": "instructions",
+        "languages": "Languages",
+        "leaderboard": "leaderboard",
+        "loading": "Loading",
+        "login": "Login",
+        "logout": "logout",
+        "moves": "Moves",
+        "newPassword": "new password",
+        "next": "next",
+        "nickname": "nickname",
+        "password": "password",
+        "pause": "pause",
+        "play": "play",
+        "player": "Player",
+        "previous": "previous",
+        "profile": "Profile",
+        "ranking": "Ranking",
+        "register": "Register",
+        "resendEmail": "resend email",
+        "reset": "reset",
+        "resetPassword": "reset password",
+        "restorePassword": "restore password",
+        "resume": "resume",
+        "save": "Save",
+        "saving": "Saving...",
+        "score": "score",
+        "singout": "Sign out",
+        "start": "start",
+        "submit": "Submit",
+        "time": "Time",
+        "total": "total",
+        "wpm": "wpm"
+    },
+    "games": {
+        "tictactoe": {
+            "name": "Tic Tac Toe",
+            "ranking": "Ranking is based on order of winninig the imposible level.",
+            "instructions": "Check 3 tiles in a row to win (any diraction is valid).",
+            "board_label": "Tic Tac Toe game board",
+            "turn": "Player {{nextPlayer}}'s turn"
+        },
+        "lizardtype": {
+            "name": "LizardType",
+            "ranking": "Ranking is based on greater words per minute. Accuracy is the tiebreaker.",
+            "instructions": "Type as many words as you can in the given time. Try to have the least amount of mistakes."
+        },
+        "puzzle15": {
+            "name": "15 Puzzle",
+            "ranking": "Ranking is based on a combination of total correct guesses and accuracy.",
+            "instructions": "Move tiles in grid to order them from 1 to 15.",
+            "board_error": "Error fetching board.",
+            "win": "You solved the puzzle 🚀"
+        },
+        "pokemon": {
+            "name": "Who's that Pokémon?",
+            "ranking": "Ranking is based on faster times. Fewer moves are the tiebreaker.",
+            "instructions": "Guess as many Pokémon as you can in {{INITIAL_TIME}} seconds.",
+            "error": "Error fetching Pokémon data.",
+            "results_error": "Error fetching Pokémon results.",
+            "pokemon": "Pokémon!"
+        },
+        "not_found": {
+            "title": "Oops! Game Not Found",
+            "p1": "It seems like the game you're looking for doesn't exist... yet!"
+        },
+        "active_mode": "mode activated!",
+        "check_results": "Checking results...",
+        "draw_wp": "It's a draw! Well played.",
+        "loading": "loading game...",
+        "multi_player": "Multiplayer",
+        "new_game": "New Game",
+        "not_found_db": "Game was not found in the database.",
+        "play_again": "Play again",
+        "single_player": "Single Player",
+        "square_label": "Square",
+        "switch_mode": "Switch Game Mode",
+        "time_up": "Time's up!",
+        "wins": "wins. Congratulations!",
+        "you_guessed": "You guessed"
+    },
+    "ranking": {
+        "no_scores_available": "No scores available",
+        "select_game": "Select a Game"
+    },
+    "confirm_email": {
+        "title": "Confirm Email",
+        "description": "Please confirm your email address by clicking the link in the email we sent you.",
+        "resend": "Resend Email",
+        "success": "Email confirmed successfully!",
+        "verifying": "Verifying email...",
+        "error": "Error confirming email.",
+        "no_token": "No token provided."
+    },
+    "not_found": {
+        "title": "Oops! Page Not Found",
+        "p1": "Something went wrong.",
+        "p2": "It seem like the page you're looking for doesn't exist!"
+    },
+    "login": {
+        "loading": "Logging in...",
+        "success": "Logged in successfully!",
+        "error": "Login failed. Please try again.",
+        "forgot_password": "Forgot password?",
+        "title": "Login",
+        "register": "Register here",
+        "no_account": "Don't have an account?"
+    },
+    "register": {
+        "loading": "Registering...",
+        "success": "Confirmation email has been resent. Please check your inbox.",
+        "error": "An error occurred during registration.",
+        "title": "Register",
+        "login": "Login here",
+        "already_have_account": "Already have an account?"
+    },
+    "profile": {
+        "title": "Profile",
+        "error": "An error occurred while fetching your profile.",
+        "avatar_uploader": {
+            "save_loading": "Saving avatar...",
+            "save_success": "Avatar updated successfully!",
+            "save_error": "An error occurred while updating your avatar.",
+            "delete_loading": "Deleting avatar...",
+            "delete_success": "Avatar deleted successfully!",
+            "delete_error": "An error occurred while deleting your avatar.",
+            "empty_avatar": "No avatar to delete.",
+            "delete": "Delete Avatar",
+            "upload": "Upload Avatar"
+        },
+        "account": "Account",
+        "password": "Password",
+        "account_tab": {
+            "loading": "Updating profile...",
+            "success": "Profile updated successfully!",
+            "error": "An error occurred while updating your profile."
+        },
+        "password_tab": {
+            "loading": "Updating password...",
+            "success": "Password updated successfully!",
+            "error": "An error occurred while updating your password."
+        }
+    },
+    "resend_email": {
+        "valid_email": "Please provide a valid email address.",
+        "loading": "Verifying email...",
+        "success": "Email sent successfully.",
+        "error": "An error occurred while sending your email.",
+        "resend": "Resend Email"
+    },
+    "restore_password": {
+        "email_required": "Please enter your email address.",
+        "title": "Restore Password",
+        "description": "Enter your email address and we’ll send you instructions to reset your password.",
+        "loading": "Requesting password reset link...",
+        "success": "If an account with this email exists, you will receive a password reset link shortly.",
+        "error": "An error occurred while reuqesting password reset link.",
+        "btn": "Send reset link"
+    },
+    "reset_password": {
+        "title": "Reset Password",
+        "description": "Enter your new password below.",
+        "missing_token": "Missing or invalid token.",
+        "loading": "Reseting password...",
+        "success": "Password reset successful!",
+        "error": "An error occurred while reseting your password."
+    },
+    "scores": {
+        "empty_game": "Game ID is empty",
+        "session_expired": "Session expired. Please log in to upload your score.",
+        "error": "Error uploading score.",
+        "login_to_upload": "Login to upload score",
+        "loading": "Uploading scores...",
+        "new_score": "New score",
+        "previous_score": "Previous score",
+        "not_uploaded": "Score not uploaded"
+    }
+}
