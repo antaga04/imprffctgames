@@ -2,6 +2,7 @@ import { CreateEmailResponseSuccess, ErrorResponse, Resend } from 'resend';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { PUBLIC_DIR } from '..';
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -37,21 +38,11 @@ export const sendResetPasswordEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    const emailTemplatePath1 = path.resolve(__dirname, '../../public/resetPassword.html');
-    const emailTemplatePath = path.resolve(process.cwd(), 'public/resetPassword.html');
+    const emailTemplatePath = path.join(PUBLIC_DIR, 'resetPassword.html');
 
     try {
-        const message =
-            '################ filename: ' +
-            __filename +
-            '################ dirname: ' +
-            __dirname +
-            '################ ruta1: ' +
-            emailTemplatePath1 +
-            '################ ruta2: ' +
-            emailTemplatePath +
-            ' \n############# __filename: ' +
-            __filename;
+        const message = '################ ruta: ' + emailTemplatePath;
+
         throw new Error(message);
     } catch (error) {
         console.error('Error en utils/email:', error);
