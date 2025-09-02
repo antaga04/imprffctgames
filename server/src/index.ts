@@ -54,16 +54,6 @@ app.use('/hello', helloWorldLimiter, (req, res) => {
     res.send('Hello World yes!');
 });
 
-app.use('/debug', (req, res) => {
-    try {
-        const ruta = path.resolve(__dirname, '../public/index.html');
-        const message = '################ ruta: ' + ruta + ' \n############# __filename: ' + __filename;
-        throw new Error(message);
-    } catch (error) {
-        console.error('Error en /debug:', error);
-    }
-});
-
 // Controlador de rutas no encontradas
 app.use('*', (req, res, next) => {
     return sendError(res, 404, {

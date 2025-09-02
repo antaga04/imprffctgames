@@ -2,11 +2,11 @@ import { CreateEmailResponseSuccess, ErrorResponse, Resend } from 'resend';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { PUBLIC_DIR } from '..';
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const PUBLIC_PATH = process.env.IS_PRODUCTION === 'production' ? '../public' : '../../public';
 
 export const sendConfirmationEmail = async (
     email: string,
@@ -14,7 +14,7 @@ export const sendConfirmationEmail = async (
 ): Promise<{ data: CreateEmailResponseSuccess | null; error: ErrorResponse | null }> => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     // Load and customize email template
-    const emailTemplatePath = path.resolve(__dirname, '../../public/email.html');
+    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, '/email.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
@@ -38,16 +38,7 @@ export const sendResetPasswordEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    const emailTemplatePath = path.join(PUBLIC_DIR, 'resetPassword.html');
-
-    try {
-        const message = '################ ruta: ' + emailTemplatePath;
-
-        throw new Error(message);
-    } catch (error) {
-        console.error('Error en utils/email:', error);
-    }
-
+    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, '/resetPassword.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const resetPasswordLink = `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(token)}`;
@@ -71,7 +62,7 @@ export const sendAccountDeletionEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    const emailTemplatePath = path.resolve(process.cwd(), 'public/accountDeletion.html');
+    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, '/accountDeletion.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const accountDeletionLink = `${process.env.CLIENT_URL}/delete-account?token=${encodeURIComponent(token)}`;
