@@ -13,7 +13,7 @@ export const sendConfirmationEmail = async (
 ): Promise<{ data: CreateEmailResponseSuccess | null; error: ErrorResponse | null }> => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     // Load and customize email template
-    const emailTemplatePath = path.resolve(__dirname, '../../public/email.html');
+    const emailTemplatePath = path.resolve(__dirname, '../templates/email.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
@@ -37,7 +37,7 @@ export const sendResetPasswordEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    const emailTemplatePath = path.resolve(__dirname, '../../public/resetPassword.html');
+    const emailTemplatePath = path.resolve(__dirname, '../templates/resetPassword.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const resetPasswordLink = `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(token)}`;
@@ -61,7 +61,7 @@ export const sendAccountDeletionEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    const emailTemplatePath = path.resolve(__dirname, '../../public/accountDeletion.html');
+    const emailTemplatePath = path.resolve(__dirname, '../templates/accountDeletion.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const accountDeletionLink = `${process.env.CLIENT_URL}/delete-account?token=${encodeURIComponent(token)}`;
