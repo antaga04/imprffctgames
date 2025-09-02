@@ -426,7 +426,7 @@ export const confirmEmail = async (req: Request, res: Response) => {
 
         let decoded: TokenPayload;
         try {
-            decoded = jwt.verify(token, process.env.PASSWORD_RESET_SECRET!) as TokenPayload;
+            decoded = jwt.verify(token, process.env.EMAIL_CONFIRMATION_SECRET!) as TokenPayload;
         } catch (err) {
             return sendError(res, 400, {
                 i18n: 'user.invalid_token',
