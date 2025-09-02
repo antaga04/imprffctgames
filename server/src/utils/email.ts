@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PUBLIC_PATH = process.env.IS_PRODUCTION === 'production' ? '../public/' : '../../public/';
+const PUBLIC_PATH = process.env.IS_PRODUCTION === 'true' ? '../public/' : '../../public/';
 
 export const sendConfirmationEmail = async (
     email: string,
