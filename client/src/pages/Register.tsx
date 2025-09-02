@@ -23,6 +23,7 @@ const RegisterForm = () => {
     const navigate = useNavigate();
     const focusRef = useRef<HTMLInputElement>(null);
     const [disable, setDisable] = useState(false);
+    const successRef = useRef(false);
 
     useEffect(() => {
         if (focusRef.current) {
@@ -55,14 +56,20 @@ const RegisterForm = () => {
             return;
         }
 
-        toast.promise(
-            register(nickname.trim(), email.trim(), password.trim()).then(() => navigate('/login')),
-            {
-                loading: t('register.loading'),
-                success: t('register.success'),
-                error: (err) => t(`server.${err.response?.data?.i18n}`) || t('register.error'),
+        toast.promise(register(nickname.trim(), email.trim(), password.trim()), {
+            loading: t('register.loading'),
+            success: () => {
+                navigate('/login');
+                successRef.current = true;
+                return t('register.success');
             },
-        );
+            error: (err) => t(`server.${err.response?.data?.i18n}`) || t('register.error'),
+        });
+
+        if (successRef.current) {
+            toast.info(t('register.check_email'));
+            successRef.current = false;
+        }
     };
 
     return (
