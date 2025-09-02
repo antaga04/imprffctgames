@@ -34,6 +34,21 @@ type ProfileData = {
     scores: Score[];
 };
 
+interface DecisionToastProps {
+    title: ReactNode;
+    body: ReactNode;
+    onConfirm: () => void;
+    onCancel: () => void;
+    confirmText?: string;
+    cancelText?: string;
+    confirmClassName?: string;
+    cancelClassName?: string;
+}
+
+interface DecisionToastOptions extends DecisionToastProps {
+    duration?: number;
+}
+
 type MyAvatarProps = {
     url: string;
     alt: string;
