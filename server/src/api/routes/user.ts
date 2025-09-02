@@ -25,6 +25,7 @@ import {
 } from '@/middlewares/rateLimiters';
 import { emailValidationMiddleware } from '@/middlewares/emailValidationAPI';
 import { mxRecordLookup } from '@/middlewares/mxRecordLookup';
+import { deleteAccount, requestAccountDeletion } from '../controllers/email';
 
 const router: Router = Router();
 
@@ -40,6 +41,9 @@ router.post(
     emailValidationMiddleware,
     resendConfirmationEmail,
 );
+
+router.get('/delete', hasValidAuthJwt, requestPasswordResetLimiter, requestAccountDeletion);
+router.delete('/delete', hasValidAuthJwt, resetPasswordLimiter, deleteAccount);
 
 router.post('/request-password-reset', requestPasswordResetLimiter, requestPasswordReset);
 router.post('/reset-password', resetPasswordLimiter, resetPassword);
