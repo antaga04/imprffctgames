@@ -14,8 +14,6 @@ export const sendConfirmationEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
     // Load and customize email template
     const emailTemplatePath = path.resolve(__dirname, '../../public/email.html');
-    console.error('Ruta:', emailTemplatePath);
-    console.error('Ruta de utils/email:', __filename);
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
@@ -39,8 +37,26 @@ export const sendResetPasswordEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    // const emailTemplatePath = path.resolve(__dirname, '../templates/resetPassword.html');
+    const emailTemplatePath1 = path.resolve(__dirname, '../../public/resetPassword.html');
     const emailTemplatePath = path.resolve(process.cwd(), 'public/resetPassword.html');
+
+    try {
+        const message =
+            '################ filename: ' +
+            __filename +
+            '################ dirname: ' +
+            __dirname +
+            '################ ruta1: ' +
+            emailTemplatePath1 +
+            '################ ruta2: ' +
+            emailTemplatePath +
+            ' \n############# __filename: ' +
+            __filename;
+        throw new Error(message);
+    } catch (error) {
+        console.error('Error en utils/email:', error);
+    }
+
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const resetPasswordLink = `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(token)}`;
