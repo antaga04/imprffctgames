@@ -48,7 +48,7 @@ const EmailForm: React.FC<{ onSubmit: EmailFormProps }> = ({ onSubmit }) => {
 
         setDisable(true);
 
-        toast.promise(onSubmit.function(email), {
+        toast.promise(onSubmit.function(email.trim()), {
             loading: onSubmit.loading,
             success: (res) => t(`server.${res.data.i18n}`) || onSubmit.success,
             error: (err) => t(`server.${err.response.data.i18n}`) || onSubmit.error,
