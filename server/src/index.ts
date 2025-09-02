@@ -42,7 +42,10 @@ app.disable('x-powered-by');
 app.use(express.static(path.resolve(__dirname, '../public')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../public/index.html'));
+    const ruta = path.resolve(__dirname, '../public/index.html');
+    console.info('Ruta:', ruta);
+    console.log('Ruta del index:', __filename);
+    res.sendFile(ruta);
 });
 
 app.use('/api', mainRouter);

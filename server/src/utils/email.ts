@@ -13,7 +13,9 @@ export const sendConfirmationEmail = async (
 ): Promise<{ data: CreateEmailResponseSuccess | null; error: ErrorResponse | null }> => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     // Load and customize email template
-    const emailTemplatePath = path.resolve(process.cwd(), 'public/email.html');
+    const emailTemplatePath = path.resolve(__dirname, '../../public/email.html');
+    console.info('Ruta:', emailTemplatePath);
+    console.log('Ruta de utils/email:', __filename);
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
