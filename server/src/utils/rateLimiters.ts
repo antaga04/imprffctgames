@@ -27,14 +27,14 @@ const getUserIdentifier = async (req: Request) => {
 };
 
 // Factory function to create multiple rate limiters
-export const createRateLimiter = (options: { windowMs: number; limit: number; message: string }) => {
+export const createRateLimiter = (options: { windowMs: number; limit: number; message: string; i18n: string }) => {
     return rateLimit({
         windowMs: options.windowMs,
         limit: options.limit,
         keyGenerator: async (req) => await getUserIdentifier(req),
         handler: (req, res) => {
             sendError(res, 429, {
-                i18n: 'rate_limit_exceeded',
+                i18n: options.i18n,
                 message: options.message,
             });
         },
