@@ -1,64 +1,40 @@
 import BackButton from '@/components/ui/BackButton';
-import axios from 'axios';
-import React, { useRef } from 'react';
+import EmailForm from '@/components/ui/EmailForm';
+import SigninLogo from '@/components/ui/SigninLogo';
+import { resendEmail } from '@/services/userServices';
 import { useTranslation } from 'react-i18next';
-import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 const ResendEmail = () => {
     const { t } = useTranslation();
-    const formRef = useRef<HTMLFormElement | null>(null);
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-
-        const form = e.target as HTMLFormElement;
-        const emailInput = form.elements.namedItem('email') as HTMLInputElement;
-        const email = emailInput?.value;
-
-        if (!email) {
-            toast.error(t('resend_email.valid_email'));
-            return;
-        }
-
-        const loadingToastId = toast.loading(t('resend_email.loading'));
-
-        try {
-            await axios.post(`${import.meta.env.VITE_API_URL}/users/resend-email`, { email });
-            toast.success(t('resend_email.success'));
-        } catch (error) {
-            console.error('Sending email error:', error);
-            const err = error as MyError;
-            toast.error(t(`server.${err.response?.data?.i18n}`) || t('resend_email.error'));
-        } finally {
-            toast.dismiss(loadingToastId);
-        }
+    const onSubmit = {
+        loading: t('resend_email.loading'),
+        success: t('resend_email.success'),
+        error: t('resend_email.error'),
+        function: resendEmail,
     };
+
     return (
-        <section className="flex flex-col items-center justify-center min-h-screen p-6">
-            <BackButton />
-            <form
-                ref={formRef}
-                onSubmit={handleSubmit}
-                className="bg-black/50 mt-6 flex h-10 items-center  justify-between gap-2 overflow-hidden rounded-md shadow-border focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-0 dark:bg-[#0B0B09] dark:focus-within:ring-white/20 border-gray-200 focus-within:border-gray-400 focus-within:ring-white/20"
-            >
-                <label htmlFor="email" className="sr-only">
-                    {t('constants.email_label')}
-                </label>
-                <input
-                    id="email"
-                    name="email"
-                    className="text-white h-full w-[40%] grow border-none bg-transparent px-3.5 transition-colors placeholder:text-gray-300 focus:outline-none"
-                    required
-                    placeholder="Enter your email"
-                />
-                <button
-                    type="submit"
-                    className="text-black mr-1 h-[30px] rounded-[4px] bg-white hover:bg-white/90  transition-colors duration-150 px-1.5 text-sm font-medium md:px-3.5"
-                >
-                    {t('resend_email.resend')}
-                </button>
-            </form>
-        </section>
+        <div className="w-full flex-1 flex items-center justify-center">
+            <BackButton url="/login" />
+            <div className="flex flex-col w-full md:p-4 mx-auto md:-mt-3 max-w-[425px] md:max-w-[500px]">
+                <SigninLogo />
+                <section className="mt-5 flex flex-col gap-4 bg-[#f9fafb] text-[#111827] rounded-md px-8 py-4">
+                    <h1 className="lusiana-font text-2xl">{t('restore_password.title')}</h1>
+                    <p className="text-sm text-gray-600">{t('restore_password.description')}</p>
+                    <EmailForm onSubmit={onSubmit} />
+                    <div className="text-center">
+                        <Link
+                            to="/login"
+                            className="text-[#4b6a9d] hover:text-[#35517c] hover:underline transition-colors ease-in-out duration-200"
+                        >
+                            {t('globals.back_login')}
+                        </Link>
+                    </div>
+                </section>
+            </div>
+        </div>
     );
 };
 
