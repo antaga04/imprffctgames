@@ -7,7 +7,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectToDatabase } from '@/config/db';
 import mainRouter from '@/api/routes/index';
-import { generalLimiter } from '@/middlewares/rateLimiters';
+import { generalLimiter, helloWorldLimiter } from '@/middlewares/rateLimiters';
 import { sendError } from './utils/response';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,6 +46,12 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', mainRouter);
+
+app.use('/hello', helloWorldLimiter, (req, res) => {
+    console.log(req.headers);
+
+    res.send('Hello World yes!');
+});
 
 // Controlador de rutas no encontradas
 app.use('*', (req, res, next) => {
