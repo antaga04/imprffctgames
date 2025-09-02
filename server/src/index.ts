@@ -43,8 +43,8 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 
 app.get('/', (req, res) => {
     const ruta = path.resolve(__dirname, '../public/index.html');
-    console.info('Ruta:', ruta);
-    console.log('Ruta del index:', __filename);
+    console.warn('Ruta:', ruta);
+    console.warn('Ruta del index:', __filename);
     res.sendFile(ruta);
 });
 
