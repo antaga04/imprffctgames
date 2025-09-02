@@ -166,7 +166,8 @@
         "success": "Email confirmed successfully!",
         "verifying": "Verifying email...",
         "error": "Error confirming email.",
-        "no_token": "No token provided."
+        "no_token": "No token provided.",
+        "note": "And if you haven't received the email, you can request a new one below."
     },
     "not_found": {
         "title": "Oops! Page Not Found",

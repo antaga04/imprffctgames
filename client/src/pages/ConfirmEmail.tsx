@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import BackButton from '@/components/ui/BackButton';
-import { verifyEmail } from '@/services/requests';
+import { verifyEmail } from '@/services/userServices';
 import { useTranslation } from 'react-i18next';
 
 const ConfirmEmail = () => {
@@ -36,6 +36,8 @@ const ConfirmEmail = () => {
 
                 <h1 className="text-4xl font-bold neon-text text-white mb-2">{t('confirm_email.title')}</h1>
                 <p className="text-lg text-slate-300 mb-4">{t('confirm_email.description')}</p>
+                <p className="text-lg text-slate-300 mb-4">{t('register.check_email')}</p>
+                <p className="text-lg text-slate-300 mb-4">{t('confirm_email.note')}</p>
                 <Link to="/resend-email">
                     <span className="bg-white hover:bg-white/90 transition-colors duration-150 px-1.5 text-sm font-medium md:px-3.5 rounded-[4px] py-1 text-black">
                         {t('confirm_email.resend')}

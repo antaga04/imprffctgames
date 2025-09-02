@@ -166,7 +166,8 @@
         "success": "¡Correo confirmado con éxito!",
         "verifying": "Verificando correo...",
         "error": "Error al confirmar correo.",
-        "no_token": "No se proporcionó token."
+        "no_token": "No se proporcionó token.",
+        "note": "Y si no has recibido el correo, puedes solicitar uno nuevo a continuación."
     },
     "not_found": {
         "title": "¡Ups! Página no encontrada",
