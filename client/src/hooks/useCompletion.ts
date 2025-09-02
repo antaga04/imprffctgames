@@ -45,7 +45,7 @@ export const useGameCompletion = (gameId: string | undefined, slug: string) => {
         } else {
             toast.info(t('scores.login_to_upload'), {
                 action: {
-                    label: 'Login',
+                    label: t('globals.login'),
                     onClick: () => navigate('/login'),
                 },
             });
