@@ -10,4 +10,5 @@ export default defineConfig({
     sourcemap: true,
     splitting: false,
     tsconfig: './tsconfig.json',
+    onSuccess: 'cp -r src/templates dist/templates',
 });
