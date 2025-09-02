@@ -43,8 +43,6 @@ app.use(express.static(path.resolve(__dirname, '../public')));
 
 app.get('/', (req, res) => {
     const ruta = path.resolve(__dirname, '../public/index.html');
-    console.error('Ruta:', ruta);
-    console.error('Ruta del index:', __filename);
     res.sendFile(ruta);
 });
 
@@ -54,6 +52,16 @@ app.use('/hello', helloWorldLimiter, (req, res) => {
     console.log(req.headers);
 
     res.send('Hello World yes!');
+});
+
+app.use('/debug', (req, res) => {
+    try {
+        const ruta = path.resolve(__dirname, '../public/index.html');
+        const message = '################ ruta: ' + ruta + ' \n############# __filename: ' + __filename;
+        throw new Error(message);
+    } catch (error) {
+        console.error('Error en /debug:', error);
+    }
 });
 
 // Controlador de rutas no encontradas
