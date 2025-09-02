@@ -3,7 +3,9 @@
         "general_error": "Ocurrió un error inesperado con la autenticación.",
         "login_cta": "¡Puedes iniciar sesión para aparecer en el ranking!",
         "login_required": "Inicia sesión para acceder a esta página.",
-        "session_expired": "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+        "session_expired": "Tu sesión ha expirado. Por favor, inicia sesión nuevamente.",
+        "resend_email": "Reenviar correo electrónico",
+        "email_advice": "Por favor, revisa tu bandeja de entrada y la carpeta de spam para el correo."
     },
     "footer": {
         "author": "Diseñado y construido por",
@@ -75,17 +77,17 @@
         "login": "Iniciar sesión",
         "logout": "cerrar sesión",
         "moves": "Movimientos",
-		"more_pages": "Más páginas",
+        "more_pages": "Más páginas",
         "newPassword": "nueva contraseña",
         "next": "Siguiente",
-		"next_page_aria": "Ir a la página siguiente",
+        "next_page_aria": "Ir a la página siguiente",
         "nickname": "apodo",
         "password": "contraseña",
         "pause": "pausa",
         "play": "jugar",
         "player": "Jugador",
         "previous": "Anterior",
-		"previous_page_aria": "Ir a la página anterior",
+        "previous_page_aria": "Ir a la página anterior",
         "profile": "Perfil",
         "ranking": "Ranking",
         "register": "Registrarse",
@@ -186,7 +188,8 @@
         "error": "Ocurrió un error durante el registro.",
         "title": "Registrarse",
         "login": "Inicia sesión aquí",
-        "already_have_account": "¿Ya tienes cuenta?"
+        "already_have_account": "¿Ya tienes cuenta?",
+        "check_email": "No olvides revisar tu carpeta de spam."
     },
     "profile": {
         "title": "Perfil",
@@ -213,6 +216,24 @@
             "loading": "Actualizando contraseña...",
             "success": "¡Contraseña actualizada con éxito!",
             "error": "Ocurrió un error al actualizar tu contraseña."
+        },
+        "danger_zone": {
+            "title": "Zona de Peligro",
+            "description": "Esta es la zona de peligro. Ten cuidado con las acciones que tomes aquí.",
+            "delete": {
+                "p1": "Puedes eliminar tu cuenta y todos tus datos.",
+                "p2": "Se enviará un correo a tu dirección de correo para confirmar la eliminación de tu cuenta.",
+                "p3": "Después de confirmar la eliminación de tu cuenta, tu cuenta y todos tus datos serán eliminados permanentemente.",
+                "button": "Eliminar Cuenta",
+                "toast": {
+                    "title": "Solicitar Eliminación de Cuenta",
+                    "p1": "¿Estás seguro de que deseas eliminar tu cuenta?",
+                    "p2": "Esta acción enviará un correo a tu dirección de correo para confirmar la eliminación de tu cuenta.",
+                    "loading": "Solicitando eliminación de cuenta...",
+                    "success": "¡Eliminación de cuenta solicitada con éxito!",
+                    "error": "Ocurrió un error al solicitar la eliminación de la cuenta."
+                }
+            }
         }
     },
     "resend_email": {
@@ -248,6 +269,14 @@
         "new_score": "Nueva puntuación",
         "previous_score": "Puntuación anterior",
         "not_uploaded": "Puntuación no subida"
+    },
+    "delete_account": {
+        "title": "Eliminar Cuenta",
+        "description": "¿Estás seguro de que deseas eliminar tu cuenta?",
+        "warning": "Esta acción no se puede deshacer.",
+        "loading": "Eliminando cuenta...",
+        "success": "¡Cuenta eliminada con éxito!",
+        "error": "Ocurrió un error al eliminar tu cuenta."
     },
     "server": {
         "not_found": "Ruta no encontrada",
