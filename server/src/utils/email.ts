@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PUBLIC_PATH = process.env.IS_PRODUCTION === 'production' ? '../public' : '../../public';
+const PUBLIC_PATH = process.env.IS_PRODUCTION === 'production' ? '../public/' : '../../public/';
 
 export const sendConfirmationEmail = async (
     email: string,
@@ -14,7 +14,7 @@ export const sendConfirmationEmail = async (
 ): Promise<{ data: CreateEmailResponseSuccess | null; error: ErrorResponse | null }> => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     // Load and customize email template
-    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, '/email.html');
+    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, 'email.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const confirmationLink = `${process.env.CLIENT_URL}/confirm-email?token=${token}`;
@@ -38,7 +38,7 @@ export const sendResetPasswordEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, '/resetPassword.html');
+    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, 'resetPassword.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const resetPasswordLink = `${process.env.CLIENT_URL}/reset-password?token=${encodeURIComponent(token)}`;
@@ -62,7 +62,7 @@ export const sendAccountDeletionEmail = async (
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Load and customize email template
-    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, '/accountDeletion.html');
+    const emailTemplatePath = path.resolve(__dirname, PUBLIC_PATH, 'accountDeletion.html');
     const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf-8');
 
     const accountDeletionLink = `${process.env.CLIENT_URL}/delete-account?token=${encodeURIComponent(token)}`;
