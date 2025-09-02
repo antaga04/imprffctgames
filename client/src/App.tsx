@@ -15,6 +15,7 @@ import ResendEmail from './pages/ResendEmail';
 import RestorePassword from './pages/RestorePassword';
 import ResetPassword from './pages/ResetPassword';
 import Terms from './pages/Terms';
+import DeleteAccount from './pages/DeleteAccount';
 
 function App() {
     console.log(`
@@ -48,6 +49,7 @@ Hi there! 👋 I hope you like what you see here. Enjoy! 🚀
                         <Route path="/resend-email" element={<ResendEmail />} />
                         <Route path="/restore-password" element={<RestorePassword />} />
                         <Route path="/reset-password" element={<ResetPassword />} />
+                        <Route path="/delete-account" element={<DeleteAccount />} />
                         <Route path="/terms" element={<Terms />} />
                         <Route path="*" element={<NotFound />} />
                     </Routes>
