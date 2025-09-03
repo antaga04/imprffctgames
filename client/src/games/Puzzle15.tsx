@@ -231,7 +231,7 @@ const Puzzle15: React.FC = () => {
     const { t } = useTranslation();
 
     return (
-        <GameWrapper title={t('games.puzzle15.name')} instructions={game?.info?.instructions}>
+        <GameWrapper title={t('games.puzzle15.name')} instructions={t('games.puzzle15.instructions')}>
             <Game game={game} />
         </GameWrapper>
     );
