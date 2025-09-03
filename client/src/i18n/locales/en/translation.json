@@ -53,6 +53,7 @@
         }
     },
     "globals": {
+        "accuracy": "accuracy",
         "all_fields_required": "All fields are required",
         "available_soon": "Available soon",
         "back_home": "Back to Home",
@@ -101,6 +102,7 @@
         "score": "score",
         "singout": "Sign out",
         "start": "start",
+        "settings": "Settings",
         "submit": "Submit",
         "terms": "Terms",
         "time": "Time",
@@ -118,7 +120,9 @@
         "lizardtype": {
             "name": "LizardType",
             "ranking": "Ranking is based on greater words per minute. Accuracy is the tiebreaker.",
-            "instructions": "Type as many words as you can in the given time. Try to have the least amount of mistakes."
+            "instructions": "Type as many words as you can in the given time. Try to have the least amount of mistakes.",
+            "focus_text": "Click here and start typing to begin the test",
+            "completed": "Test Completed! Check your stats."
         },
         "puzzle15": {
             "name": "15 Puzzle",

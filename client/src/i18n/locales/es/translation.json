@@ -53,6 +53,7 @@
         }
     },
     "globals": {
+        "accuracy": "Precisión",
         "all_fields_required": "Todos los campos son obligatorios",
         "available_soon": "Disponible pronto",
         "back_home": "Volver al inicio",
@@ -92,7 +93,7 @@
         "ranking": "Ranking",
         "register": "Registrarse",
         "resendEmail": "reenviar correo",
-        "reset": "restablecer",
+        "reset": "Restablecer",
         "resetPassword": "restablecer contraseña",
         "restorePassword": "recuperar contraseña",
         "resume": "reanudar",
@@ -101,6 +102,7 @@
         "score": "puntuación",
         "singout": "Cerrar sesión",
         "start": "iniciar",
+        "settings": "Configuraciones",
         "submit": "Enviar",
         "terms": "Términos",
         "time": "Tiempo",
@@ -118,7 +120,9 @@
         "lizardtype": {
             "name": "LizardType",
             "ranking": "El ranking se basa en mayor cantidad de palabras por minuto. La precisión es el desempate.",
-            "instructions": "Escribe tantas palabras como puedas en el tiempo dado. Intenta cometer la menor cantidad de errores."
+            "instructions": "Escribe tantas palabras como puedas en el tiempo dado. Intenta cometer la menor cantidad de errores.",
+            "focus_text": "Haz clic aquí y comienza a escribir para iniciar la prueba.",
+            "completed": "¡Prueba completada! Revisa tus estadísticas."
         },
         "puzzle15": {
             "name": "Juego del 15",
