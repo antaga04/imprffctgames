@@ -1,7 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSignal, gameSessionId, initialTime }) => {
+const DecrementTimer: React.FC<DecrementTimerProps> = ({
+    onGameFinished,
+    resetSignal,
+    gameSessionId,
+    initialTime,
+    text,
+}) => {
     const { t } = useTranslation();
     const [timeLeft, setTimeLeft] = useState<number>(initialTime);
 
@@ -30,7 +36,7 @@ const DecrementTimer: React.FC<DecrementTimerProps> = ({ onGameFinished, resetSi
 
     return (
         <p className="font-mono min-w-[6ch] text-right">
-            {t('globals.time')}:{' '}
+            {text && `${t('globals.time')}: `}
             <span className={`font-mono ${timeColorClass}`}>{String(timeLeft).padStart(2, '0')}s</span>
         </p>
     );

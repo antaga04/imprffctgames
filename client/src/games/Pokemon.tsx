@@ -292,6 +292,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                                 onGameFinished={handleGameOver}
                                 resetSignal={playAgainKey}
                                 gameSessionId={gameSessionId}
+                                text={true}
                             />
                             <div className="flex justify-between gap-4 items-center">
                                 <span className="font-mono min-w-[6ch] text-right">
@@ -337,7 +338,7 @@ const PokemonGame: React.FC = () => {
     );
 
     return (
-        <GameWrapper title={t('games.pokemon.name')} height="479px" instructions={game?.info?.instructions}>
+        <GameWrapper title={t('games.pokemon.name')} height="479px" instructions={t('games.pokemon.instructions')}>
             <Game game={game} />
         </GameWrapper>
     );
