@@ -50,3 +50,34 @@ export const getTargetIndex = (key: string, emptyIndex: number, emptyRow: number
 
     return targetIndex;
 };
+
+export function getColorClass(value: number, type: string) {
+    let thresholds = [20, 40, 60, 80, 100, 150];
+
+    switch (type) {
+        case 'wpm':
+        case 'raw':
+            thresholds = [20, 40, 60, 80, 100, 150];
+            break;
+        case 'accuracy':
+        case 'consistency':
+            thresholds = [15, 35, 50, 70, 85, 95];
+            break;
+        case 'performance':
+            thresholds = [20, 40, 60, 70, 85, 95];
+            break;
+        case 'errorRate':
+            thresholds = [90, 70, 50, 20, 10, 5];
+            break;
+        default:
+            break;
+    }
+
+    if (value < thresholds[0]) return 'text-red-500';
+    if (value < thresholds[1]) return 'text-orange-500';
+    if (value < thresholds[2]) return 'text-yellow-500';
+    if (value < thresholds[3]) return 'text-green-500';
+    if (value < thresholds[4]) return 'text-blue-500';
+    if (value < thresholds[5]) return 'text-purple-500';
+    return 'text-blue-500';
+}
