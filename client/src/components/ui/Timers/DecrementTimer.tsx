@@ -35,7 +35,7 @@ const DecrementTimer: React.FC<DecrementTimerProps> = ({
     const timeColorClass = timeLeft < 11 ? 'text-red-600' : 'text-white';
 
     return (
-        <p className="font-mono min-w-[6ch] text-right">
+        <p className={`font-mono text-right ${text && 'min-w-[6ch]'}`}>
             {text && `${t('globals.time')}: `}
             <span className={`font-mono ${timeColorClass}`}>{String(timeLeft).padStart(2, '0')}s</span>
         </p>
