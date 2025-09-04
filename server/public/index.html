@@ -176,14 +176,37 @@
 			</div>
 			<div class="endpoint">
 				<span class="method post">POST</span>
-				<span class="path">/api/users/confirm</span>
+				<span class="path">/api/users/confirm-email</span>
 				<div class="description">Confirm user registration</div>
 			</div>
 			<div class="endpoint">
 				<span class="method post">POST</span>
-				<span class="path">/api/users/resend</span>
+				<span class="path">/api/users/resend-email</span>
 				<div class="description">Resend confirmation email</div>
 			</div>
+
+			<div class="endpoint">
+				<span class="method get">GET</span>
+				<span class="path">/api/users/delete</span>
+				<div class="description">Request account deletion</div>
+			</div>
+			<div class="endpoint">
+				<span class="method delete">DELETE</span>
+				<span class="path">/api/users/delete</span>
+				<div class="description">Delete account</div>
+			</div>
+
+			<div class="endpoint">
+				<span class="method post">POST</span>
+				<span class="path">/api/users/request-password-reset</span>
+				<div class="description">Request password reset</div>
+			</div>
+			<div class="endpoint">
+				<span class="method post">POST</span>
+				<span class="path">/api/users/reset-password</span>
+				<div class="description">Reset password to new one</div>
+			</div>
+
 			<div class="endpoint">
 				<span class="method put">PUT</span>
 				<span class="path">/api/users/newpassword</span>
@@ -225,8 +248,8 @@
 			</div>
 			<div class="endpoint">
 				<span class="method get">GET</span>
-				<span class="path">/api/games/:id</span>
-				<div class="description">Get a specific game by ID</div>
+				<span class="path">/api/games/:slug</span>
+				<div class="description">Get a specific game by SLUG</div>
 			</div>
 			<div class="endpoint">
 				<span class="method post">POST</span>
@@ -268,7 +291,50 @@
 				<div class="description">Delete a score</div>
 			</div>
 		</div>
-	</div>
+
+		<div class="endpoint-group">
+			<h2>Puzzle 15</h2>
+			<div class="endpoint">
+				<span class="method get">GET</span>
+				<span class="path">/api/puzzle15/</span>
+				<div class="description">Get puzzle 15 board</div>
+			</div>
+		</div>
+
+		<div class="endpoint-group">
+			<h2>Pokemon</h2>
+			<div class="endpoint">
+				<span class="method get">GET</span>
+				<span class="path">/api/pokemon/:gameSessionId/:batchNumber</span>
+				<div class="description">Get a batch of pokemon</div>
+			</div>
+			<div class="endpoint">
+				<span class="method post">POST</span>
+				<span class="path">/api/pokemon</span>
+				<div class="description">Create pokemon game session</div>
+			</div>
+			<div class="endpoint">
+				<span class="method post">POST</span>
+				<span class="path">/api/pokemon/results</span>
+				<div class="description">Check pokemon results</div>
+			</div>
+		</div>
+
+		<div class="endpoint-group">
+			<h2>LizardType</h2>
+			<div class="endpoint">
+				<div class="endpoint">
+					<span class="method post">POST</span>
+					<span class="path">/api/lizardtype/</span>
+					<div class="description">Create lizard type game session</div>
+				</div>
+				<div class="endpoint">
+					<span class="method post">POST</span>
+					<span class="path">/api/lizardtype/results</span>
+					<div class="description">Check lizard type results</div>
+				</div>
+			</div>
+		</div>
 </body>
 
 </html>
