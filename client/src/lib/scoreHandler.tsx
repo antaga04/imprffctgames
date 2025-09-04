@@ -32,7 +32,9 @@ export const handleScoreUpload = async ({ scoreData, gameId, slug }: ScoreUpload
         if (response.status === 201 || response.status === 200) {
             toast(
                 <>
-                    <MedalIcon className="mr-4" />
+                    <span className="mr-4">
+                        <MedalIcon />
+                    </span>
                     <div className="flex flex-col">
                         <h2 className="text-base font-bold">{message}</h2>
                         <p className="text-sm">
