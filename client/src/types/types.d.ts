@@ -252,6 +252,7 @@ type DecrementTimerProps = {
     onGameFinished: () => void;
     resetSignal: number;
     gameSessionId: string | null; // Used to start the decrement timer
+    text?: boolean;
 };
 
 type GameItemProps = {
@@ -271,6 +272,29 @@ type Feedback = {
     guess: string;
 };
 
+type LizardtypeGameState = 'waiting' | 'playing' | 'finished';
+type Language = (typeof LANGUAGES)[number]['value'];
+type LizardtypeGameMode = (typeof LIZARDTYPE_VARIANTS)[string];
+
+interface LizardtypeStats {
+    wpm: number; // total number of characters in the correctly typed words (not including spaces)
+    raw: number; // like wpm but with all keystrokes except special keys
+    accuracy: number; // percentage of correct keystrokes
+    consistency: number; // spacing between keystrokes
+    correct: number; // correct characters of the end result
+    incorrect: number; // incorrect characters of the end result
+    hits: number; // correct characters that were typed
+    mistakes: number; // mistakes made during typing
+    missed: number; // mistakes made during typing
+}
+
+type KeystrokeData = {
+    key: string;
+    timestamp: number;
+    duration?: number;
+    spacing?: number;
+};
+
 /* --------------- TempScore --------------- */
 type TempScoreData = {
     scoreData: ScoreData;
@@ -285,13 +309,19 @@ type TempScoreContextType = {
 };
 
 /* --------------- Scores --------------- */
-type ScoreData = {
+interface ScoreData extends Partial<LizardtypeScore> {
     correct?: number;
     total?: number;
     guesses?: Guess[];
     moves?: Move[];
     time?: number;
-};
+}
+
+interface LizardtypeScore extends LizardtypeStats {
+    hash: string;
+    gameSessionId: string | null;
+    keystrokes: KeystrokeData[];
+}
 
 type ScoreDataGeneric = {
     [key: string]: number | undefined;
