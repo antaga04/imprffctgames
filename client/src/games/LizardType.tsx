@@ -5,14 +5,15 @@ import DecrementTimer from '@/components/ui/Timers/DecrementTimer';
 import { useGameCompletion } from '@/hooks/useCompletion';
 import { useFetch } from '@/hooks/useFetch';
 import { useTempScore } from '@/hooks/useTempScore';
-import { LIZARD_LANGUAGE_MAP, LIZARDTYPE_SLUG } from '@/lib/constants';
+import { LIZARDTYPE_SLUG } from '@/lib/constants';
+import axios from 'axios';
 import { Settings } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 const API_LIZARDTYPE_GAME_URL = `${import.meta.env.VITE_API_URL}/games/${LIZARDTYPE_SLUG}`;
-// const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
     const { t, i18n } = useTranslation();
@@ -29,6 +30,8 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
     const [resetSignal, setResetSignal] = useState(0);
     const [totalMistakes, setTotalMistakes] = useState(0);
     const [isFocused, setIsFocused] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [hash, setHash] = useState(null);
     const [stats, setStats] = useState<LizardtypeStats>({
         wpm: 0,
         accuracy: 0,
@@ -42,24 +45,46 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
     const { setTempScore } = useTempScore();
     const handleCompletion = useGameCompletion(game?._id, LIZARDTYPE_SLUG);
 
-    const generateWords = useCallback(() => {
-        const wordList = LIZARD_LANGUAGE_MAP[language as keyof typeof LIZARD_LANGUAGE_MAP];
-        const generatedWords = [];
-        for (let i = 0; i < 200; i++) {
-            generatedWords.push(wordList[Math.floor(Math.random() * wordList.length)]);
+    const generateGame = useCallback(async () => {
+        try {
+            const response = await axios.post(`${API_URL}/lizardtype`, {
+                withCredentials: true,
+                language,
+                variant: gameMode,
+            });
+            const { words, hash, gameSessionId } = response.data.payload;
+
+            if (words && hash) {
+                return {
+                    newWords: words,
+                    hash,
+                    gameSessionId,
+                };
+            }
+        } catch (error) {
+            console.error('Error fetching board:', error);
+            const err = error as MyError;
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('games.lyzard.board_error'));
+        } finally {
+            setLoading(false);
         }
-        return generatedWords;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [language]);
 
-    const resetGame = useCallback(() => {
-        const newWords = generateWords();
+    const resetGame = useCallback(async () => {
+        setLoading(true);
+        const gameSession = await generateGame().finally(() => setLoading(false));
+        if (!gameSession) return;
+        const { newWords, hash, gameSessionId } = gameSession;
+
         setWords(newWords);
+        setHash(hash);
         setTypedWords([]);
         setCurrentWordIndex(0);
         setCurrentCharIndex(0);
         setStartTime(null);
         setGameState('waiting');
-        setGameSessionId(null);
+        setGameSessionId(gameSessionId);
         setResetSignal((prev) => prev + 1);
         setTotalMistakes(0);
         setStats({
@@ -70,7 +95,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
             totalMistakes: 0,
         });
         resetFocus();
-    }, [generateWords]);
+    }, [generateGame]);
 
     useEffect(() => {
         resetGame();
@@ -123,10 +148,10 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         const gameStats = calculateStats();
         setStats(gameStats);
 
-        if (!game) {
+        if (!game || !gameSessionId || !hash) {
             return toast.error(t('games.not_found_db'));
         }
-        const scoreData = gameStats;
+        const scoreData = { ...gameStats, hash, gameSessionId };
         setTempScore({ scoreData, gameId: game._id, slug: game.slug });
         handleCompletion(scoreData);
         // eslint-disable-next-line
@@ -193,7 +218,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
             if (gameState === 'waiting') {
                 setGameState('playing');
                 setStartTime(Date.now());
-                setGameSessionId(Date.now().toString());
+                // setGameSessionId(Date.now().toString());
             }
 
             if (gameState === 'playing' || gameState === 'waiting') {
@@ -317,7 +342,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                     initialTime={gameDuration}
                     onGameFinished={onGameFinished}
                     resetSignal={resetSignal}
-                    gameSessionId={gameSessionId}
+                    gameSessionId={gameState === 'playing' ? gameSessionId : null}
                 />
             </div>
 
@@ -330,7 +355,13 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                         onClick={handleWordsClick}
                     >
                         <div className="text-xl leading-relaxed font-mono text-left select-none">
-                            {words.length > 0 ? renderWords() : 'Loading...'}
+                            {words.length > 0 ? (
+                                renderWords()
+                            ) : (
+                                <div className="text-muted-foreground">
+                                    {loading ? t('globals.loading') + '...' : t('games.lizardtype.no_words')}
+                                </div>
+                            )}
                         </div>
 
                         <input
@@ -352,7 +383,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
                         {gameState === 'waiting' && !isFocused && (
                             <p className="absolute inset-0 text-black font-mono font-bold backdrop-blur-sm grid justify-items-center items-center cursor-default">
-                                {t('games.lizardtype.focus_text')}
+                                {loading ? t('globals.loading') : t('games.lizardtype.focus_text')}
                             </p>
                         )}
                     </div>
@@ -363,6 +394,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                             onSubmit={resetGame}
                             bgColor="bg-yellow-600"
                             hoverBgColor="hover:bg-yellow-700"
+                            coolTime={2500}
                         />
                     </div>
                 </div>
