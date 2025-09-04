@@ -41,10 +41,18 @@ export async function seedScores() {
                         };
                         break;
                     case 'wpm_time':
+                        const wpm = getRandomInt(20, 100);
                         scoreData = {
-                            wpm: getRandomInt(20, 100),
-                            variant: variant,
-                            consistency: getRandomInt(60, 100),
+                            wpm: wpm,
+                            raw: Math.min(wpm + getRandomInt(0, 10), 100),
+                            accuracy: getRandomInt(40, 100),
+                            consistency: getRandomInt(60, 90),
+                            correct: getRandomInt(60, 90),
+                            incorrect: getRandomInt(0, 10),
+                            hits: getRandomInt(60, 90),
+                            mistakes: getRandomInt(0, 20),
+                            missed: getRandomInt(0, 10),
+                            variant,
                         };
                         break;
                     case 'win':
