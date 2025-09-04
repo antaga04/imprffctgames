@@ -21,7 +21,7 @@ export default function Controls({
     resetFocus,
 }: ControlsProps) {
     return (
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center flex-col md:flex-row">
             {/* Game Modes */}
             <div className="flex gap-2">
                 {LIZARDTYPE_VARIANTS.map((mode) => (
@@ -39,8 +39,6 @@ export default function Controls({
                     />
                 ))}
             </div>
-
-            <span>|</span>
 
             {/* Languages */}
             <div className="flex gap-2">
