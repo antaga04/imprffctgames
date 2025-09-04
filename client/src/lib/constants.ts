@@ -11,7 +11,7 @@ export const EMAIL_INPUT = {
     type: 'email',
     placeholder: 'constants.email_placeholder',
     Icon: AtSign,
-};
+} as const;
 
 const PASSWORD_INPUT = {
     label: 'constants.password_label',
@@ -19,7 +19,7 @@ const PASSWORD_INPUT = {
     type: 'password',
     placeholder: 'constants.password_placeholder',
     Icon: KeyRound,
-};
+} as const;
 
 const CONFIRM_PASSWORD_INPUT = {
     label: 'constants.confirm_password_label',
@@ -27,7 +27,7 @@ const CONFIRM_PASSWORD_INPUT = {
     type: 'password',
     placeholder: 'constants.confirm_password_placeholder',
     Icon: KeyRound,
-};
+} as const;
 
 const CURRENT_PASSWORD_INPUT = {
     label: 'constants.current_password_label',
@@ -35,7 +35,7 @@ const CURRENT_PASSWORD_INPUT = {
     type: 'password',
     placeholder: 'constants.current_password_placeholder',
     Icon: KeyRound,
-};
+} as const;
 
 const NEW_PASSWORD_INPUT = {
     label: 'constants.new_password_label',
@@ -43,7 +43,7 @@ const NEW_PASSWORD_INPUT = {
     type: 'password',
     placeholder: 'constants.new_password_placeholder',
     Icon: KeyRound,
-};
+} as const;
 
 const NICKNAME_INPUT = {
     label: 'constants.nickname_label',
@@ -51,24 +51,25 @@ const NICKNAME_INPUT = {
     type: 'text',
     placeholder: 'constants.nickname_placeholder',
     Icon: User,
-};
+} as const;
 
-export const LOGIN_INPUTS = [EMAIL_INPUT, PASSWORD_INPUT];
+export const LOGIN_INPUTS = [EMAIL_INPUT, PASSWORD_INPUT] as const;
 
-export const REGISTER_INPUTS = [NICKNAME_INPUT, EMAIL_INPUT, PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT];
+export const REGISTER_INPUTS = [NICKNAME_INPUT, EMAIL_INPUT, PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT] as const;
 
-export const ACCOUNT_INPUTS = [EMAIL_INPUT, NICKNAME_INPUT];
+export const ACCOUNT_INPUTS = [EMAIL_INPUT, NICKNAME_INPUT] as const;
 
-export const PASSWORD_INPUTS = [CURRENT_PASSWORD_INPUT, NEW_PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT];
+export const PASSWORD_INPUTS = [CURRENT_PASSWORD_INPUT, NEW_PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT] as const;
 
-export const RESET_PASSWORD_INPUTS = [NEW_PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT];
+export const RESET_PASSWORD_INPUTS = [NEW_PASSWORD_INPUT, CONFIRM_PASSWORD_INPUT] as const;
 
 export const UNIT_MAP: Record<string, string> = {
     time: 's',
     consistency: '%',
+    accuracy: '%',
     moves: '', // no unit
     wpm: '', // no unit
-};
+} as const;
 
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -81,4 +82,6 @@ export const LANGUAGES = [
         label: 'Español',
         value: 'es',
     },
-];
+] as const;
+
+export const LIZARDTYPE_VARIANTS = ['15s', '30s', '60s'] as const;
