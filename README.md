@@ -23,6 +23,7 @@ Se ha integrado un sistema de autenticación y seguridad para proteger la inform
 - Who's that Pokémon: se trata de adivinar nombres de Pokémon en 60s.
   Puedes estudiar los distintos nombres aquí: https://www.pokemon.com/es/pokedex
 - 15 Puzzle: se trata de ordenar 15 bloques en una cuadrícula de 4x4.
+- LizardunType: se trata de un juego de mecanografía donde hay que escribir el máximo número de palabras en un tiempo limitado.
 
 ## Manual de instalación
 

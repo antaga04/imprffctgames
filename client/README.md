@@ -1,3 +1,3 @@
 # Imprffct Games Client
 
-Built with React, TypeScript, TailwindCSS and shadcn UI.
+Frontend de la app de juegos Imprffct Games.
