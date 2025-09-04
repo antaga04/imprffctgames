@@ -1,4 +1,4 @@
-const specialKeys = ['Backspace', 'Alt', 'Meta', 'Shift', 'Control', 'Tab', 'Enter', 'CapsLock', 'Escape'];
+const specialKeys = ['Alt', 'Meta', 'Shift', 'Control', 'Tab', 'Enter', 'CapsLock', 'Escape'];
 
 export const generateWords = (wordList: string[]) => {
     const generatedWords = [];
