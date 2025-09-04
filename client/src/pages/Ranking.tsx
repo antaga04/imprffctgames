@@ -50,8 +50,8 @@ const Ranking: React.FC = () => {
     const gameSlugParam = searchParams.get('game');
     const pageParam = parseInt(searchParams.get('page') || '1', 10);
 
-    const storageGame = localStorage.getItem('rankingGame');
-    const defaultGame = games?.find((game) => game.slug === storageGame) || games?.[1] || undefined;
+    const storageGame = JSON.parse(localStorage.getItem('rankingGame') || '{}');
+    const defaultGame = games?.find((game) => game.slug === storageGame.gameSlug) || games?.[1] || undefined;
 
     const selectedGame = slugToGame(gameSlugParam || '') || defaultGame;
     const currentPage = isNaN(pageParam) || pageParam < 1 ? 1 : pageParam;
@@ -66,7 +66,7 @@ const Ranking: React.FC = () => {
         // Intentar tomar de URL
         const variantParam = searchParams.get('variant');
         if (variantParam) {
-            selectedVariant = selectedGame.variants.find((v) => v.key.toString() === variantParam);
+            selectedVariant = selectedGame.variants.find((v) => v.label.toString() === variantParam);
         } else {
             // Si no hay en URL, tomar el primer variant por defecto
             selectedVariant = selectedGame.variants[0];
@@ -92,7 +92,7 @@ const Ranking: React.FC = () => {
             setIsLoading(true);
             try {
                 const response = await axios.get(`${import.meta.env.VITE_API_URL}/scores/${selectedGame._id}`, {
-                    params: { page: currentPage, limit: PAGINATED_ITEMS, variant: selectedVariant?.key },
+                    params: { page: currentPage, limit: PAGINATED_ITEMS, variant: selectedVariant?.label },
                 });
 
                 const { payload } = response.data;
@@ -110,30 +110,32 @@ const Ranking: React.FC = () => {
 
         // TODO: add axios call to get games
         fetchScores();
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, selectedGame, selectedVariant]);
 
     const handleGameChange = (value: string) => {
         let gameId: string;
-        let variantKey: number | undefined;
+        let variantLabel: string | undefined;
 
-        if (value.includes('|')) {
-            const [id, variantStr] = value.split('|'); // ambos son strings
+        if (value.includes('-')) {
+            const [id, variantStr] = value.split('-');
             gameId = id;
-            variantKey = parseInt(variantStr, 10); // ahora sí es number
+            variantLabel = variantStr;
         } else {
             gameId = value;
-            variantKey = undefined;
+            variantLabel = undefined;
         }
 
         const game = games?.find((g) => g._id === gameId);
         if (!game) return;
 
         // Guardar en localStorage
-        localStorage.setItem('rankingGame', JSON.stringify({ gameSlug: game.slug, variant: variantKey }));
+        localStorage.setItem('rankingGame', JSON.stringify({ gameSlug: game.slug, variant: variantLabel }));
 
         // Actualizar URL search params
         const params: Record<string, string> = { game: game.slug || '', page: '1' };
-        if (variantKey !== undefined) params.variant = variantKey.toString(); // convertir a string
+        if (variantLabel !== undefined) params.variant = variantLabel.toString(); // convertir a string
         setSearchParams(params);
     };
 
@@ -194,11 +196,13 @@ const Ranking: React.FC = () => {
                                             <DropdownMenuSubContent className="w-[180px]">
                                                 {game.variants.map((variant) => (
                                                     <DropdownMenuItem
-                                                        key={`${game._id}-${variant.key}`}
-                                                        onSelect={() => handleGameChange(`${game._id}|${variant.key}`)}
+                                                        key={`${game._id}-${variant.label}`}
+                                                        onSelect={() =>
+                                                            handleGameChange(`${game._id}-${variant.label}`)
+                                                        }
                                                         className={
                                                             selectedGame?._id === game._id &&
-                                                            selectedVariant?.key === variant.key
+                                                            selectedVariant?.label === variant.label
                                                                 ? 'bg-blue-100 text-blue-700'
                                                                 : ''
                                                         }
