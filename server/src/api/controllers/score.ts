@@ -115,6 +115,7 @@ export const getScoresByGameId = async (req: Request, res: Response) => {
 export const uploadScore = async (req: Request, res: Response) => {
     try {
         const { scoreData, game_id } = req.body.score;
+        const { variant } = scoreData;
         const { id: user_id } = (req as AuthenticatedRequest).user;
 
         const errors = validateRequiredFields({ ...req.body.score, user_id }, ['user_id', 'game_id', 'scoreData']);
@@ -146,7 +147,7 @@ export const uploadScore = async (req: Request, res: Response) => {
             });
         }
 
-        let existingScore = await Score.findOne({ user_id, game_id });
+        let existingScore = await Score.findOne({ user_id, game_id, variant });
 
         if (existingScore) {
             if (!gameLogic.compare(existingScore.scoreData as StoredPuzzle15Score & StoredPokemonScore, newScore)) {
@@ -159,7 +160,7 @@ export const uploadScore = async (req: Request, res: Response) => {
             existingScore.scoreData = newScore;
             await existingScore.save();
         } else {
-            existingScore = new Score({ user_id, game_id, scoreData: newScore });
+            existingScore = new Score({ user_id, game_id, scoreData: newScore, variant });
             await existingScore.save();
             await User.findByIdAndUpdate(user_id, { $push: { scores: existingScore._id } }, { new: true });
         }
