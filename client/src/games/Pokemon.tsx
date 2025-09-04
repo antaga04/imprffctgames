@@ -338,7 +338,11 @@ const PokemonGame: React.FC = () => {
     );
 
     return (
-        <GameWrapper title={t('games.pokemon.name')} height="479px" instructions={t('games.pokemon.instructions')}>
+        <GameWrapper
+            title={t('games.pokemon.name')}
+            height="479px"
+            instructions={t('games.pokemon.instructions', { INITIAL_TIME })}
+        >
             <Game game={game} />
         </GameWrapper>
     );
