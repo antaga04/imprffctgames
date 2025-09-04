@@ -105,7 +105,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         }
 
         try {
-            const scoreData = { hash, gameSessionId, keystrokes, variant: gameMode.slice(0, -1) };
+            const scoreData = { hash, gameSessionId, keystrokes, variant: gameMode };
 
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/lizardtype/results`, scoreData);
 

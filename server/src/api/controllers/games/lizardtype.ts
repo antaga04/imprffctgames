@@ -72,9 +72,9 @@ export const checkLizardTypeResults = async (req: Request, res: Response) => {
 
         // const expectedText = session.state.join(' ');
         const expectedText = session.state;
-        const results = calculateTypingMetrics(keystrokes, expectedText, Number(variant));
+        const results = calculateTypingMetrics(keystrokes, expectedText, Number(variant.slice(0, -1)));
 
-        session.validatedResults = { ...results, variant: variant + 's' };
+        session.validatedResults = { ...results, variant };
         await session.save();
 
         return sendSuccess(res, 200, {
