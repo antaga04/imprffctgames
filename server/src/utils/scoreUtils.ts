@@ -16,6 +16,14 @@ export function comparePuzzle15Scores(existingScore: StoredPuzzle15Score, newSco
     return newScore.moves < existingScore.moves;
 }
 
+export function compareLizardtypeScores(existingScore: LizardtypeNewScore, newScore: LizardtypeNewScore) {
+    // More `wpm` wins; tiebreaker is better `accuracy`
+    if (newScore.wpm !== existingScore.wpm) {
+        return newScore.wpm > existingScore.wpm;
+    }
+    return newScore.accuracy > existingScore.accuracy;
+}
+
 export function sortPokemonScores(scores: ScoreDocument[]) {
     return scores.sort((a, b) => {
         const aScore = calculateGuessesCorrectTotal(a.scoreData as StoredPokemonScore);
@@ -31,6 +39,15 @@ export function sortPuzzle15Scores(scores: ScoreDocument[]) {
             return a.scoreData.time - b.scoreData.time; // Shorter time first
         }
         return a.scoreData.moves - b.scoreData.moves; // Fewer moves in case of a tie
+    });
+}
+
+export function sortLizardtypeScores(scores: ScoreDocument[]) {
+    return scores.sort((a, b) => {
+        if (a.scoreData.wpm !== b.scoreData.wpm) {
+            return b.scoreData.wpm - a.scoreData.wpm; // Higher wpm first
+        }
+        return b.scoreData.accuracy - a.scoreData.accuracy; // Higher accuracy in case of a tie
     });
 }
 
