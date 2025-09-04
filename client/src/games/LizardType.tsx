@@ -4,6 +4,7 @@ import Controls from '@/components/ui/lizardtype/Controls';
 import DecrementTimer from '@/components/ui/Timers/DecrementTimer';
 import { useGameCompletion } from '@/hooks/useCompletion';
 import { useFetch } from '@/hooks/useFetch';
+import useKeystrokeRecorder from '@/hooks/useTelemetry';
 import { useTempScore } from '@/hooks/useTempScore';
 import { LIZARDTYPE_SLUG } from '@/lib/constants';
 import axios from 'axios';
@@ -11,6 +12,8 @@ import { Settings } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import Confetti from 'react-confetti';
+import Stats from '@/components/ui/lizardtype/Stats';
 
 const API_LIZARDTYPE_GAME_URL = `${import.meta.env.VITE_API_URL}/games/${LIZARDTYPE_SLUG}`;
 const API_URL = import.meta.env.VITE_API_URL;
@@ -25,32 +28,27 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
     const [typedWords, setTypedWords] = useState<string[]>([]);
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
     const [currentCharIndex, setCurrentCharIndex] = useState(0);
-    const [startTime, setStartTime] = useState<number | null>(null);
     const [gameSessionId, setGameSessionId] = useState<string | null>(null);
     const [resetSignal, setResetSignal] = useState(0);
-    const [totalMistakes, setTotalMistakes] = useState(0);
     const [isFocused, setIsFocused] = useState(false);
     const [loading, setLoading] = useState(false);
     const [hash, setHash] = useState(null);
-    const [stats, setStats] = useState<LizardtypeStats>({
-        wpm: 0,
-        accuracy: 0,
-        correctChars: 0,
-        totalChars: 0,
-        totalMistakes: 0,
-    });
+    const [stats, setStats] = useState<LizardtypeStats | null>(null);
+    const { keystrokes, recordKey, reset: resetKeystrokes } = useKeystrokeRecorder();
     const hiddenInputRef = useRef<HTMLInputElement>(null);
     const gameDuration = gameMode.slice(0, -1) as unknown as number;
 
     const { setTempScore } = useTempScore();
     const handleCompletion = useGameCompletion(game?._id, LIZARDTYPE_SLUG);
 
+    const hasHandledCompletion = useRef(false);
+
     const generateGame = useCallback(async () => {
         try {
             const response = await axios.post(`${API_URL}/lizardtype`, {
                 withCredentials: true,
                 language,
-                variant: gameMode,
+                variant: gameMode.slice(0, -1),
             });
             const { words, hash, gameSessionId } = response.data.payload;
 
@@ -82,86 +80,52 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         setTypedWords([]);
         setCurrentWordIndex(0);
         setCurrentCharIndex(0);
-        setStartTime(null);
         setGameState('waiting');
         setGameSessionId(gameSessionId);
         setResetSignal((prev) => prev + 1);
-        setTotalMistakes(0);
-        setStats({
-            wpm: 0,
-            accuracy: 0,
-            correctChars: 0,
-            totalChars: 0,
-            totalMistakes: 0,
-        });
+        setStats(null);
+        resetKeystrokes();
         resetFocus();
+        hasHandledCompletion.current = false;
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [generateGame]);
 
     useEffect(() => {
         resetGame();
     }, [resetGame]);
 
-    const calculateStats = useCallback(() => {
-        let correctChars = 0;
-        let totalChars = 0;
-
-        for (let wordIdx = 0; wordIdx < currentWordIndex; wordIdx++) {
-            const word = words[wordIdx];
-            const typedWord = typedWords[wordIdx] || '';
-
-            for (let charIdx = 0; charIdx < word.length; charIdx++) {
-                totalChars++;
-                if (charIdx < typedWord.length && typedWord[charIdx] === word[charIdx]) {
-                    correctChars++;
-                }
-            }
-        }
-
-        if (currentWordIndex < words.length) {
-            const currentWord = words[currentWordIndex];
-            const currentTypedWord = typedWords[currentWordIndex] || '';
-
-            for (let charIdx = 0; charIdx < currentCharIndex; charIdx++) {
-                totalChars++;
-                if (charIdx < currentTypedWord.length && currentTypedWord[charIdx] === currentWord[charIdx]) {
-                    correctChars++;
-                }
-            }
-        }
-
-        const accuracy = totalChars > 0 ? ((totalChars - totalMistakes) / totalChars) * 100 : 0;
-        const timeElapsed = startTime ? (Date.now() - startTime) / 60000 : 0;
-        const wordsTyped = correctChars / 5;
-        const wpm = timeElapsed > 0 ? Math.round(wordsTyped / timeElapsed) : 0;
-
-        return {
-            wpm,
-            accuracy: Math.round(Math.max(0, accuracy)),
-            correctChars,
-            totalChars,
-            totalMistakes,
-        };
-    }, [typedWords, words, currentWordIndex, currentCharIndex, startTime, totalMistakes]);
-
-    const onGameFinished = useCallback(() => {
+    const handleGameOver = async () => {
+        if (hasHandledCompletion.current) return;
+        hasHandledCompletion.current = true;
         setGameState('finished');
-        const gameStats = calculateStats();
-        setStats(gameStats);
 
         if (!game || !gameSessionId || !hash) {
             return toast.error(t('games.not_found_db'));
         }
-        const scoreData = { ...gameStats, hash, gameSessionId };
-        setTempScore({ scoreData, gameId: game._id, slug: game.slug });
-        handleCompletion(scoreData);
-        // eslint-disable-next-line
-    }, [calculateStats]);
+
+        try {
+            const scoreData = { hash, gameSessionId, keystrokes, variant: gameMode.slice(0, -1) };
+
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/lizardtype/results`, scoreData);
+
+            setStats(response.data.payload ?? {});
+
+            setTempScore({ scoreData, gameId: game._id, slug: game.slug });
+            handleCompletion(scoreData);
+        } catch (error) {
+            console.error('Error fetching results:', error);
+            const err = error as MyError;
+            toast.error(t(`server.${err.response?.data?.i18n}`) || t('games.lizardtype.results_error'));
+        }
+    };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
             e.preventDefault();
             return;
         }
+        recordKey(e.key);
 
         if (e.key === 'Backspace' && (e.altKey || e.metaKey)) {
             e.preventDefault();
@@ -200,14 +164,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
         if (e.key === ' ') {
             e.preventDefault();
-            if (currentWordIndex < words.length - 1) {
-                const currentTyped = typedWords[currentWordIndex] || '';
-                const currentWord = words[currentWordIndex];
-                if (currentTyped.length > currentWord.length) {
-                    const extraChars = currentTyped.length - currentWord.length;
-                    setTotalMistakes((prev) => prev + extraChars);
-                }
-
+            if (currentWordIndex < words.length - 1 && currentCharIndex !== 0) {
                 setCurrentWordIndex((prev) => prev + 1);
                 setCurrentCharIndex(0);
             }
@@ -217,29 +174,11 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
         if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
             if (gameState === 'waiting') {
                 setGameState('playing');
-                setStartTime(Date.now());
-                // setGameSessionId(Date.now().toString());
             }
 
             if (gameState === 'playing' || gameState === 'waiting') {
                 const newTypedWords = [...typedWords];
                 const currentTyped = newTypedWords[currentWordIndex] || '';
-                const currentWord = words[currentWordIndex];
-
-                if (currentCharIndex < currentWord.length) {
-                    const expectedChar = currentWord[currentCharIndex];
-                    const typedChar = e.key;
-
-                    // Normalize both characters for comparison (handles accents)
-                    const normalizedExpected = expectedChar.normalize('NFD');
-                    const normalizedTyped = typedChar.normalize('NFD');
-
-                    if (normalizedExpected !== normalizedTyped && expectedChar !== typedChar) {
-                        setTotalMistakes((prev) => prev + 1);
-                    }
-                } else {
-                    setTotalMistakes((prev) => prev + 1);
-                }
 
                 newTypedWords[currentWordIndex] = currentTyped + e.key;
                 setTypedWords(newTypedWords);
@@ -294,6 +233,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                                 className += 'text-red-400 bg-red-400/10';
                             }
                         } else if (isCurrentWord && charIdx === currentCharIndex) {
+                            // TODO: check edge case where it's not yellow when it should. letter + espace + Alt Backspace
                             className += 'bg-yellow-400/30 animate-pulse text-yellow-600';
                         } else {
                             className += 'text-muted-foreground';
@@ -320,7 +260,8 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
 
     return (
         <div className="w-full max-w-4xl space-y-8 mt-4">
-            <div className="flex justify-center items-center gap-6">
+            {stats && <Confetti recycle={false} numberOfPieces={200} />}
+            <div className="flex justify-center items-center gap-6 flex-col md:flex-row">
                 <div className="flex items-center gap-2">
                     <Settings className="w-4 h-4 text-gray-400" />
                     <span className="text-sm text-gray-400 font-mono">{t('globals.settings')}:</span>
@@ -340,7 +281,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
             <div className="flex justify-center text-4xl font-bold font-mono">
                 <DecrementTimer
                     initialTime={gameDuration}
-                    onGameFinished={onGameFinished}
+                    onGameFinished={handleGameOver}
                     resetSignal={resetSignal}
                     gameSessionId={gameState === 'playing' ? gameSessionId : null}
                 />
@@ -400,23 +341,7 @@ const Game: React.FC<{ game: GameSchema | null }> = ({ game }) => {
                 </div>
             </div>
 
-            {gameState === 'finished' && (
-                <div className="p-6 bg-gray-900 border border-gray-700 rounded-lg">
-                    <div className="text-center space-y-4">
-                        <h2 className="text-2xl font-bold text-white font-mono">{t('games.lizardtype.completed')}</h2>
-                        <div className="grid grid-cols-2 gap-6 text-center">
-                            <div>
-                                <div className="text-4xl font-bold text-yellow-400 font-mono">{stats.wpm}</div>
-                                <div className="text-sm text-gray-400 capitalize">{t('globals.wpm')}</div>
-                            </div>
-                            <div>
-                                <div className="text-4xl font-bold text-white font-mono">{stats.accuracy}%</div>
-                                <div className="text-sm text-gray-400">{t('globals.accuracy')}</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+            {gameState === 'finished' && stats && <Stats gameState={gameState} stats={stats} />}
         </div>
     );
 };
