@@ -10,6 +10,6 @@
     "author": "antaga04",
     "license": "ISC",
     "devDependencies": {
-        "prettier": "^3.9.6"
+        "prettier": "^3.9.10"
     }
 }
